@@ -1,0 +1,7 @@
+﻿@if(Request.IsAuthenticated) {
+    <text> Welcome <b>@RealEstateCRM.Web.BLL.UserInfo.CurUser.Name</b>
+    </text>
+}
+else {
+    <b>未登录</b>
+}

@@ -1,0 +1,27 @@
+﻿@model OUDAL.Role
+@using RealEstateCRM.Web;
+@using RealEstateCRM.Web.BLL;
+@{
+    ViewBag.Title = "角色信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@section Main{
+<link rel="stylesheet" href="@Url.Content("~/content/colorbox.css")" />
+<script src="@Url.Content("~/scripts/jquery.colorbox-min.js")"></script>
+<script type="text/javascript">
+
+</script>
+<div>
+    @*<input type="button" value="角色修改" onclick="$.colorbox({iframe:true, width:'600px', height:'80%',href:'../RoleEdit/@Model.Id'});" />
+    <input type="button" value="权限修改" onclick="$.colorbox({iframe:true, width:'600px', height:'80%',href:'../RoleFunctionEdit/@Model.Id'});" />*@
+   <input type="button" value="角色修改" onclick="PopWindow('../RoleEdit/@Model.Id');" />
+    <input type="button" value="权限修改" onclick="PopWindow('../RoleFunctionEdit/@Model.Id');" />
+</div>
+<hr />
+    @Html.HiddenFor(model => model.Id)
+    <table class="form"><col width="80" /><col width="200" />
+        <tr>@Html.MyDisplayFor(m => m.Name)</tr>
+        <tr>@Html.MyDisplayFor(m=>m.Remark)</tr>
+    </table>
+    
+}

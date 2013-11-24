@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "删除";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+}
+
+
+@section Main{
+    <script type="text/javascript">
+        $(document).ready(function() {
+           
+        });
+       
+    </script>
+    <style type="text/css">
+    </style>
+    <div style="width:300px; margin:20px;">
+        <h3>删除后不可恢复，确定要删除吗？</h3>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+        <br/>
+        <input type="submit" value="确定删除" />
+            <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>
+            <input class="btn" type="button" onclick="window.close();" value="取消删除"/>
+        }
+    </div>
+}

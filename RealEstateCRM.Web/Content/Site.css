@@ -1,0 +1,112 @@
+﻿body
+{
+    padding-left:0.1em;
+    padding-right:0.1em;
+}
+.tdRight {
+	background-color: #FFEBCD;
+	text-align: right !important;	
+}
+.right {
+    text-align: right !important;	
+}
+.menuContent
+{
+    background-color:#FFFFFF;
+}
+div.leftDiv
+{
+    float:left;
+    min-width:200px;
+    min-height:300px;
+}
+div.searchdiv
+{
+    padding:3px 3px 3px 3px;
+}
+div.searchdiv input[type="text"]
+{
+    min-width:110px;
+}
+div.searchdiv select
+{
+    width:150px;
+}
+div.searchdiv input[type="button"]
+{
+    min-width:80px;
+    padding: 4px 12px;
+}
+input[type="button"]
+{
+    min-width:100px;
+}
+input[type="submit"]
+{
+    min-width:100px;
+}
+.len80
+{
+    min-width:80px;
+    padding-left:10px;
+    padding-right:4px;
+    display:inline-block;
+}
+.len60
+{
+    min-width:50px;
+    padding-left:4px;
+    padding-right:4px;
+    display:inline-block;
+}
+.textMiddle {
+    width: 300px;
+    display: inline;
+}
+.text150
+{
+    width:150px;    
+}
+.text100
+{
+    width:100px;    
+}
+.text80 {
+    width: 80px;
+}
+.text60
+{
+    width:80px;    
+}
+.display-label,
+.editor-label
+{
+    
+    margin: 1em 0 0 0;
+    /* padding:1em;
+    text-align:right;
+    min-width:8em;
+    clear:left;
+    float:left;
+    */
+}
+.editor-field
+{
+    margin:0.2em 0 0 0;
+    /* padding:0.5em; */
+}
+.placeheld {color: #b0b0b0;}
+.zeroThSpan1 {
+    padding: 0 0 0 0 !important;
+    min-width: 60px;
+}
+.zeroThSpan2 {
+    padding: 0 0 0 0 !important;
+    min-width: 140px;
+}
+label {
+    text-align: right;
+    min-width: 120px;
+    padding-right: 15px;
+    font-weight: normal;
+}

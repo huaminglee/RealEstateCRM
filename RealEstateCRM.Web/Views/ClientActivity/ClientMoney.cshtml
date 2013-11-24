@@ -1,0 +1,38 @@
+﻿@model OUDAL.Client
+
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+    
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+   
+}); 
+</script>
+<div style="width:500px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>客户意向金额</legend>
+        
+        <div class="editor-label">
+            <label for="Address">目标金额 亿</label>
+        </div>
+        <div class="editor-field">
+            <input class="text-box single-line" id="Address" name="Address" type="text" value="" />
+        </div> 
+        <div class="editor-label">
+            <label for="Address">意向金额 亿</label>
+        </div>
+        <div class="editor-field">
+           <input class="text-box single-line" id="Address" name="Address" type="text" value="" />、
+        </div> 
+                    
+    </fieldset>
+    <p>@MyControls.SubmitBtn("保存") @MyControls.Btn("取消","window.close()")</p>
+}
+</div>
+

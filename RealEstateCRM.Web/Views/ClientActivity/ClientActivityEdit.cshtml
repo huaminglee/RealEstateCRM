@@ -1,0 +1,31 @@
+﻿@model ClientActivity
+@{
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    ViewBag.Title = "客户活动编辑";
+}
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    });
+</script>
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        <fieldset>
+        <legend>客户活动内容</legend>
+        @Html.MyDropdownFor(model=>model.FundId,ViewBag.Funds as List<SelectListItem>)
+        @Html.MyTextFor(model=>model.Name)
+        @Html.MyDateFor(model=>model.ActivityDate) 
+        @Html.MyTextAreaFor(model => model.Detail ,3)
+        @Html.MyEnumFor(model => model.State,typeof(ActivityState))
+        @Html.MyTextAreaFor(model => model.Remark ,5)
+        @Html.MyTextAreaFor(model => model.Result ,5)        
+    
+    </fieldset>
+     @MyControls.FormBtn(false)
+    }
+</div>

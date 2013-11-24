@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "客户意见";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+    
+}
+@section Main{
+    <script type="text/javascript">
+        $(function(){
+            var message='@ViewBag.Message';
+            if(message.length>0)
+            {
+                alert(message);
+            }
+        });
+
+        function Delete() {
+            var data={id:@Model.Id};
+    $.post('../Delete',data,function (data){
+        alert(data.obj);
+        if(data.success==true){        
+            if(data.obj=="已删除"){            
+                window.opener.location.href=window.opener.location.href;
+                window.close();
+            }
+            window.location.reload();
+        }
+    });
+}
+    </script>
+    <div class="btn-toolbar well">
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');" >修改</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientMoney/@Model.Id');">增加处理过程</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientMoney/@Model.Id');">客户回访</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="Delete();">删除</button></div>
+
+    </div>
+
+    <div>
+       
+            <table class="table table-bordered">
+                @MyControls.ViewTable(2) 
+                <tr>
+                    <td class='tdRight'>客户姓名</td><td>张三</td><td class='tdRight'>状态</td><td>处理中</td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>意见日期</td><td>2013-6-8</td><td class='tdRight'>意见类型</td><td>投诉</td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>意见概述</td><td colspan="3">这里是意见概述</td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>详细说明</td><td colspan="3">这里是意见的详细说明<br />可多行</td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>回访时间</td><td></td><td class='tdRight'>回访人</td><td></td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>客户回访意见</td><td colspan="3">这里是意见的详细说明<br />可多行</td>
+                </tr>
+
+            </table>
+       
+        
+    </div>
+    <div style="clear:both"><b>处理过程</b> <button class="btn" onclick="">新增</button>
+        <table  class="table table-bordered">
+            <tr><td>分配时间</td><td>责任人</td><td>说明</td><td>反馈时间</td><td>反馈内容</td>
+            </tr>
+            <tr><td>2013-6-8</td><td>某人</td><td>...</td>
+                <td>2013-6-9</td><td>.。。。</td>
+            </tr>
+            <tr><td>2013-6-9</td><td>某人</td><td>...</td>
+                <td></td><td><button class="btn" onclick="">填写反馈</button></td>
+            </tr>
+        </table>
+    </div>
+    <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+        <div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Client.LogClass))</div>
+    </div>
+
+
+}
+
+

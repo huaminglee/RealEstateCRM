@@ -1,0 +1,64 @@
+﻿@model OUDAL.Client
+@{
+    ViewBag.Title = "客户信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+
+}
+@section Main{
+    <script type="text/javascript">
+        $(function() {
+            var message = '@ViewBag.Message';
+            if (message.length > 0) {
+                alert(message);
+            }
+        });
+
+        function Delete() {
+            var data = { id: @Model.Id };
+            $.post('../Delete', data, function(data) {
+                alert(data.obj);
+                if (data.success == true) {
+                    if (data.obj == "已删除") {
+                        window.opener.location.href = window.opener.location.href;
+                        window.close();
+                    }
+                }
+            });
+        }
+
+    </script>
+    <div class="btn-toolbar well">
+        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../Edit/@Model.Id');">修改</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="Delete();">删除</button></div>
+    </div>
+    <div>
+        <strong>基本信息</strong>
+        <table class="table table-bordered">
+            @MyControls.ViewTable(2)
+            @Html.HiddenFor(model => model.Id)
+            <tr>
+                @Html.MyDisplayFor(m => m.Name)@Html.MyDisplayFor(m => m.Sex)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.AllPhone) @Html.MyDisplayFor(m => m.RoomType)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Way)@Html.MyDisplayFor(m => m.WayExtend)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.ProjectId,DepartmentBLL.GetNameById(Model.ProjectId))
+                @Html.MyDisplayFor(m => m.GroupId,DepartmentBLL.GetNameById(Model.GroupId))
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Code)@Html.MyDisplayFor(m => m.Remark)
+            </tr>
+
+        </table>
+        <strong>联系记录</strong>
+        <strong>邀约记录</strong>
+    </div>
+}
+
+
+

@@ -1,0 +1,76 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "商场管理";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h2>欢迎使用 绿地商业集团.运营管理系统</h2>
+      </div>
+
+      <!-- Example row of columns -->
+        <div class="row">
+            <div class="span4">
+          <h2>注意，系统新增权限控制</h2>
+           <p>因为系统各项功能均有权限控制，如果您找不到需要的菜单项，请联系集团IT部为您开通权限。
+           </p>
+          
+        </div>
+            <div class="span4">
+                <h2>物资及设备种类维护</h2>
+                <p>将物资及设备分类，有助于物资的管理与统计分析。注意，各商场的物资设备种类是一致的，设置好了不要轻易改动。
+                </p>
+          
+            </div>
+            <div class="span4">
+                <h2>物资物料管理模块</h2>
+                <p>首先设置物资物料名称。</p>
+                <p>新增物资物料时，输入“物资入库”信息。如果是报损，也输入“物资入库”信息，在数量栏输入负数即可。同样，因为盘点差异而需要调整物资数量，也是输入“物资入库”信息。</p>
+          
+            </div>
+            <div class="span4">
+                <h2>提醒</h2>
+                @{
+                    List<Asset> outGuaranteeAsset = ViewBag.OutGuaranteeAsset;
+                    if (outGuaranteeAsset != null && outGuaranteeAsset.Count > 0)
+                    {
+                        <span>一个月内保修到期或超期的设备</span>
+                        <ul>
+                            @foreach (var item in outGuaranteeAsset)
+                            {
+                                <li>@Html.ActionLink(item.Name,"AssetView","Asset", new {id=item.Id},new {target="_blank"})</li>
+                            }
+                        </ul>
+                    }
+                    List<Asset> maintain = ViewBag.MaintainAlert;
+                    if (maintain != null && maintain.Count > 0)
+                    {
+                        <span>一个月内需要保修保养的设备</span>
+                        <ul>
+                            @foreach (var item in maintain)
+                            {
+                                <li>@Html.ActionLink(item.Name, "AssetView", "Asset", new { id = item.Id }, new { target = "_blank" })</li>
+                            }
+                        </ul>
+                    }
+                }
+          
+            </div>
+        </div>
+
+      <hr>
+
+      
+
+    </div>
+@section Footer{
+@@copyright xxx
+<script language="javascript">
+  
+</script>
+}

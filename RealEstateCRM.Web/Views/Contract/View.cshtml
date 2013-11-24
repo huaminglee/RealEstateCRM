@@ -1,0 +1,191 @@
+﻿@model OUDAL.Client
+
+@{
+    ViewBag.Title = "客户信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+    
+}
+@section Main{
+    <script type="text/javascript">
+        $(function(){
+            var message='@ViewBag.Message';
+    if(message.length>0)
+    {
+        alert(message);
+    }
+});
+
+function Delete() {
+    var data={id:@Model.Id};
+    $.post('../Delete',data,function (data){
+        alert(data.obj);
+        if(data.success==true){        
+            if(data.obj=="已删除"){            
+                window.opener.location.href=window.opener.location.href;
+                window.close();
+            }
+            window.location.reload();
+        }
+    });
+}
+    </script>
+    <div class="btn-toolbar well">
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');" >修改</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientMoney/@Model.Id');">意向金额</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientPlan/@Model.Id');">新增计划</button></div> 
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientSupport/@Model.Id');">申请领导支持</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="">意向变更</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="">签订意向</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="">变更客户经理</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="Delete();">删除</button></div>
+
+    </div>
+    @Html.HiddenFor(model => model.Id)
+    <div>
+        <div class="span6 firstSpan">
+            <table class="table table-bordered">
+                @MyControls.ViewTable(1) 
+                
+                <tr class="info"><td colspan="2">基本信息</td></tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Name) 
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.FullName)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Contact)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Phone)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Address)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Remark)
+                </tr>
+
+            </table>
+        </div>
+        <div class="span6">
+        <table class="table table-bordered">
+            @MyControls.ViewTable(1) 
+            <tr class="info"><td colspan="2">扩展信息</td></tr>
+            <tr>
+                    <td class='tdRight'>客户来源</td><td>直募开发</td> 
+                </tr>
+                <tr>
+                    <td class='tdRight'>客户类型</td><td>供应商</td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>客户意向</td><td>重点客户</td>
+                </tr>
+            <tr>
+                <td class='tdRight'>目标金额</td><td>0.3 亿元</td>
+            </tr>
+             <tr>
+                    <td class='tdRight'>预计金额</td><td>- 亿元</td>
+                </tr>
+                <tr>
+                    <td class='tdRight'>客户经理</td><td>Jo</td>
+                </tr>
+               
+
+            </table></div>
+    </div>
+    <div style="clear:both" class="span8"></div>
+    <div style="clear:both"><b>客户计划</b> <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientPlan/@Model.Id');">新增计划</button></div> <br/>
+        <table  class="table table-bordered">
+            <thead><tr><td>日期(周1)</td>
+                       <td>本周完成情况</td>        
+                       <td>下周计划</td>
+                       <td>备注</td>
+                   </tr></thead>
+            <tr><td>2013-6-24</td><td>这里显示本周完成情况<br/>1.。。。<br/>2.。。。</td>
+                <td>这里显示下周计划<br/>已电话沟通，邮件资料；下周上半周面谈<br />II期就已经了解，但认为3000万门槛偏高
+                    </td>
+                <td>这里是备注3</td>
+            </tr>
+            <tr><td>2013-6-17</td><td>这里显示本周完成情况<br/>1.。。。<br/>2.。。。</td>
+                <td>这里显示下周计划<br/>1.。。。<br/>2.。。。</td>
+                <td>这里是备注2</td>
+            </tr>
+            <tr><td>2013-6-10</td><td>这里显示本周完成情况<br/>1.。。。<br/>2.。。。</td>
+                <td>这里显示下周计划<br/>1.。。。<br/>2.。。。</td>
+                <td>这里是备注1</td>
+            </tr>   
+        </table>
+    </div>
+    <div style="clear:both">
+        <div class="span6 firstSpan">
+            <b>活动支持</b> <br/>
+            <table  class="table table-bordered">
+                <thead><tr><td>日期</td>
+                           <td>活动名称</td>        
+                           <td>状态</td>
+                           <td>备注</td>
+                       </tr></thead>
+                <tr><td>2013-6-22</td><td>某活动</td>
+                    <td>申请中
+                    </td>
+                    <td></td>
+                </tr>
+                <tr><td>2013-6-1</td><td>某活动</td>
+                    <td>已参加</td>
+                    <td>这里是备注</td>
+                </tr>
+            </table>
+        </div>
+        <div class="span6">
+            <b>领导支持</b> <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientSupport/@Model.Id');">申请领导支持</button></div> <br/>
+            <table  class="table table-bordered">
+                <thead><tr><td>申请日期</td>
+                           <td>申请需求</td>        
+                           <td>安排内容</td>
+                           <td>备注</td>
+                       </tr></thead>
+                <tr><td>2013-6-18</td><td>需要领导支持</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td>2013-5-1</td><td>需要领导支持</td>
+                    <td>成本部</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="clear:both"><b>意向与合同</b> <br/>
+        <table  class="table table-bordered">
+            <thead><tr>
+                       <td>签订日期</td>  <td>状态</td>      
+                       <td>金额（亿）</td>
+                       <td>到账（亿）</td>
+                   </tr></thead>
+            <tr><td>2013-6-24</td><td>意向</td>
+                <td>0.5</td>
+                <td>0.3</td>
+            
+            </tr>   
+        </table>
+    </div>
+    <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+        <div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Client.LogClass))</div>
+    </div>
+
+
+}
+
+

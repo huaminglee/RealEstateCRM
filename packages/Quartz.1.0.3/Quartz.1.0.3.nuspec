@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Quartz</id>
+    <version>1.0.3</version>
+    <title>Quartz</title>
+    <authors>Marko Lahma,  James House (Java)</authors>
+    <owners>Marko Lahma,  James House (Java)</owners>
+    <projectUrl>http://www.quartz-scheduler.net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Quartz.NET Scheduling Framework for .NET Platform</description>
+    <summary>Quartz.NET Scheduling Framework for .NET Platform</summary>
+    <dependencies>
+      <dependency id="Common.Logging" version="1.2.0" />
+    </dependencies>
+  </metadata>
+</package>

@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/Print.css")" rel="stylesheet" type="text/css" />
+    @Styles.Render("~/bundles/BootstrapCss")
+    @Styles.Render("~/Content/redmond")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/BootstrapJs")
+    @Scripts.Render("~/bundles/MyJs")
+    @Styles.Render("~/Content/jqGrid/css")
+    @Scripts.Render("~/bundles/jqGrid")
+    @RenderSection("scripts", required: false)
+<script type="text/javascript">
+    var rootpath = '@Url.Content("~")';
+    $().ready(function () { $("form").addClass("form-horizontal"); });
+</script>
+</head>
+
+<body>
+<div class="container">
+  
+        @RenderBody()
+        @RenderSection("Main", false)
+      
+</div>
+<footer>
+@RenderSection("Footer",false)
+</footer>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+﻿@model OUDAL.Role
+
+@{
+    ViewBag.Title = "角色修改";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+}
+
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@section Main{
+
+<div  style="width:300px;margin:0px auto;margin-top:10px;"	>
+
+@using (Html.BeginForm()) {
+    
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>角色修改</legend>
+
+        @Html.HiddenFor(model => model.Id)
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Remark)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Remark)
+            @Html.ValidationMessageFor(model => model.Remark)
+        </div>        
+    </fieldset>
+    <p><input type="submit" value="Save" /></p>
+}
+
+</div>
+}

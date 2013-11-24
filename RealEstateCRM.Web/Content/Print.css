@@ -1,0 +1,398 @@
+﻿/*----------------------------------------------------------
+The base color for this template is #5c87b2. If you'd like
+to use a different color start by replacing all instances of
+#5c87b2 with your new color.
+----------------------------------------------------------*/
+body
+{
+   
+    font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+    margin: 0;
+    padding: 20px;
+}
+
+a:link
+{
+   
+    text-decoration: underline;
+}
+a:visited
+{
+   
+}
+a:hover
+{
+    text-decoration: none;
+}
+a:active
+{
+   
+}
+
+p, ul
+{
+   
+    line-height: 1.6em;
+}
+
+/* HEADINGS   
+----------------------------------------------------------*/
+h1, h2, h3, h4, h5, h6
+{
+    font-size: 1.5em;
+   
+}
+
+h1
+{
+    font-size: 2em;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+h2
+{
+    padding: 0 0 10px 0;
+}
+h3
+{
+    font-size: 1.2em;
+}
+h4
+{
+    font-size: 1.1em;
+}
+h5, h6
+{
+    font-size: 1em;
+}
+
+/* this rule styles <h2> tags that are the 
+first child of the left and right table columns */
+.rightColumn > h1, .rightColumn > h2, .leftColumn > h1, .leftColumn > h2
+{
+    margin-top: 0;
+}
+
+/* PRIMARY LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+/* you can specify a greater or lesser percentage for the 
+page width. Or, you can specify an exact pixel width. */
+.page
+{
+    width: 96%;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#header
+{
+    position: relative;
+    border: none;
+    width:100%;
+    margin-bottom:0px;
+}
+#header tr
+{
+     margin-bottom:0px;
+}
+#header td
+{
+    border:0px;    
+    padding:0px 0px 0px 0px;
+    margin-bottom:0px;
+}
+.headerh1
+{
+    font-weight: bold;
+    padding: 5px 0;
+    margin: 0;
+    border: none;
+    line-height: 2em;
+    font-size: 32px !important;
+}
+
+#main
+{
+    padding: 0px 10px 0px 10px;
+    margin-top:2px;
+    _height: 1px; /* only IE6 applies CSS properties starting with an underscore */
+}
+
+#footer
+{
+    padding: 10px 0;
+    text-align: center;
+    line-height: normal;
+    margin: 0;
+    font-size: .9em;
+}
+
+/* TAB MENU   
+----------------------------------------------------------*/
+ul#menu
+{
+   
+    padding: 10 0 0px;
+    position: relative;
+    margin: 0px;
+    text-align: right;
+}
+
+ul#menu li
+{
+    display: inline;
+    list-style: none;
+}
+
+ul#menu li#greeting
+{
+    padding: 5px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: 2.8em;
+
+}
+
+ul#menu li a
+{
+    padding: 5px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: 2.8em;
+
+ 
+}
+
+ul#menu li a:hover
+{
+
+    text-decoration: none;
+}
+
+ul#menu li a:active
+{
+
+    text-decoration: none;
+}
+
+ul#menu li.selected a
+{
+
+}
+
+/* FORM LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+fieldset 
+{
+    border:1px solid #ddd;
+    padding:0 1.4em 1.4em 1.4em;
+    margin:0 0 1.5em 0;
+}
+
+legend 
+{
+    font-size:1.2em;
+    font-weight: bold;
+}
+
+textarea 
+{
+    min-height: 75px;
+}
+
+input[type="text"] 
+{
+   
+    border: 1px solid #CCC;
+}
+
+input[type="password"] 
+{
+    width: 200px;
+    border: 1px solid #CCC;
+}
+
+/* TABLE
+----------------------------------------------------------*/
+
+table 
+{
+  /*border: solid 1px #e8eef4;
+  border-collapse: collapse;*/
+}
+
+table td 
+{
+  padding: 5px;   
+  /*border: solid 1px #e8eef4;*/
+  font-size: 12px;
+  font-family : "Tahoma","宋体"
+}
+
+table th
+{
+  padding: 6px 5px;
+  text-align: left;
+
+  /*border: solid 1px #e8eef4;*/   
+}
+
+/* MISC  
+----------------------------------------------------------*/
+.clear
+{
+    clear: both;
+}
+
+.error
+{
+
+}
+
+#menucontainer
+{
+    
+}
+
+div#title
+{
+    display:block;
+    float:left;
+    text-align:left;
+}
+
+#logindisplay
+{
+    font-size:1.1em;
+    display:block;
+    text-align:right;
+    margin:10px;
+
+}
+
+#logindisplay a:link
+{
+
+    text-decoration: underline;
+}
+
+#logindisplay a:visited
+{
+
+    text-decoration: underline;
+}
+
+#logindisplay a:hover
+{
+
+    text-decoration: none;
+}
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+/* Styles for editor and display helpers
+----------------------------------------------------------*/
+.display-label,
+.editor-label
+{
+    margin: 1em 0 0 0;
+}
+
+.display-field,
+.editor-field
+{
+    margin:0.5em 0 0 0;
+}
+
+.text-box
+{
+    width: 30em;
+}
+
+.text-box.multi-line
+{
+    height: 6.5em;
+}
+
+.tri-state
+{
+    width: 6em;
+}
+/*--------------------------------------------------------*/
+/*-------- 表单的系列样式--------*/
+table.form
+{
+ 
+}
+table.form td {
+	border: 1px solid #DCDCDC;
+	padding: 5px;
+}
+.form {
+	border-top: 3px solid #D2B48C;
+	border-bottom: 1px solid #D2B48C;
+
+	border-collapse: collapse;
+}
+.form-item {
+
+	text-align: right;
+	border-top: 1px solid #93ACDB;
+	white-space:nowrap;
+}
+.form-txt {
+	padding: 9px;
+
+	line-height: 150%
+}
+
+table.noform td {
+	border-bottom: 0px;
+	padding: 0px;
+}
+.form-listhead {
+
+	text-align: center;
+	border-top: 1px solid #93ACDB;
+	white-space:nowrap;
+}
+.list-title {
+	border-top: 2px solid #A6C6DD;
+
+}
+.list-title th{
+
+}
+.alt
+{
+
+}

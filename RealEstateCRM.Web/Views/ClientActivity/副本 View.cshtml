@@ -1,0 +1,155 @@
+﻿@model OUDAL.ClientActivity
+@{
+    ViewBag.Title ="客户活动信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+}
+
+@section Main{
+    <script type="text/javascript">
+        $(function(){
+            var message='@ViewBag.Message';
+            if(message.length>0)
+            {
+                alert(message);
+            }
+        });
+        jQuery(document).ready(function () {
+            $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+
+            var state=@((int)Model.State);
+            if (state==1){
+                $("#btn_check").hide();
+                
+            }
+            else if(state==0){
+                $("#btn_uncheck").hide();
+               
+            }
+            else{
+                $("#btn_uncheck").hide();
+                
+                $("#btn_check").hide();
+               
+                //$("#btn_del").hide();
+            }
+        });
+        function Delete() {
+            var data={id:@Model.Id};
+            $.post('../Delete',data,function (data){
+                alert(data.obj);
+                if(data.success==true){        
+                    if(data.obj=="已删除"){            
+                        window.opener.location.href=window.opener.location.href;
+                        window.close();
+                    }
+                    window.location.reload();
+                }
+            });
+        }
+
+        function Check(){
+            $("#btn_pass").dialog({
+            
+                autoOpen:false,
+                modal:true
+            });
+            $("#btn_pass").dialog("open");
+        }
+
+        function UnCheck(){
+            $("#btn_unpass").dialog({
+            
+                autoOpen:false,
+                modal:true
+            });
+            $("#btn_unpass").dialog("open");
+        }
+      
+
+        $(function(){
+            window.onunload = function(){
+                window.opener.SearchClick();
+            };
+        });
+        function Refresh(){
+            window.location.reload();
+        }
+    </script>
+    <div class="btn-toolbar well">
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="window.location.href=('../ClientActivityEdit/@Model.Id');" >修改</button></div>
+         <div class="btn-group">
+            <button class="btn btn-primary" id="btn_check" onclick="Check();">审核通过</button>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="btn_uncheck" onclick="UnCheck();">撤销审核</button>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../ClientMoney/@Model.Id');">总结</button></div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="Delete();">删除</button></div>
+
+            <form method="post" action="../RentContractPass/@Model.Id">
+                <p>@MyControls.SubmitBtn("确认通过") @MyControls.Btn("取消", " $(\"#btn_pass\").dialog(\"close\");")</p>
+            </form>
+        </div>
+        <div id="btn_unpass" title="确认撤销审核" style="display: none">
+            <form method="post" action="../RentContractUnPass/@Model.Id">
+                <p>@MyControls.SubmitBtn("确认撤销") @MyControls.Btn("取消", " $(\"#btn_unpass\").dialog(\"close\");")</p>
+            </form>
+        </div>
+       
+   
+   @Html.HiddenFor(model => model.Id)
+    <div>
+       
+            <table class="table table-bordered">
+                @MyControls.ViewTable(2) 
+                <tr>
+                    @Html.MyDisplayFor(m => m.Name) @Html.MyDisplayFor(m=>m.State)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.ActivityDate)@Html.MyDisplayFor(m => m.OwnnerId,UserBLL.GetNameById(Model.OwnnerId))
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Detail,3)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Remark,3)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Result,3)
+                </tr>
+
+            </table>
+       
+        
+    </div>
+    <div style="clear:both"><b>已确定客户</b> <button class="btn" onclick="">打印名单</button>
+        <table  class="table table-bordered">
+            <tr><td>张三</td><td>这里是申请时填写说说明</td><td>如实际参加，这里显示相关信息</td>
+                <td>李四</td><td>这里是申请时填写的说明</td><td>如实际参加，这里显示相关信息</td>
+            </tr>
+            <tr><td>王五</td><td>这里是申请时填写说说明</td><td><button class="btn" onclick="">不参加</button>如果活动未开始，还可调整参加人员</td>
+                <td>赵六</td><td>这里是申请时填写的说明</td><td><button class="btn" onclick="">不参加</button></td>
+            </tr>
+        </table>
+    </div>
+    <div style="clear:both"><b>申请客户</b> <button class="btn" onclick="">申请参加</button>
+        <table  class="table table-bordered">
+            <tr><td>甲</td><td>这里是申请时填写说说明</td><td><button class="btn" onclick="">通过</button></td>
+                <td>乙</td><td>这里是申请时填写的说明</td><td><button class="btn" onclick="">通过</button></td>
+            </tr>
+            <tr><td>丙</td><td>这里是申请时填写说说明</td><td><button class="btn" onclick="">通过</button></td>
+                <td>丁</td><td>这里是申请时填写的说明</td><td><button class="btn" onclick="">通过</button></td>
+            </tr>
+        </table>
+    </div>
+   
+    <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+        <div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Client.LogClass))</div>
+    </div>
+
+
+}

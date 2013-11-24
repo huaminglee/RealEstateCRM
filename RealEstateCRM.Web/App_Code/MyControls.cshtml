@@ -1,0 +1,198 @@
+﻿@using OUDAL
+@helper Btn(string name,string onClick)
+{
+    <input type="button" class="btn btn-primary" onclick="@onClick;" value="@name" />
+}
+@helper BtnNormal(string name,string onClick)
+{
+    <input type="button" class="btn" onclick="@onClick    ;" value="@name" />
+}
+@helper SubmitBtn(string name,string onClick="")
+{
+    
+    <input type="submit" class="btn btn-primary" value="@name"/>
+}
+@helper FormBtn(bool cancelIsClose){
+    <div style="width:50%;margin:0px auto">
+        <input type="submit" class="btn btn-primary" value="保 存"/>
+@if(cancelIsClose==true)
+{
+    <input type="button" class="btn btn-default" onclick="window.close();" value="取 消" style="float:right" />
+}else
+{
+    <input type="button" class="btn btn-default" onclick="history.go(-1);" value="取 消" style="float:right" />
+}
+
+    </div>
+}
+@helper SearchBtn()
+{
+    <input type="button" class="btn btn-primary" onclick="SearchClick();" value="查询" />
+}
+@helper PrintBtn(){
+    <input type="button" class="btn btn-primary" value="打印" onclick="var printwindow = window.open(rootpath + 'home/output');  "/>
+}
+
+@helper SelectUser(int? userid, string name, string departmentControlId, int mallid = 0)
+{
+    string username = "";
+    int _userid = 0;
+    if (userid != null)
+    {
+        _userid = (int)userid;
+        OUDAL.SystemUser user = UserBLL.GetById(_userid);
+        if (user != null)
+        {
+            username = user.Name;
+        }
+    }
+    string controlname = name + "Name";
+    string funcationname = "SelectUserSet_" + name;
+  <input id="@controlname" name="@controlname" type="text" value="@username" readonly="readonly" style="width:150px" /><input id="@name" name="@name" type="hidden" value=@_userid />
+    <a href="#" onclick="var deptid=$('#@departmentControlId').val();OpenMiddleWindow(rootpath+'system/selectuser?name=@name&mallid=@mallid&departid='+deptid,'selectuser');">[选择]</a>
+<script type="text/javascript">function @funcationname (id,name){document.getElementById('@controlname').value=name;document.getElementById('@name').value=id;}</script>
+        }
+
+@helper AccessLogTable(List<OUDAL.AccessLog> list)
+{
+    if (list.Count > 0)
+    {
+        <span>操作日志</span>
+        <table class="form">
+            <thead>
+                <tr><td style="width:150px">时间</td><td style="width:150px">操作人</td><td>动作</td><td>说明</td></tr>
+            </thead>
+            <tbody>
+            @foreach (OUDAL.AccessLog log in list)
+            {
+                <tr>
+                    <td>@log.AccessTime.ToString("yyyy-MM-dd hh:mm")</td>
+                    <td>@log.AccessPerson</td>
+                    <td>@log.AccessAction</td>
+                    <td>@log.AccessInfo</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
+// 不能用
+@helper ShowErrorAndClose(string error)
+{
+    if (error != null)
+    {
+    <script type="text/javascript">
+        var message = '@error';
+        alert(message);
+        var father = window.opener;
+        if (father) { father.location = father.location; }
+        window.close();
+    </script>
+        Context.Response.End();
+    }
+}
+@helper ShowError(string error)
+{
+    <script type="text/javascript">
+        var message = '@error';
+        alert(message);
+    </script>
+}
+@* ****************** 未完成，先不要使用 部门下拉单项选择 ********************@
+@helper DepartmentDropdownSingle(string name, int rootId, int defaultId = 0, string defaultName = "")
+{
+    
+}
+@* ****************** 部门下拉多项选择 ********************@
+@helper DepartmentDropdown(string name, string defaultIds = "", string defaultNames = "", int root = 0)
+{
+    var setting = "setting" + name;
+    var onCheck = "onCheck" + name;
+    var onClick = "onClick" + name;
+    var showMenu = "showMenu" + name;
+    var hideMenu = "hideMenu" + name;
+    var onBodyDown = "onBodyDown" + name;
+    var departTree = "departTree" + name;
+    var departName = "departName" + name;
+    var departValue = name;
+    var menuContent = "menuContent" + name;
+    <script type="text/javascript">
+    var @setting = {   
+			check: {
+				enable: true,
+				chkboxType: {"Y":"", "N":""}
+			},
+    
+			view: {
+				dblClickExpand: false
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {				
+				onCheck: @onCheck,
+                
+			}
+		};
+function @onCheck (e, treeId, treeNode) {
+			var zTree = $.fn.zTree.getZTreeObj("@departTree");
+			var nodes = zTree.getCheckedNodes(true);
+			var v = "";var ids="";
+			for (var i=0, l=nodes.length; i<l; i++) {
+				v += nodes[i].name + ",";
+                ids+=nodes[i].id+","
+			}
+			if (v.length > 0 ) v = v.substring(0, v.length-1);
+            if(ids.length>0)ids=ids.substring(0,ids.length-1);
+			$("#@departName").attr("value", v);
+            $("#@departValue").attr("value",ids);  
+		}
+
+		function @showMenu () {
+            var Obj = $("#@departName");
+			var Offset = Obj.offset();
+			$("#@menuContent").css({left:Offset.left + "px", top:Offset.top + Obj.outerHeight() + "px"}).slideDown("fast");
+
+			$("body").bind("mousedown", @onBodyDown);
+		}
+		function @hideMenu () {
+			$("#@menuContent").fadeOut("fast");
+			$("body").unbind("mousedown", @onBodyDown);
+		}
+        function @onBodyDown (event) {
+			if (!(event.target.id == "menuBtn" || event.target.id == "@departName" || event.target.id == "@menuContent" || $(event.target).parents("#@menuContent").length>0)) {
+				@hideMenu ();
+			}
+		}
+        $(document).ready(function(){
+         $.post(rootpath+"system/departmentjson", {@if (root != 0)
+                                                   {<text>parentid:@root</text>}}, function (data, textStatus) {
+                this;
+                var nodes = eval(data);
+                $.fn.zTree.init($("#@departTree"), @setting, nodes.obj);
+            });
+
+        });
+        </script>
+<input id="@departName" type="text" readonly value="@defaultNames" onclick="@showMenu ();" /><text>[<a Href="#" onclick="$('#@departName').val('');$('#@departValue').val('');return false;">清除</a>]</text>
+<input id="@departValue" name="@departValue" value="@defaultIds" type="hidden"/>
+<div id="@menuContent" class="menuContent ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" style="display:none; position: absolute;z-index:99">
+	<ul id="@departTree" class="ztree dropdown" style="margin-top:0; width:250px; "></ul>
+</div>
+}
+
+
+
+@helper ViewTable(int columnNum)
+{
+    <tr>
+        @for (var i = 0; i < columnNum; i++)
+        {
+            <th class="zeroThSpan1"></th>
+            <th class="zeroThSpan2"></th>
+        }
+
+    </tr>
+}

@@ -1,0 +1,28 @@
+﻿@model OUDAL.Company
+
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+   
+}); 
+</script>
+<div class="well" style="margin:0px auto; width:600px;" >
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>公司信息</legend>
+            @Html.MyTextFor(model => model.Name)
+            @Html.MyTextFor(model => model.AccountNumber)
+@Html.MyTextAreaFor(model => model.Remark,3)
+        
+    </fieldset>
+    <p>@MyControls.SubmitBtn("保存") @MyControls.Btn("取消","window.close()")</p>
+}
+</div>
+

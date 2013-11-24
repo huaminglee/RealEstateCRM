@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/bundles/BootstrapCss")
+    @Styles.Render("~/Content/redmond")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/BootstrapJs")
+    @Scripts.Render("~/bundles/MyJs")
+    @Styles.Render("~/Content/jqGrid/css")
+    @Scripts.Render("~/bundles/jqGrid")
+    @RenderSection("scripts", required: false)
+<script type="text/javascript">
+    var rootpath = '@Url.Content("~")';
+</script>
+</head>
+
+<body>
+@RenderBody()
+</body>
+</html>

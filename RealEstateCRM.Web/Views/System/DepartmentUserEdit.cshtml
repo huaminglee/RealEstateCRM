@@ -1,0 +1,137 @@
+﻿
+@using OUDAL;
+@using RealEstateCRM.Web;
+@using RealEstateCRM.Web.BLL;
+@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";    
+}
+@section Main{
+    <script src="@Url.Content("~/Scripts/jquery.tmpl.min.js")" type="text/javascript"></script>
+     @Styles.Render("~/Content/jqGrid/css")
+    @Scripts.Render("~/bundles/jqGrid")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    getusers();
+    var PostData = {NoDept:true };
+     @Html.Raw(JqGridSimple.OutGrid("../UserQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        grid.setCell(rowid,"State",aData.State==0?"正常":"禁用");        
+     }
+}); 
+var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+,{ name: 'Name',label:"用户名", index: 'Name', align: 'left' ,width:85}
+,{ name: 'Roles',label:"角色",sortable:false, align: 'left',width:85 }
+,{ name: 'State',label:"状态", index: 'State', align: 'left',width:40 }];
+function rowclick(id)
+{   
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()});    
+    $('#listGrid').appendPostData({ State1: $("#checkEnabled").prop("checked")}); 
+    $('#listGrid').appendPostData({ State2: $("#checkDisabled").prop("checked")}); 
+    $('#listGrid').appendPostData({ NoDept: $("#checkNoDept").prop("checked")}); 
+    $('#listGrid').trigger('reloadGrid');
+}   
+function getusers() {
+            $.post("../departmentuser", { id: @Model.Id }, function (data, textStatus) {
+                this;
+                var a = eval(data);
+                if (a.success == false) {
+                    alert(a.obj);
+                    return;
+                }
+                $("#selectuser").empty();
+                $("#tmplView").tmpl(a.obj).appendTo("#selectuser");
+            });
+        }
+function adduser()
+{
+    var rowid = $("#listGrid").getGridParam("selrow"); 
+    var id= $("#listGrid").getRowData(rowid).id;
+    $.post("../departmentadduser", { id: @Model.Id,userid:id }, function (data, textStatus) {
+        this;
+        var a = eval(data);
+        if (a.success == false) {
+            alert(a.obj);
+            return;
+        }
+        getusers();
+    });
+}
+function removeuser()
+{
+    var users=$('#selectuser').val();
+    $.post("../departmentremoveuser", { id: @Model.Id,users:users }, function (data, textStatus) {
+        this;
+        var a = eval(data);
+        if (a.success == false) {
+            alert(a.obj);
+            return;
+        }
+        getusers();
+    });
+}
+function setmanager()
+{
+    var users=$('#selectuser').val();
+    $.post("../departmentsetmanager", { id: @Model.Id,managers:users }, function (data, textStatus) {
+        this;
+        var a = eval(data);
+        if (a.success == false) {
+            alert(a.obj);
+            return;
+        }
+        getusers();
+    });
+}
+function removemanager()
+{
+    var users=$('#selectuser').val();
+    $.post("../departmentremovemanager", { id: @Model.Id,managers:users }, function (data, textStatus) {
+        this;
+        var a = eval(data);
+        if (a.success == false) {
+            alert(a.obj);
+            return;
+        }
+        getusers();
+    });
+}
+</script>
+<div  style="width:260px;margin:0px auto;float:left">
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label>用户名称</label><input id="Name" type="text" style="width:80px" />
+
+@MyControls.SearchBtn()<br />
+状态：<input type="checkbox" id="checkEnabled" />正常
+<input type="checkbox" id="checkDisabled" />禁用
+<input type="checkbox" id="checkNoDept"  />未分配部门
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+</div>
+<div  style="width:60px; height:400px; margin:0px auto;margin-top:10px; padding :5px; vertical-align:middle; float:left">
+<br /><br /><br /><br /><br /><br />
+<button  onclick="adduser();">添加<br />选中<br />人员<br />》》</button><br /><br /><br /><br /><br />
+<button  onclick="removeuser();">移除<br />选中<br />人员<br />《《</button><br />
+</div> 
+<div style="width:240px;float:right">
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+部门人员<br /><br />
+
+</div>
+<div style="width:160px;margin:0px auto;float:left">
+<script id="tmplView" type="text/x-jquery-tmpl">
+<option value='${userid}'>${username} {{if ismanager==1}}经理{{/if}} </option>     
+</script>
+<select multiple="multiple" size="20" style="width:100%" id="selectuser">
+
+</select></div>
+<div style="padding-left:5px"><br /><br />
+<button onclick="setmanager();" style="width:50px">将选中人员设置为部门经理</button><br /><br /> <button onclick="removemanager();" style="width:50px">将选中人员取消部门经理</button>
+</div>
+</div>
+<div style="clear:both"></div>
+}
