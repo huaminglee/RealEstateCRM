@@ -66,11 +66,11 @@ namespace RealEstateCRM.Web.Controllers
         }
 
 
-        
+
         public ActionResult View(int id)
         {
             Client c = db.Clients.Find(id);
-            
+
             return View(c);
         }
 
@@ -83,7 +83,7 @@ namespace RealEstateCRM.Web.Controllers
             {
                 c = new Client();
                 c.ProjectId = projectid;
-                c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType=="小组" select o.Id).FirstOrDefault();
+                c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
                 c.AllPhone = "";
                 c.RoomType = "";
             }
@@ -93,18 +93,18 @@ namespace RealEstateCRM.Web.Controllers
                 phoneList.Add("");
             }
             ViewBag.Phones = phoneList;
-            
-            List<SelectListItem> typelist=new List<SelectListItem>();
+
+            List<SelectListItem> typelist = new List<SelectListItem>();
             List<string> hastype = c.RoomType.Split(',').ToList();
-            foreach(string s in DepartmentBLL.GetRoomType(projectid))
+            foreach (string s in DepartmentBLL.GetRoomType(projectid))
             {
-                typelist.Add(new SelectListItem() {Text=s,Value=s,Selected=hastype.Contains(s) });
+                typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
             }
             ViewBag.RoomTypes = typelist;
             return View(c);
         }
 
-        
+
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -117,20 +117,21 @@ namespace RealEstateCRM.Web.Controllers
             if (c == null)
             {
                 c = new Client();
+                c.CreateTime = DateTime.Now;
                 db.Clients.Add(c);
                 int check = CheckClientByPhone(collection["AllPhone"]);
-                if (check!=0)
+                if (check != 0)
                 {
-                    ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为："+DepartmentBLL.GetNameById(check));
+                    ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为：" + DepartmentBLL.GetNameById(check));
                 }
             }
-           
-            TryUpdateModel(c,"",new string[]{},new string[]{"RoomType"},collection);
+
+            TryUpdateModel(c, "", new string[] { }, new string[] { "RoomType"}, collection);
             c.RoomType = b;
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 db.SaveChanges();
-                return Redirect("../View/"+c.Id);
+                return Redirect("../View/" + c.Id);
             }
             c.AllPhone = c.AllPhone ?? "";
             List<string> phoneList = c.AllPhone.Split(',').ToList();
@@ -157,7 +158,7 @@ namespace RealEstateCRM.Web.Controllers
 
             var result = new Result();
             Client s = db.Clients.Find(id); if (!UserInfo.CurUser.HasRight("租赁管理-客户维护")) return Json(new Result { obj = "没有权限" });
-            if (1==2)
+            if (1 == 2)
             {
                 result.obj = "已有合同记录，不能删除";
             }
@@ -174,29 +175,44 @@ namespace RealEstateCRM.Web.Controllers
         public int CheckClientByPhone(string allphone)
         {
             int check = 0;
-            if (allphone == null||allphone.Equals("")) return check;
+            if (allphone == null || allphone.Equals("")) return check;
             List<string> forcheck = allphone.Split(',').ToList();
-            foreach(string s in forcheck)
+            foreach (string s in forcheck)
             {
-                var query = (from o in db.Clients where o.AllPhone.Contains(s) select o).FirstOrDefault();
-                if (query != null)
-                    return query.ProjectId;
+                if (!s.Equals(""))
+                {
+                    var query = (from o in db.Clients where o.AllPhone.Contains(s) select o).FirstOrDefault();
+                    if (query != null)
+                        return query.ProjectId;
+                }
             }
             return check;
         }
         [HttpPost]
-        public JsonResult CheckClient(string name)
+        public JsonResult PhoneCheck(int id,string phone)
         {
-            var c = (from o in db.Clients where o.Name == name select o).FirstOrDefault();
-            Result result=new Result();
-            if(c!=null)
+            Result result = new Result();
+            long i;
+            if(!long.TryParse(phone,out i)||!(phone.Length==8||phone.Length==11))
             {
-                result.success = true;
-                result.obj = c.Id;
+                result.success = false;
+                result.obj = "号码格式错误";
+                return Json(result);
             }
+            if (id == 0)
+            {
+                var query = (from o in db.Clients where o.AllPhone.Contains(phone) select o).FirstOrDefault();
+                if (query != null)
+                {
+                    result.success = false;
+                    result.obj = "该用户已经存在，所在项目为：" + DepartmentBLL.GetNameById(query.ProjectId);
+                    return Json(result);
+                }
+            }
+            result.success = true;
             return Json(result);
         }
 
     }
-    
+
 }

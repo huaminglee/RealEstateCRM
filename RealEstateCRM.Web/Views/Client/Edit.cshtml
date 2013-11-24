@@ -6,20 +6,30 @@
 }
     
 <script type="text/javascript">
-    jQuery(document).ready(function () {   
-    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
-   
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
     });
     function RoomTypeChanged() {
         var roomtype = "";
         $('input[name="RoomType"]:checked').each(function () {
-            if(roomtype=="")
+            if (roomtype == "")
                 roomtype += $(this).val();
             else
-                roomtype += (","+$(this).val());
+                roomtype += ("," + $(this).val());
         });
         //alert(roomtype);
         $("#RoomType").val(roomtype);
+    }
+
+    function PhoneCheck(phone) {
+        if (phone != null && phone != "") {
+            $.post("../PhoneCheck/@Model.Id", { phone: phone }, function (res) {
+                if (!res.success) {
+                    alert(res.obj);
+                }
+            });
+        }
     }
 </script>
 <div style="width:700px;margin:0px auto">
@@ -27,6 +37,8 @@
     @Html.ValidationSummary(true)
     @Html.ValidationMessageFor(m => m.AllPhone)
     @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.ProjectId)
+    @Html.HiddenFor(model => model.GroupId)
     <fieldset>
         <legend>客户信息</legend>
         <table class="table table-bordered">
@@ -40,7 +52,7 @@
                 <td class="tdRight">@Html.DisplayNameFor(m => m.AllPhone)</td>
                 @foreach(var phone in ViewBag.Phones)
                 {
-                    <td><input class="text-box" type="text" name="AllPhone" value="@phone" /></td>
+                    <td><input class="text-box" type="text" name="AllPhone" value="@phone" onchange="PhoneCheck(this.value);"/></td>
                 }
             </tr>
             <tr>
@@ -49,16 +61,14 @@
                 <td class="tdRight">@Html.DisplayNameFor(m => m.WayExtend)</td>
                 <td>@Html.EditorFor(m => m.WayExtend)@Html.ValidationMessageFor(m => m.WayExtend)</td>
             </tr>
-            <tr>
+            @*<tr>
                 <td class="tdRight">@Html.DisplayNameFor(m => m.ProjectId)</td>
-                <td>@Html.DropDownListFor(m => m.ProjectId, DepartmentBLL.GetDepartmentByType(Model.ProjectId), new { @readonly = "readonly" })
-                @Html.ValidationMessageFor(m => m.ProjectId)
-                @*<input id="ProjectId" value="@Model.ProjectId" style="display:none;"/>*@</td>
+                <td>@Html.TextBoxFor(m => m.ProjectId, DepartmentBLL.GetNameById(Model.ProjectId), new { @readonly = "readonly" })
+                @Html.ValidationMessageFor(m => m.ProjectId)</td>
                 <td class="tdRight">@Html.DisplayNameFor(m => m.GroupId)</td>
-                <td>@Html.DropDownListFor(m => m.GroupId, DepartmentBLL.GetDepartmentByType(Model.ProjectId, Model.GroupId), new { @readonly = "readonly" })
-                @Html.ValidationMessageFor(m => m.GroupId)
-                    @*<input id="GroupId" value="@Model.GroupId" style="display:none;" />*@</td>
-</tr>
+                <td>@Html.TextBoxFor(m => m.GroupId, DepartmentBLL.GetNameById(Model.GroupId), new { @readonly = "readonly" })
+                @Html.ValidationMessageFor(m => m.GroupId)</td>
+</tr>*@
             <tr>
                 <td class="tdRight">@Html.DisplayNameFor(m => m.RoomType)</td>
                 <td colspan="3">
