@@ -190,6 +190,24 @@ namespace RealEstateCRM.Web.Controllers
             }
 
         }
+
+        [HttpPost]
+        public JsonResult RemoveContact(int id)//id为contactid
+        {
+            Result result = new Result();
+            ClientActivity c = db.ClientActivities.Find(id);
+            if (c != null)
+            {
+                db.ClientActivities.Remove(c);
+                db.SaveChanges();
+                result.success = true;
+                return Json(result);
+            }
+            result.success = false;
+            result.obj = "删除失败";
+            return Json(result);
+        }
+
         public ActionResult AddAppointment(int id)//id为client的id
         {
             ClientActivity c = new ClientActivity();
@@ -216,14 +234,57 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
+        public JsonResult RemoveAppointment(int id)//id为appointmentid
+        {
+            Result result = new Result();
+            ClientActivity c = db.ClientActivities.Find(id);
+            if(c!=null)
+            {
+                db.ClientActivities.Remove(c);
+                db.SaveChanges();
+                result.success = true;
+                return Json(result);
+            }
+            result.success = false;
+            result.obj = "删除失败";
+            return Json(result);
+        }
+
+        public ActionResult EditAppointment(int id)//id为Appointment的id
+        {
+            ClientActivity c = db.ClientActivities.Find(id);
+            return View(c);
+        }
+
+        [HttpPost]
+        public ActionResult EditAppointment(int id, FormCollection collection)//id为Appointment的id
+        {
+            ClientActivity c = db.ClientActivities.Find(id);
+            TryUpdateModel(c, collection);
+            if (ModelState.IsValid)
+            {
+                db.SaveChanges();
+                return Redirect("~/Content/close.htm");
+            }
+            else
+            {
+                return View(c);
+            }
+
+        }
+
+        [HttpPost]
         public JsonResult Delete(int id)
         {
 
             var result = new Result();
-            Client s = db.Clients.Find(id); if (!UserInfo.CurUser.HasRight("租赁管理-客户维护")) return Json(new Result { obj = "没有权限" });
-            if (1 == 2)
+            Client s = db.Clients.Find(id); 
+            if (!UserInfo.CurUser.HasRight("租赁管理-客户维护")) return Json(new Result { obj = "没有权限" });
+            ClientActivity c = (from o in db.ClientActivities where o.ClientId == id select o).FirstOrDefault();
+            if (c!=null)
             {
-                result.obj = "已有合同记录，不能删除";
+                result.success = false;
+                result.obj = "已有联系记录，不能删除";
             }
             else
             {

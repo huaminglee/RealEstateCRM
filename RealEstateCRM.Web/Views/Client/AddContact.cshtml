@@ -26,9 +26,12 @@
                     <span class="radio-inline"><input type="radio" name="Type" value="@s.Value" />@s.Text</span>
 
                 }
+                @Html.ValidationMessageFor(m => m.Type)
             </div>
             @Html.MyDateTimeFor(model => model.ActualTime)
+            @Html.ValidationMessageFor(m => m.ActualTime)
             @Html.MyTextAreaFor(model => model.Detail,3)
+            @Html.ValidationMessageFor(m => m.Detail)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
     }
