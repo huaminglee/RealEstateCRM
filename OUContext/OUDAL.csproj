@@ -91,7 +91,8 @@
     <Compile Include="BLL\DepartmentBLL.cs" />
     <Compile Include="ModelBase\Attachment.cs" />
     <Compile Include="Model\Client.cs" />
-    <Compile Include="Model\DepartmentInfomation.cs" />
+    <Compile Include="Model\ClientActivity.cs" />
+    <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Contract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BLL\UserName.cs" />

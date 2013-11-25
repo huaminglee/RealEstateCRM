@@ -29,10 +29,11 @@ namespace OUDAL
         public DbSet<Attachment> Attachments { get; set; }
 
         public DbSet<Client> Clients { get; set; }
+        public DbSet<ClientActivity> ClientActivities { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<ContractPay> ContractPays { get; set; }
         public DbSet<ContractPlan> ContractPlans { get; set; }
-        public DbSet<DepartmentInfomation> DepartmentInformations { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -162,7 +163,8 @@ namespace OUDAL
                                                               new Dictionary {Catalog = "客户", Name = "意向级别"},
                                                               new Dictionary {Catalog = "客户", Name = "来源类型"},
                                                               new Dictionary {Catalog = "客户", Name = "客户类别",KeyId = 1},
-                                                              new Dictionary {Catalog = "客户", Name = "联系类型"}
+                                                              new Dictionary {Catalog = "客户", Name = "联系类型"},
+                                                              new Dictionary {Catalog = "客户", Name = "邀约类型"}
                                                           };
                 List<OUDAL.DictionaryItem> dictionaryItems = new List<DictionaryItem>
                                                                {
@@ -181,6 +183,10 @@ namespace OUDAL
                                                                    new DictionaryItem{DictId = 4,IndexNum = 1,Name = "来访"},
                                                                    new DictionaryItem{DictId = 4,IndexNum = 2,Name = "来电"},
                                                                    new DictionaryItem{DictId = 4,IndexNum = 3,Name = "去电"},
+                                                                   new DictionaryItem{DictId = 5,IndexNum = 1,Name = "来访邀约"},
+                                                                   new DictionaryItem{DictId = 5,IndexNum = 2,Name = "办卡邀约"},
+                                                                   new DictionaryItem{DictId = 5,IndexNum = 3,Name = "大定邀约"},
+                                                                   new DictionaryItem{DictId = 5,IndexNum = 4,Name = "签约邀约"},
                                                                };
                 dictionaries.ForEach(o => context.Dictionaries.Add(o));
                 context.SaveChanges();

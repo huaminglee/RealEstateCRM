@@ -505,6 +505,7 @@
     <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
+    <Content Include="Scripts\jquery-ui-timepicker-addon.js" />
     <Content Include="Scripts\jquery.colorbox-min.js" />
     <Content Include="Scripts\jquery.jqGrid.js" />
     <Content Include="Scripts\jquery.jqGrid.min.js" />
@@ -584,6 +585,8 @@
     <Content Include="Views\ClientActivity\ClientActivityEdit.cshtml" />
     <Content Include="Views\ClientActivity\副本 View.cshtml" />
     <Content Include="Views\List.cshtml" />
+    <Content Include="Views\Client\AddAppointment.cshtml" />
+    <Content Include="Views\Client\AddContact.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />
@@ -698,7 +701,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>19717</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:1379/</IISUrl>
+          <IISUrl>http://localhost:19717/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

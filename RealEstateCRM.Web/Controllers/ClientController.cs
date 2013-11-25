@@ -35,8 +35,12 @@ namespace RealEstateCRM.Web.Controllers
 
             Utilities.AddSqlFilterLike(collection, "Name", ref sql, "c.Name", parameters);
             Utilities.AddSqlFilterLike(collection, "PhoneNumber", ref sql, "c.Allphone", parameters);
-
-
+            int projectid = 0;//按项目过滤客户
+            if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); }
+            if (projectid != 0)
+            {
+                sql += string.Format(" and c.ProjectId={0}", projectid);
+            }
             if (!string.IsNullOrEmpty(sidx) && !sidx.Contains(';') && !sord.Contains(';'))
             {
                 //string pre = "";
@@ -70,7 +74,12 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult View(int id)
         {
             Client c = db.Clients.Find(id);
-
+            List<ClientActivity> ContactList = new List<ClientActivity>();
+            List<ClientActivity> AppointmentList = new List<ClientActivity>();
+            ContactList=(from o in db.ClientActivities where o.ClientId==id&& !o.PlanTime.HasValue select o).ToList();
+            AppointmentList=(from o in db.ClientActivities where o.ClientId==id&& o.PlanTime.HasValue select o).ToList();
+            ViewBag.Contacts = ContactList;
+            ViewBag.Appointments = AppointmentList;
             return View(c);
         }
 
@@ -96,7 +105,7 @@ namespace RealEstateCRM.Web.Controllers
 
             List<SelectListItem> typelist = new List<SelectListItem>();
             List<string> hastype = c.RoomType.Split(',').ToList();
-            foreach (string s in DepartmentBLL.GetRoomType(projectid))
+            foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
             {
                 typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
             }
@@ -131,26 +140,80 @@ namespace RealEstateCRM.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
-                return Redirect("../View/" + c.Id);
+                if (id == 0)
+                    return Redirect("../View/" + c.Id);
+                return Redirect("~/Content/close.htm");
             }
-            c.AllPhone = c.AllPhone ?? "";
-            List<string> phoneList = c.AllPhone.Split(',').ToList();
-            while (phoneList.Count != 3)
+            else
             {
-                phoneList.Add("");
+                c.AllPhone = c.AllPhone ?? "";
+                List<string> phoneList = c.AllPhone.Split(',').ToList();
+                while (phoneList.Count != 3)
+                {
+                    phoneList.Add("");
+                }
+                ViewBag.Phones = phoneList;
+                c.RoomType = c.RoomType ?? "";
+                List<SelectListItem> typelist = new List<SelectListItem>();
+                List<string> hastype = c.RoomType.Split(',').ToList();
+                foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
+                {
+                    typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
+                }
+                ViewBag.RoomTypes = typelist;
+                return View(c);
             }
-            ViewBag.Phones = phoneList;
-            c.RoomType = c.RoomType ?? "";
-            List<SelectListItem> typelist = new List<SelectListItem>();
-            List<string> hastype = c.RoomType.Split(',').ToList();
-            foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
-            {
-                typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
-            }
-            ViewBag.RoomTypes = typelist;
+        }
+
+        public ActionResult AddContact(int id)//id为client的id
+        {
+            ClientActivity c = new ClientActivity();
+            c.ActualTime = DateTime.Now;
+            c.ClientId = id;
             return View(c);
         }
 
+        [HttpPost]
+        public ActionResult AddContact(FormCollection collection)
+        {
+            ClientActivity c = new ClientActivity();
+            db.ClientActivities.Add(c);
+            TryUpdateModel(c, collection);
+            if(ModelState.IsValid)
+            {
+                db.SaveChanges();
+                return Redirect("~/Content/close.htm");
+            }
+            else
+            {
+                return View(c);
+            }
+
+        }
+        public ActionResult AddAppointment(int id)//id为client的id
+        {
+            ClientActivity c = new ClientActivity();
+            c.ClientId = id;
+            return View(c);
+        }
+
+        [HttpPost]
+        public ActionResult AddAppointment(FormCollection collection)
+        {
+            ClientActivity c = new ClientActivity();
+            db.ClientActivities.Add(c);
+            TryUpdateModel(c, collection);
+            if (ModelState.IsValid)
+            {
+                db.SaveChanges();
+                return Redirect("~/Content/close.htm");
+            }
+            else
+            {
+                return View(c);
+            }
+
+        }
 
         [HttpPost]
         public JsonResult Delete(int id)

@@ -5,10 +5,10 @@
 @section Main{
 
     <script type="text/javascript">
-    jQuery(document).ready(function () {
-        var PostData = {};
-        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
-        @Html.Raw(JqGridSimple.OutGrid("ListQuery"))
+        jQuery(document).ready(function () {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            @Html.Raw(JqGridSimple.OutGrid("ListQuery"))
 
             function AfterInsertRow(rowid, aData) {
                 //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");
@@ -28,34 +28,30 @@
         @Html.JqFieldString("Code","编码",100,"c.Code")
         @Html.JqFieldString("Remark","备注",150,"c.Remark")];
 
-    function rowclick(id) {
-        OpenFullWindow("./View/" + id, "_blank");
-    }
-    function AddNew() {
-        OpenFullWindow("./Edit/0", "_blank");
-    }
-    function SearchClick() {
-        $('#listGrid').appendPostData({ Name: $("#Name").val() });
-        $('#listGrid').appendPostData({ PhoneNumber: $("#PhoneNumber").val() });
+        function rowclick(id) {
+            OpenFullWindow("./View/" + id, "_blank");
+        }
+        function AddNew() {
+            OpenFullWindow("./Edit/0", "_blank");
+        }
+        function SearchClick() {
+            $('#listGrid').appendPostData({ Name: $("#Name").val() });
+            $('#listGrid').appendPostData({ PhoneNumber: $("#PhoneNumber").val() });
 
-        $('#listGrid').trigger('reloadGrid');
-    }
-    //function ShowHidSearchDiv() {
-    //    $("#SearchDiv").toggle();
-    //    if ($("#SearchDiv").css('display') == 'none') {
-    //        $("#btnShowHide1").val("打开搜索条件");
-    //        $("#btnShowHide2").val("打开搜索条件");
-    //    } else {
-    //        $("#btnShowHide1").val("关闭搜索条件");
-    //        $("#btnShowHide2").val("关闭搜索条件");
-    //    }
-    //}
+            $('#listGrid').trigger('reloadGrid');
+        }
+        function Refresh() {
+            SearchClick();
+        }
     </script>
     <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
         @Html.ShortInput("Name", "名 称:")
         @Html.ShortInput("PhoneNumber", "电 话:")
         @MyControls.SearchBtn()
-        @MyControls.Btn("新增", "AddNew()")
+        @if (Request.RequestContext.RouteData.Values["projectid"] != null)
+        {
+            @MyControls.Btn("新增", "AddNew()")
+        }
     </div>
     @Html.Raw(JqGridSimple.OutTable())
 

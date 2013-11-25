@@ -293,7 +293,7 @@ namespace OUDAL
 
         static public List<string> GetRoomType(int projectid)
         {
-            string d = (from o in db.DepartmentInformations where o.DepartmentId==projectid select o.RoomType).FirstOrDefault();
+            string d = (from o in db.Projects where o.DepartmentId == projectid select o.RoomType).FirstOrDefault();
             d = d ?? "";
             List<string> types = d.Split(',').ToList();
             return types;

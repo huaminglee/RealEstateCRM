@@ -147,6 +147,36 @@ namespace RealEstateCRM.Web
             return MvcHtmlString.Create(fullStr);
             
         }
+
+        public static MvcHtmlString MyDateTimeFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
+            string fullName = ExpressionHelper.GetExpressionText(expression);
+            string str = @"<div class='form-group'>
+    <label for='{0}'>{1}</label>
+   
+    <input id='{0}' class='form-control datepicker text150' type='text' value='{2}' name='{0}' {3} />{4}    
+    {5}
+   
+</div>";
+            string valueStr = "";
+            if (metadata.Model != null)
+            {
+                DateTime d = (DateTime)metadata.Model;
+                if (d != DateTime.MinValue)
+                {
+                    valueStr = d.ToString("yyyy-MM-dd HH:mm");
+                }
+            }
+            string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, valueStr
+              , metadata.IsRequired == true ? string.Format(" data-val='true' data-val-required='{0} 字段是必需的'", metadata.DisplayName ?? metadata.PropertyName, metadata) : ""
+                , metadata.IsRequired == true ? " <span style='color:red'>*</span>" : "", m3.ToHtmlString()
+                );
+            return MvcHtmlString.Create(fullStr);
+
+        }
+
         public static MvcHtmlString MyEnumFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression, Type enumType)
         {
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);

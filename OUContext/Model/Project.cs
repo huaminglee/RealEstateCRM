@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OUDAL
 {
-    public class DepartmentInfomation
+    public class Project
     {
         public int Id { get; set; }
         public int DepartmentId { get; set; }

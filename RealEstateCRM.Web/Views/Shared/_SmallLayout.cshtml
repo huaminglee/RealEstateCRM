@@ -40,12 +40,12 @@
           <span class="icon-bar"></span>
         </a>
         <div class="nav-collapse">
-          <ul class="nav">
-            <li class="brand">@ViewBag.Title</li>
-          </ul>
-          <ul class="nav pull-right active">
-            <li class="brand">@System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>            
-          </ul>
+            <ul class="nav navbar-brand">
+                <li class="brand">@ViewBag.Title</li>
+            </ul>
+            <ul class="nav pull-right active navbar-brand">
+                <li class="brand">@System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>
+            </ul>
         </div>
       </div>
     </div>

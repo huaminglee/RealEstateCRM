@@ -1,10 +1,10 @@
 ﻿@model OUDAL.Client
 
 @{
-    ViewBag.Title = "客户信息";
+    ViewBag.Title = "客户信息编辑";
     Layout = "~/Views/Shared/_InfoLayout.cshtml";
 }
-    
+
 <script type="text/javascript">
     jQuery(document).ready(function () {
         $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
@@ -31,67 +31,97 @@
             });
         }
     }
+    $(function () {
+        window.onunload = function () {
+            window.opener.Refresh();
+        };
+    });
 </script>
-<div style="width:700px;margin:0px auto">
-@using (Html.BeginForm() ){
-    @Html.ValidationSummary(true)
-    @Html.ValidationMessageFor(m => m.AllPhone)
-    @Html.HiddenFor(model => model.Id)
-    @Html.HiddenFor(model => model.ProjectId)
-    @Html.HiddenFor(model => model.GroupId)
-    <fieldset>
-        <legend>客户信息</legend>
-        <table class="table table-bordered">
-            <tr>
-                <td class="tdRight">@Html.DisplayNameFor(m=>m.Name)</td>
-                <td>@Html.EditorFor(m=>m.Name)@Html.ValidationMessageFor(m=>m.Name)</td>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.Sex)</td>
-                <td>@Html.EditorFor(m => m.Sex)@Html.ValidationMessageFor(m => m.Sex)</td>
-            </tr>
-            <tr>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.AllPhone)</td>
-                @foreach(var phone in ViewBag.Phones)
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.ValidationMessageFor(m => m.AllPhone)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.ProjectId)
+        @Html.HiddenFor(model => model.GroupId)
+        <input id="RoomType" type="text" style="display:none" />
+        <fieldset>
+            <legend>客户信息</legend>
+            @Html.MyTextFor(model => model.Name)
+            @Html.MyTextFor(model => model.Sex)
+            <div class='form-group'>
+                @Html.LabelFor(m => m.AllPhone)
+                @foreach (var phone in ViewBag.Phones)
                 {
-                    <td><input class="text-box" type="text" name="AllPhone" value="@phone" onchange="PhoneCheck(this.value);"/></td>
+                    <input class="text-box" type="text" name="AllPhone" value="@phone" onchange="PhoneCheck(this.value);" />
                 }
-            </tr>
-            <tr>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.Way)</td>
-                <td>@Html.EditorFor(m => m.Way)@Html.ValidationMessageFor(m => m.Way)</td>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.WayExtend)</td>
-                <td>@Html.EditorFor(m => m.WayExtend)@Html.ValidationMessageFor(m => m.WayExtend)</td>
-            </tr>
-            @*<tr>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.ProjectId)</td>
-                <td>@Html.TextBoxFor(m => m.ProjectId, DepartmentBLL.GetNameById(Model.ProjectId), new { @readonly = "readonly" })
-                @Html.ValidationMessageFor(m => m.ProjectId)</td>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.GroupId)</td>
-                <td>@Html.TextBoxFor(m => m.GroupId, DepartmentBLL.GetNameById(Model.GroupId), new { @readonly = "readonly" })
-                @Html.ValidationMessageFor(m => m.GroupId)</td>
-</tr>*@
-            <tr>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.RoomType)</td>
-                <td colspan="3">
-                    @foreach (SelectListItem s in ViewBag.RoomTypes)
-                    {
-                        <label><input name="RoomType" type="checkbox" checked="@s.Selected" value="@s.Value" onclick="RoomTypeChanged()"/>@s.Text</label>
-                    }
-                    <input id="RoomType" type="text" style="display:none"/>
-                </td>
-                
-            </tr>
-            <tr>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.Code)</td>
-                <td>@Html.TextBoxFor(m => m.Code, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.Code)</td>
-                <td class="tdRight">@Html.DisplayNameFor(m => m.Remark)</td>
-                <td>@Html.TextAreaFor(m => m.Remark)@Html.ValidationMessageFor(m => m.Remark)</td>
-            </tr>
+            </div>
+            @Html.MyTextFor(model => model.Way)
+            @Html.MyTextFor(model => model.WayExtend)
+            <div class='form-group'>
+                @Html.LabelFor(m => m.RoomType) 
+                @foreach (SelectListItem s in ViewBag.RoomTypes)
+                {
+                    <span class="checkbox-inline"><input name="RoomType" type="checkbox" checked="@s.Selected" value="@s.Value" onclick="RoomTypeChanged()" /> @s.Text</span>
+                }
+            </div>
+            <div class='form-group'>
+                @Html.LabelFor(m => m.Code)
+                @Html.TextBoxFor(m => m.Code, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.Code)
+            </div>
+            @Html.MyTextAreaFor(model => model.Remark, 3)
+
+            @*<table class="table table-bordered">
+                            <tr>
+                                <td class="tdRight">@Html.DisplayNameFor(m=>m.Name)</td>
+                                <td>@Html.EditorFor(m=>m.Name)@Html.ValidationMessageFor(m=>m.Name)</td>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.Sex)</td>
+                                <td>@Html.EditorFor(m => m.Sex)@Html.ValidationMessageFor(m => m.Sex)</td>
+                            </tr>
+                            <tr>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.AllPhone)</td>
+                                @foreach(var phone in ViewBag.Phones)
+                                {
+                                    <td><input class="text-box" type="text" name="AllPhone" value="@phone" onchange="PhoneCheck(this.value);"/></td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.Way)</td>
+                                <td>@Html.EditorFor(m => m.Way)@Html.ValidationMessageFor(m => m.Way)</td>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.WayExtend)</td>
+                                <td>@Html.EditorFor(m => m.WayExtend)@Html.ValidationMessageFor(m => m.WayExtend)</td>
+                            </tr>
+                            <tr>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.ProjectId)</td>
+                                <td>@Html.TextBoxFor(m => m.ProjectId, DepartmentBLL.GetNameById(Model.ProjectId), new { @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.ProjectId)</td>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.GroupId)</td>
+                                <td>@Html.TextBoxFor(m => m.GroupId, DepartmentBLL.GetNameById(Model.GroupId), new { @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.GroupId)</td>
+                </tr>
+                            <tr>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.RoomType)</td>
+                                <td colspan="3">
+                                    @foreach (SelectListItem s in ViewBag.RoomTypes)
+                                    {
+                                        <label><input name="RoomType" type="checkbox" checked="@s.Selected" value="@s.Value" onclick="RoomTypeChanged()"/>@s.Text</label>
+                                    }
+                                    <input id="RoomType" type="text" style="display:none"/>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.Code)</td>
+                                <td>@Html.TextBoxFor(m => m.Code, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.Code)</td>
+                                <td class="tdRight">@Html.DisplayNameFor(m => m.Remark)</td>
+                                <td>@Html.TextAreaFor(m => m.Remark)@Html.ValidationMessageFor(m => m.Remark)</td>
+                            </tr>
 
 
-        </table>
-                    
-    </fieldset>
-    <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
-}
+                        </table>*@
+
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+    }
 </div>
-

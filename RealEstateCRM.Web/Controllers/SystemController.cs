@@ -77,7 +77,7 @@ namespace RealEstateCRM.Web.Controllers
         [HttpPost]
         public String GetRoomTypeByDepartmentId(int deptid)
         {
-            string roomType = (from o in db.DepartmentInformations where o.DepartmentId == deptid select o.RoomType).FirstOrDefault();
+            string roomType = (from o in db.Projects where o.DepartmentId == deptid select o.RoomType).FirstOrDefault();
             return roomType!=null ? roomType : "";
 
         }
@@ -99,7 +99,7 @@ namespace RealEstateCRM.Web.Controllers
             
             db.SaveChanges();
             if (dept.DepartmentType == null) dept.DepartmentType = "";
-            DepartmentInfomation info = (from o in db.DepartmentInformations where o.DepartmentId == dept.Id select o).FirstOrDefault();
+            Project info = (from o in db.Projects where o.DepartmentId == dept.Id select o).FirstOrDefault();
             if (info != null)
             {
                 info.RoomType = collection["RoomType"] ?? "";
@@ -108,8 +108,8 @@ namespace RealEstateCRM.Web.Controllers
             {
                 if (collection["RoomType"] != null || !collection["RoomType"].Equals(""))
                 {
-                    info = new DepartmentInfomation() { DepartmentId = dept.Id, RoomType = collection["RoomType"] };
-                    db.DepartmentInformations.Add(info);
+                    info = new Project() { DepartmentId = dept.Id, RoomType = collection["RoomType"] };
+                    db.Projects.Add(info);
                 }
             }
             db.SaveChanges();
@@ -165,10 +165,10 @@ namespace RealEstateCRM.Web.Controllers
                 {
                     db.Database.ExecuteSqlCommand(string.Format("delete departmentusers where departmentid={0}", id));
                     db.Departments.Remove(dept);
-                    var query = (from o in db.DepartmentInformations where o.DepartmentId == id select o).FirstOrDefault();
+                    var query = (from o in db.Projects where o.DepartmentId == id select o).FirstOrDefault();
                     if(query!=null)
                     {
-                        db.DepartmentInformations.Remove(query);
+                        db.Projects.Remove(query);
                     }
                     db.SaveChanges();
                     DepartmentBLL.UpdateDepartments();

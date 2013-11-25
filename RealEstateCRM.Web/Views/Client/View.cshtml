@@ -26,11 +26,22 @@
                 }
             });
         }
-
+        function Refresh()
+        {
+            window.location.reload();
+        }
+        
+        $(function () {
+            window.onunload = function () {
+                window.opener.Refresh();
+            };
+        });
     </script>
     <div class="btn-toolbar well">
         <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../Edit/@Model.Id');">修改</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="Delete();">删除</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/@Model.Id');">添加联系记录</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
     </div>
     <div>
         <strong>基本信息</strong>
@@ -47,8 +58,8 @@
                 @Html.MyDisplayFor(m => m.Way)@Html.MyDisplayFor(m => m.WayExtend)
             </tr>
             <tr>
-                @Html.MyDisplayFor(m => m.ProjectId,DepartmentBLL.GetNameById(Model.ProjectId))
-                @Html.MyDisplayFor(m => m.GroupId,DepartmentBLL.GetNameById(Model.GroupId))
+                @Html.MyDisplayFor(m => m.ProjectId, DepartmentBLL.GetNameById(Model.ProjectId))
+                @Html.MyDisplayFor(m => m.GroupId, DepartmentBLL.GetNameById(Model.GroupId))
             </tr>
             <tr>
                 @Html.MyDisplayFor(m => m.Code)@Html.MyDisplayFor(m => m.Remark)
@@ -56,7 +67,56 @@
 
         </table>
         <strong>联系记录</strong>
+        <table class="table table-bordered table-striped">
+                <tr>
+                    <th width="200px">联系类型</th>
+                    <th width="200px">联系时间</th>
+                    <th>联系内容</th>
+                </tr>
+            @foreach (ClientActivity c in ViewBag.Contacts)
+            {
+                <tr>
+                    <td>@c.Type</td>
+                    <td>@c.ActualTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
+                    <td>@c.Detail</td>
+                </tr>
+            }
+        </table>
+
         <strong>邀约记录</strong>
+        <table class="table table-bordered table-striped">
+                <tr>
+                    <th width="200px">邀约类型</th>
+                    <th width="200px">预约时间</th>
+                    <th width="200px">实际时间</th>
+                    <th width="100px">是否完成</th>
+                    <th>情况说明</th>
+                </tr>
+            @foreach (ClientActivity c in ViewBag.Appointments)
+            {
+                <tr>
+                    <td>@c.Type</td>
+                    <td>@c.PlanTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
+                    @if (c.ActualTime.HasValue)
+                    {
+                        <td>@c.ActualTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    @if (c.IsDone.GetValueOrDefault())
+                    {
+                        <td>完成</td>
+                    }
+                    else
+                    {
+                        <td>未完成</td>
+                    }
+                    <td>@c.Detail</td>
+                </tr>
+            }
+        </table>
     </div>
 }
 
