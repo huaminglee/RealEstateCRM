@@ -1,7 +1,7 @@
 ﻿@model OUDAL.ClientActivity
 
 @{
-    ViewBag.Title = "邀约记录编辑";
+    ViewBag.Title = "邀约记录完成";
     Layout = "~/Views/Shared/_InfoLayout.cshtml";
 }
 @Scripts.Render("~/Scripts/jquery-ui-timepicker-addon.js")
@@ -25,20 +25,16 @@
         @Html.HiddenFor(model => model.ClientId)
         <fieldset>
             <legend>邀约信息</legend>
-            <div class="form-group">
-                @Html.LabelFor(model => model.Type)
-                @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
-                {
-                    <label class="radio-inline" style="min-width:initial;"><input type="radio" name="Type" value="@s.Value" checked='@s.Value.Equals(Model.Type)' />@s.Text</label>
-                }
-                @Html.ValidationMessageFor(m => m.Type)
-            </div>
-            @Html.MyDateTimeFor(model => model.PlanTime)@Html.ValidationMessageFor(m => m.PlanTime)
             <div class='form-group'>
-                @Html.LabelFor(model => model.ActualTime)
-                @Html.TextBoxFor(model => model.ActualTime, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.ActualTime)
+                @Html.LabelFor(model => model.Type)
+                @Html.TextBoxFor(model => model.Type, new { @readonly = "readonly" })
             </div>
-            @Html.MyTextAreaFor(model => model.Detail,3)
+            <div class='form-group'>
+                @Html.LabelFor(model => model.PlanTime)
+                @Html.TextBox("PlanTime",Model.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm"), new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.PlanTime)
+            </div>
+            @Html.MyDateTimeFor(model => model.ActualTime)@Html.ValidationMessageFor(m => m.ActualTime)
+            @Html.MyTextAreaFor(model => model.Detail, 3)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
     }

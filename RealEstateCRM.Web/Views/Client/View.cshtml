@@ -113,7 +113,7 @@
                         <th width="200px">联系类型</th>
                         <th width="200px">联系时间</th>
                         <th>联系内容</th>
-                        <th width="120px">操作</th>
+                        <th width="160px">操作</th>
                     </tr>
                     @foreach (ClientActivity c in ViewBag.Contacts)
                     {
@@ -121,7 +121,7 @@
                             <td>@c.Type</td>
                             <td>@c.ActualTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
                             <td>@c.Detail</td>
-                            <td><button class="btn-danger" onclick="ToDeleteContact(@c.Id)">删除</button></td>
+                            <td><button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button></td>
                         </tr>
                     }
                 </table>
@@ -134,7 +134,7 @@
                         <th width="200px">实际时间</th>
                         <th width="100px">是否完成</th>
                         <th>情况说明</th>
-                        <th width="120px">操作</th>
+                        <th width="160px">操作</th>
                     </tr>
                     @foreach (ClientActivity c in ViewBag.Appointments)
                     {
@@ -159,8 +159,9 @@
                             }
                             <td>@c.Detail</td>
                             <td>
+                                <button class="btn-default" onclick="OpenLargeWindow('../FinishAppointment/@c.Id');">完成</button>
                                 <button class="btn-default" onclick="OpenLargeWindow('../EditAppointment/@c.Id');">修改</button>
-                                <button class="btn-danger" onclick="ToDeleteAppointment(@c.Id)">删除</button>
+                                <button class="btn-default" onclick="ToDeleteAppointment(@c.Id)">删除</button>
                             </td>
                         </tr>
                     }

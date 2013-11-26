@@ -74,6 +74,11 @@ namespace OUDAL
 
         [DisplayName("产品类型")]
         public string RoomType { get; set; }
+        [DisplayName("所属项目")]
+        public string ProjectName { get; set; }
+
+        [DisplayName("所属小组")]
+        public string GroupName { get; set; }
 
         [DisplayName("渠道")]
         public string Way { get; set; }

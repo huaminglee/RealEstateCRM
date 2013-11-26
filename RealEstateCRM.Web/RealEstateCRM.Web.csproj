@@ -588,6 +588,9 @@
     <Content Include="Views\Client\AddAppointment.cshtml" />
     <Content Include="Views\Client\AddContact.cshtml" />
     <Content Include="Views\Client\EditAppointment.cshtml" />
+    <Content Include="Views\Client\FinishAppointment.cshtml" />
+    <Content Include="Views\Client\Create.cshtml" />
+    <Content Include="Views\Client\ToCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

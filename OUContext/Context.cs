@@ -161,7 +161,7 @@ namespace OUDAL
                 List<OUDAL.Dictionary> dictionaries = new List<Dictionary>
                                                           {
                                                               new Dictionary {Catalog = "客户", Name = "意向级别"},
-                                                              new Dictionary {Catalog = "客户", Name = "来源类型"},
+                                                              new Dictionary {Catalog = "客户", Name = "渠道类型"},
                                                               new Dictionary {Catalog = "客户", Name = "客户类别",KeyId = 1},
                                                               new Dictionary {Catalog = "客户", Name = "联系类型"},
                                                               new Dictionary {Catalog = "客户", Name = "邀约类型"}
@@ -172,7 +172,7 @@ namespace OUDAL
                                                                    new DictionaryItem{DictId = 1,IndexNum = 2,Name = "意向出资"},
                                                                    new DictionaryItem{DictId = 1,IndexNum = 3,Name = "重点"},
                                                                    new DictionaryItem{DictId = 1,IndexNum = 4,Name = "一般"},
-                                                                   new DictionaryItem{DictId = 2,IndexNum = 1,Name = "直募开发"},
+                                                                   new DictionaryItem{DictId = 2,IndexNum = 1,Name = "销售员开发"},
                                                                    new DictionaryItem{DictId = 2,IndexNum = 2,Name = "中介开发"},
                                                                    new DictionaryItem{DictId = 2,IndexNum = 3,Name = "公司资源"},
                                                                    new DictionaryItem{DictId = 3,IndexNum = 1,Name = "LP"},

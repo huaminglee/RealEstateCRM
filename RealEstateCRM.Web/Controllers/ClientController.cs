@@ -21,6 +21,7 @@ namespace RealEstateCRM.Web.Controllers
             base.Dispose(disposing);
 
         }
+
         [MyAuthorize("客户管理-客户查看")]
         public ActionResult List()
         {
@@ -56,8 +57,9 @@ namespace RealEstateCRM.Web.Controllers
             var newquery = (from o in list
                             select o).Take(rows * page).Skip(page * rows - rows).ToList();// 这种写法是在内存中运算
             newquery.ForEach(o =>
-            {//这里要获取基金字段
-
+            {
+                o.ProjectName = DepartmentBLL.GetNameById(o.ProjectId);
+                o.GroupName = DepartmentBLL.GetNameById(o.GroupId);
             });
             var jsonData = new
             {
@@ -69,7 +71,21 @@ namespace RealEstateCRM.Web.Controllers
             return Json(jsonData);
         }
 
+        public ActionResult ToCreate()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public ActionResult ToCreateQuery(FormCollection collection)
+        {
+            return View();
+        }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
 
         public ActionResult View(int id)
         {
@@ -83,33 +99,33 @@ namespace RealEstateCRM.Web.Controllers
             return View(c);
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(/*int projectid,*/int id)//仅作为编辑使用
         {
             Client c = db.Clients.Find(id);
-            int projectid = 0;
-            if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); }
-            if (c == null)
-            {
-                c = new Client();
-                c.ProjectId = projectid;
-                c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
-                c.AllPhone = "";
-                c.RoomType = "";
-            }
+            //int projectid = 0;
+            //if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); }
+            //if (c == null)
+            //{
+            //    c = new Client();
+            //    c.ProjectId = projectid;
+            //    c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            //    c.AllPhone = "";
+            //    c.RoomType = "";
+            //}
             List<string> phoneList = c.AllPhone.Split(',').ToList();
-            while (phoneList.Count != 3)
+            while (phoneList.Count != 2)
             {
                 phoneList.Add("");
             }
             ViewBag.Phones = phoneList;
 
-            List<SelectListItem> typelist = new List<SelectListItem>();
-            List<string> hastype = c.RoomType.Split(',').ToList();
-            foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
-            {
-                typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
-            }
-            ViewBag.RoomTypes = typelist;
+            //List<SelectListItem> typelist = new List<SelectListItem>();
+            //List<string> hastype = c.RoomType.Split(',').ToList();
+            //foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
+            //{
+            //    typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
+            //}
+            //ViewBag.RoomTypes = typelist;
             return View(c);
         }
 
@@ -121,22 +137,20 @@ namespace RealEstateCRM.Web.Controllers
             var a = collection["AllPhone"];
             while (!a.Equals("") && a[a.Length - 1] == ',')
                 a = a.Remove(a.Length - 1);
-            var b = collection["RoomType"];
             collection["AllPhone"] = a;
-            if (c == null)
-            {
-                c = new Client();
-                c.CreateTime = DateTime.Now;
-                db.Clients.Add(c);
-                int check = CheckClientByPhone(collection["AllPhone"]);
-                if (check != 0)
-                {
-                    ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为：" + DepartmentBLL.GetNameById(check));
-                }
-            }
+            //if (c == null)
+            //{
+            //    c = new Client();
+            //    c.CreateTime = DateTime.Now;
+            //    db.Clients.Add(c);
+            //    int check = CheckClientByPhone(collection["AllPhone"]);
+            //    if (check != 0)
+            //    {
+            //        ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为：" + DepartmentBLL.GetNameById(check));
+            //    }
+            //}
 
-            TryUpdateModel(c, "", new string[] { }, new string[] { "RoomType"}, collection);
-            c.RoomType = b;
+            TryUpdateModel(c, "", new string[] { }, new string[] { }, collection);
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
@@ -148,19 +162,19 @@ namespace RealEstateCRM.Web.Controllers
             {
                 c.AllPhone = c.AllPhone ?? "";
                 List<string> phoneList = c.AllPhone.Split(',').ToList();
-                while (phoneList.Count != 3)
+                while (phoneList.Count != 2)
                 {
                     phoneList.Add("");
                 }
                 ViewBag.Phones = phoneList;
-                c.RoomType = c.RoomType ?? "";
-                List<SelectListItem> typelist = new List<SelectListItem>();
-                List<string> hastype = c.RoomType.Split(',').ToList();
-                foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
-                {
-                    typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
-                }
-                ViewBag.RoomTypes = typelist;
+                //c.RoomType = c.RoomType ?? "";
+                //List<SelectListItem> typelist = new List<SelectListItem>();
+                //List<string> hastype = c.RoomType.Split(',').ToList();
+                //foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
+                //{
+                //    typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
+                //}
+                //ViewBag.RoomTypes = typelist;
                 return View(c);
             }
         }
@@ -273,6 +287,30 @@ namespace RealEstateCRM.Web.Controllers
 
         }
 
+        public ActionResult FinishAppointment(int id)//id为Appointment的id
+        {
+            ClientActivity c = db.ClientActivities.Find(id);
+            return View(c);
+        }
+
+        [HttpPost]
+        public ActionResult FinishAppointment(int id, FormCollection collection)//id为Appointment的id
+        {
+            ClientActivity c = db.ClientActivities.Find(id);
+            TryUpdateModel(c, collection);
+            if (ModelState.IsValid)
+            {
+                db.SaveChanges();
+                return Redirect("~/Content/close.htm");
+            }
+            else
+            {
+                return View(c);
+            }
+
+        }
+
+
         [HttpPost]
         public JsonResult Delete(int id)
         {
@@ -317,7 +355,7 @@ namespace RealEstateCRM.Web.Controllers
         {
             Result result = new Result();
             long i;
-            if(!long.TryParse(phone,out i)||!(phone.Length==8||phone.Length==11))
+            if(!long.TryParse(phone,out i)||phone.Length<8||(phone[0].Equals('1')&&phone.Length!=11))
             {
                 result.success = false;
                 result.obj = "号码格式错误";

@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "创建客户";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+    <script type="text/javascript">
+        var PostData = {};
+        function SearchClick() {
+            var name = $("#Name").val();
+            var PhoneNumber = $("#PhoneNumber").val();
+        }
+        function PhoneCheck(phone) {
+            if (phone != null && phone != "") {
+                $.post("../PhoneCheck/@Model.Id", { phone: phone }, function (res) {
+                    if (!res.success) {
+                        alert(res.obj);
+                    }
+                });
+            }
+        }
+    </script>
+    <div style="width:800px;margin:auto;">
+        <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+            @Html.ShortInput("Name", "名 称:")<span style="color:red">*</span>
+            @Html.ShortInput("PhoneNumber", "电 话:")<span style="color:red">*</span>
+            @MyControls.SearchBtn()
+        </div>
+    </div>
+}
+

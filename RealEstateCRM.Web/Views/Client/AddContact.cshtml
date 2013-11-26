@@ -11,6 +11,12 @@
 
     });
 </script>
+<style>
+    .datepicker {
+        position: relative;
+        z-index: 1001;
+    }
+</style>
 <div class="well" style="width:650px;margin:0px auto">
     @using (Html.BeginForm())
     {
@@ -23,14 +29,14 @@
                 @Html.LabelFor(model => model.Type)
                 @foreach (SelectListItem s in DictionaryBLL.GetList("联系类型", false))
                 {
-                    <span class="radio-inline"><input type="radio" name="Type" value="@s.Value" />@s.Text</span>
+                    <label class="radio-inline" style="min-width:initial;"><input type="radio" name="Type" value="@s.Value" />@s.Text</label>
 
                 }
                 @Html.ValidationMessageFor(m => m.Type)
             </div>
             @Html.MyDateTimeFor(model => model.ActualTime)
             @Html.ValidationMessageFor(m => m.ActualTime)
-            @Html.MyTextAreaFor(model => model.Detail,3)
+            @Html.MyTextAreaFor(model => model.Detail, 3)
             @Html.ValidationMessageFor(m => m.Detail)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
