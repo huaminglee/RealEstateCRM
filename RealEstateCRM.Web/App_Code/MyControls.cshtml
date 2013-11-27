@@ -9,8 +9,8 @@
 }
 @helper SubmitBtn(string name,string onClick="")
 {
-    
-    <input type="submit" class="btn btn-primary" value="@name"/>
+
+    <input type="submit" class="btn btn-primary" onclick="@onClick;" value="@name" />
 }
 @helper FormBtn(bool cancelIsClose){
     <div style="width:50%;margin:0px auto">

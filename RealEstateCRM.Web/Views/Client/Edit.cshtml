@@ -49,7 +49,12 @@
         <fieldset>
             <legend>客户信息</legend>
             @Html.MyTextFor(model => model.Name)
-            @Html.MyTextFor(model => model.Sex)
+            <div class='form-group'>
+                @Html.LabelFor(m => m.Sex)
+                <label class="radio-inline" style="min-width:initial"><input name="Sex" type="radio" value="男" checked="@Model.Sex.Equals("男")" />男</label>
+                <label class="radio-inline" style="min-width:initial"><input name="Sex" type="radio" value="女" checked="@Model.Sex.Equals("女")" />女</label>
+                @Html.ValidationMessageFor(m => m.Sex)
+            </div>
             <div class='form-group'>
                 @Html.LabelFor(m => m.AllPhone)
                 @foreach (var phone in ViewBag.Phones)

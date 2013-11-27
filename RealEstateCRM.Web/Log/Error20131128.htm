@@ -1,0 +1,360 @@
+<HR COLOR=blue>
+日志时间：2013-11-28 00:01:50,173 [106] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:06:50,173 [125] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:11:50,171 [115] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:16:50,174 [114] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:28:23,819 [18] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:31:51,152 [44] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:31:56,470 [9] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:34:47,164 [116] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:35:26,881 [18] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:35:44,294 [119] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:35:48,311 [114] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:36:30,926 [44] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1>System.Data.Entity.Core.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: 从 datetime2 数据类型到 datetime 数据类型的转换产生一个超出范围的值。
+语句已终止。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   在 System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   在 System.Data.Entity.Infrastructure.Interception.DbCommandDispatcher.<>c__DisplayClassb.<Reader>b__8()
+   在 System.Data.Entity.Infrastructure.Interception.InternalDispatcher`1.Dispatch[TInterceptionContext,TResult](Func`1 operation, TInterceptionContext interceptionContext, Action`1 executing, Action`1 executed)
+   在 System.Data.Entity.Infrastructure.Interception.DbCommandDispatcher.Reader(DbCommand command, DbCommandInterceptionContext interceptionContext)
+   在 System.Data.Entity.Internal.InterceptableDbCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   在 System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   在 System.Data.Entity.Core.Mapping.Update.Internal.DynamicUpdateCommand.Execute(Dictionary`2 identifierValues, List`1 generatedValues)
+   在 System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()
+   --- 内部异常堆栈跟踪的结尾 ---
+   在 System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()
+   在 System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.<Update>b__2(UpdateTranslator ut)
+   在 System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.Update[T](T noChangesResult, Func`2 updateFunction, Boolean throwOnClosedConnection)
+   在 System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.Update(Boolean throwOnClosedConnection)
+   在 System.Data.Entity.Core.Objects.ObjectContext.<SaveChangesToStore>b__33()
+   在 System.Data.Entity.Core.Objects.ObjectContext.ExecuteInTransaction[T](Func`1 func, IDbExecutionStrategy executionStrategy, Boolean startLocalTransaction, Boolean releaseConnectionOnSuccess)
+   在 System.Data.Entity.Core.Objects.ObjectContext.SaveChangesToStore(SaveOptions options, IDbExecutionStrategy executionStrategy)
+   在 System.Data.Entity.Core.Objects.ObjectContext.<>c__DisplayClass28.<SaveChanges>b__25()
+   在 System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.Execute[TResult](Func`1 operation)
+   在 System.Data.Entity.Core.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   在 System.Data.Entity.Internal.InternalContext.SaveChanges()
+<HR COLOR=blue>
+日志时间：2013-11-28 00:41:10,239 [116] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:44:34,756 [7] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1>System.Data.Entity.Core.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: 从 datetime2 数据类型到 datetime 数据类型的转换产生一个超出范围的值。
+语句已终止。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   在 System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   在 System.Data.Entity.Infrastructure.Interception.DbCommandDispatcher.<>c__DisplayClassb.<Reader>b__8()
+   在 System.Data.Entity.Infrastructure.Interception.InternalDispatcher`1.Dispatch[TInterceptionContext,TResult](Func`1 operation, TInterceptionContext interceptionContext, Action`1 executing, Action`1 executed)
+   在 System.Data.Entity.Infrastructure.Interception.DbCommandDispatcher.Reader(DbCommand command, DbCommandInterceptionContext interceptionContext)
+   在 System.Data.Entity.Internal.InterceptableDbCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   在 System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   在 System.Data.Entity.Core.Mapping.Update.Internal.DynamicUpdateCommand.Execute(Dictionary`2 identifierValues, List`1 generatedValues)
+   在 System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()
+   --- 内部异常堆栈跟踪的结尾 ---
+   在 System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()
+   在 System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.<Update>b__2(UpdateTranslator ut)
+   在 System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.Update[T](T noChangesResult, Func`2 updateFunction, Boolean throwOnClosedConnection)
+   在 System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.Update(Boolean throwOnClosedConnection)
+   在 System.Data.Entity.Core.Objects.ObjectContext.<SaveChangesToStore>b__33()
+   在 System.Data.Entity.Core.Objects.ObjectContext.ExecuteInTransaction[T](Func`1 func, IDbExecutionStrategy executionStrategy, Boolean startLocalTransaction, Boolean releaseConnectionOnSuccess)
+   在 System.Data.Entity.Core.Objects.ObjectContext.SaveChangesToStore(SaveOptions options, IDbExecutionStrategy executionStrategy)
+   在 System.Data.Entity.Core.Objects.ObjectContext.<>c__DisplayClass28.<SaveChanges>b__25()
+   在 System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.Execute[TResult](Func`1 operation)
+   在 System.Data.Entity.Core.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   在 System.Data.Entity.Internal.InternalContext.SaveChanges()
+<HR COLOR=blue>
+日志时间：2013-11-28 00:46:04,309 [9] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:46:10,302 [9] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:51:48,043 [6] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 00:56:48,096 [19] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:02:19,445 [23] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:03:53,863 [8] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:07:19,971 [25] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:12:19,366 [23] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:14:04,155 [8] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:17:19,366 [39] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:17:45,529 [58] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:18:00,674 [51] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:18:52,119 [8] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:19:21,234 [9] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:22:19,450 [6] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:26:22,757 [6] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1>System.InvalidOperationException: 连接未关闭。 连接的当前状态为打开。
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.<>c__DisplayClass1.<Execute>b__0()
+   在 System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.Execute[TResult](Func`1 operation)
+   在 System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.Execute(Action operation)
+   在 System.Data.Entity.Core.EntityClient.EntityConnection.Open()
+<HR COLOR=blue>
+日志时间：2013-11-28 01:28:53,204 [6] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:33:53,206 [28] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:38:53,202 [27] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:43:53,204 [27] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:49:01,494 [12] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:54:04,153 [16] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:57:48,781 [31] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 01:59:04,148 [36] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:08:08,007 [9] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:08:40,594 [11] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:08:41,914 [7] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:09:45,603 [7] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:14:47,224 [5] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:19:48,092 [23] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:24:48,089 [21] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:25:39,506 [8] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1><HR COLOR=blue>
+日志时间：2013-11-28 02:31:13,133 [9] <BR>
+日志级别：ERROR 
+   <BR>
+日 志 类：ErrorLog [(null)] <BR>
+Error <BR>
+ <HR Size=1>

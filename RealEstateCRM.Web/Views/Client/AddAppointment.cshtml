@@ -29,14 +29,14 @@
                 @Html.LabelFor(model => model.Type)
                 @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
                 {
-                    <label class="radio-inline" style="min-width:initial;"><input type="radio" name="Type" value="@s.Value" />@s.Text</label>
+                    <label class="radio-inline" style="min-width:initial;"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
 
                 }
                 @Html.ValidationMessageFor(m => m.Type)
             </div>
-            @Html.MyDateTimeFor(model => model.PlanTime)@Html.ValidationMessageFor(m => m.PlanTime)
-            @Html.MyDateTimeFor(model => model.ActualTime)@Html.ValidationMessageFor(m => m.ActualTime)
-            @Html.MyTextAreaFor(model => model.Detail, 3)@Html.ValidationMessageFor(m => m.Detail)
+            @Html.MyDateTimeFor(model => model.PlanTime)
+            @Html.MyDateTimeFor(model => model.ActualTime)
+            @Html.MyTextAreaFor(model => model.Detail, 3)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
     }
