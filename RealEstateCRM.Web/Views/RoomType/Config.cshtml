@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "项目配置";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            @if (ViewBag.Projects.Count > 0)
+            {
+                <text>
+                curProject=@ViewBag.Projects[0].Id ;
+                </text>
+            }
+            SearchClick();
+        });
+        var list;
+        var curProject = 0;
+
+        function SearchClick() {
+            $.post("./RoomTypeQuery", function(respDate) {
+                if (respDate.success == true) {
+                    list = respDate.obj;
+                    showEnters(list);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+
+        function selectProject(obj, projectid) {
+            //debugger;
+            $(".list-group-item").removeClass("active");
+            $(obj).addClass("active");
+            curProject = projectid;
+            SearchClick();
+        }
+        function AddNew() {
+            OpenLargeWindow("./RoomTypeEdit/0?deptid=" + curProject, "RoomTypeEdit");
+        }
+
+        function ToDelete(id) {
+            if (window.confirm('你确定删除吗？')) {
+                Delete(id);
+            } else {
+                return;
+            }
+        }
+        function Delete(id) {
+            $.post("./RoomTypeDelete", { id: id }, function (res) {
+                if (res.success) {
+                    SearchClick();
+                }
+                else {
+                    alert(res.obj);
+                }
+            });
+        }
+    </script>
+    <div class="col-lg-3">
+        <div class="list-group">
+            @{
+                var isfirst = "active";
+                foreach (Department d in ViewBag.Projects)
+                {
+                    <a href="#" class="list-group-item @isfirst" onclick="selectProject(this, @d.Id ); ">@d.Name</a>
+                    isfirst = "";
+                }
+            }
+        </div>
+
+    </div>
+    <div id="resulttable" class="col-lg-6">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:140px">类型名称</th>
+                    <th style="width:80px">超期天数</th>
+                    <th style="width:80px">动作</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <%for(var i=0;i<obj.length;i++){var item=obj[i]; if(item.DepartmentId==curProject){%>
+
+                    <tr>
+                        <td><%=item.Name%></td>
+                        <td style="text-align:left"><%=item.OverDays%></td>
+                        <td>
+                            <button class="btn btn-default btn-sm" onclick="OpenMiddleWindow('./RoomTypeEdit/<%=item.Id%>');">编辑</button>
+                            &nbsp;&nbsp;&nbsp;<button class="btn btn-default btn-sm" onclick="ToDelete(<%=item.Id%>);">删除</button>
+                        </td>
+                    </tr>
+                    <%}}%>
+            </tbody>
+        </table>
+        <button class="btn btn-primary" onclick="AddNew()">新增</button>
+    </script>
+
+
+}

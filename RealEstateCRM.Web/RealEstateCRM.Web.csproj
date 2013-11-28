@@ -186,6 +186,7 @@
     <Compile Include="BLL\DictionaryBLL.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AttachmentController.cs" />
+    <Compile Include="Controllers\RoomTypeController.cs" />
     <Compile Include="Controllers\CustomerJsonResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
@@ -591,6 +592,8 @@
     <Content Include="Views\Client\FinishAppointment.cshtml" />
     <Content Include="Views\Client\Create.cshtml" />
     <Content Include="Views\Client\ToCreate.cshtml" />
+    <Content Include="Views\RoomType\Config.cshtml" />
+    <Content Include="Views\RoomType\RoomTypeEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

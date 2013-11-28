@@ -92,6 +92,7 @@
     <Compile Include="ModelBase\Attachment.cs" />
     <Compile Include="Model\Client.cs" />
     <Compile Include="Model\ClientActivity.cs" />
+    <Compile Include="Model\RoomType.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Contract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

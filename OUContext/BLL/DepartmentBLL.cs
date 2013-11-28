@@ -291,11 +291,9 @@ namespace OUDAL
             return res;
         }
 
-        static public List<string> GetRoomType(int projectid)
+        static public List<string> GetRoomType(int deptid)
         {
-            string d = (from o in db.Projects where o.DepartmentId == projectid select o.RoomType).FirstOrDefault();
-            d = d ?? "";
-            List<string> types = d.Split(',').ToList();
+            List<string> types = (from o in db.RoomTypes where o.DepartmentId == deptid select o.Name).ToList();
             return types;
         }
         

@@ -56,12 +56,12 @@
 
         function ToDeleteAppointment(id) {
             if (window.confirm('你确定删除这条邀约记录吗？')) {
-                DeleteContact(id);
+                DeleteAppointment(id);
             } else {
                 return;
             }
         }
-        function DeleteAppointmentt(id) {
+        function DeleteAppointment(id) {
             $.post("../RemoveAppointment", { id: id }, function (res) {
                 if (res.success) {
                     window.location.reload();

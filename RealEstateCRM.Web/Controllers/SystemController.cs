@@ -75,14 +75,6 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public String GetRoomTypeByDepartmentId(int deptid)
-        {
-            string roomType = (from o in db.Projects where o.DepartmentId == deptid select o.RoomType).FirstOrDefault();
-            return roomType!=null ? roomType : "";
-
-        }
-
-        [HttpPost]
         public JsonResult UpdateDepartment(int id, FormCollection collection)
         {
             if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result { success = false, obj = "没有权限" });
@@ -96,22 +88,7 @@ namespace RealEstateCRM.Web.Controllers
             }
             dept.Name = collection["name"];
             dept.DepartmentType = collection["departmenttype"];
-            
-            db.SaveChanges();
             if (dept.DepartmentType == null) dept.DepartmentType = "";
-            Project info = (from o in db.Projects where o.DepartmentId == dept.Id select o).FirstOrDefault();
-            if (info != null)
-            {
-                info.RoomType = collection["RoomType"] ?? "";
-            }
-            else
-            {
-                if (collection["RoomType"] != null || !collection["RoomType"].Equals(""))
-                {
-                    info = new Project() { DepartmentId = dept.Id, RoomType = collection["RoomType"] };
-                    db.Projects.Add(info);
-                }
-            }
             db.SaveChanges();
             DepartmentBLL.UpdateDepartments();
             result.success = true;
@@ -168,6 +145,11 @@ namespace RealEstateCRM.Web.Controllers
                     var query = (from o in db.Projects where o.DepartmentId == id select o).FirstOrDefault();
                     if(query!=null)
                     {
+                        var RoomTypes = (from o in db.RoomTypes where o.DepartmentId == id select o).ToList();
+                        foreach (RoomType r in RoomTypes)
+                        {
+                            db.RoomTypes.Remove(r);
+                        }
                         db.Projects.Remove(query);
                     }
                     db.SaveChanges();

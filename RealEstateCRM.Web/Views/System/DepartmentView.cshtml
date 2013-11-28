@@ -81,9 +81,6 @@
             if (document.getElementById('txtName') != undefined) {
                 document.getElementById('txtName').value = treeNode.name;
                 $("#txtType").val(treeNode.tag);
-                $.post("GetRoomTypeByDepartmentId", { deptid: treeNode.id }, function (res) {
-                    $("#RoomType").val(res);
-                });
             }
             $('#pid').val('');
             $('#btnAdd').show();
@@ -233,15 +230,6 @@
                             <option>项目</option>
                             <option>小组</option>
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="form-item">
-                        产品类型：
-                    </td>
-                    <td>
-                        <input type="text" name="RoomType" id="RoomType" /><br />
-                        <small style="color:red">类型之间用英文的逗号隔开</small>
                     </td>
                 </tr>
             </table></div>

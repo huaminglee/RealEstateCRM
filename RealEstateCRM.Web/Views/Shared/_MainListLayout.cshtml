@@ -98,9 +98,9 @@
                                     @if (UserInfo.CurUser.HasRight("系统管理-数据字典"))
                                     {
                                         <li>@Html.ActionLink("数据字典", "Dictionary", "System")</li>}
-                                    @if (UserInfo.CurUser.HasRight("系统管理-数据字典"))
+                                    @if (UserInfo.CurUser.HasRight("系统管理-部门管理"))
                                     {
-                                        <li>@Html.ActionLink("系统配置", "Dictionary", "System")</li>}
+                                        <li>@Html.ActionLink("项目配置", "Config", "RoomType")</li>}
 
                                 </ul>
                             </li>

@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace OUDAL
 {
-    public class Project
+    public class RoomType
     {
         public int Id { get; set; }
         public int DepartmentId { get; set; }
-        [DisplayName("编码")]
-        public string Code { get; set; }
+        [DisplayName("超期天数")]
+        public int OverDays { get; set; }
+        [Required]
+        [DisplayName("类型名称")]
+        public string Name { get; set; }
     }
 }
