@@ -22,46 +22,55 @@ namespace RealEstateCRM.Web.Controllers
 
         }
 
-        [MyAuthorize("系统管理-部门管理")]
-        public ActionResult Config()
+        //[MyAuthorize("系统管理-部门管理")]
+        public ActionResult Config(int projectid)
         {
-            List<Department> projects = (from o in db.Departments where o.DepartmentType=="项目" select o).ToList();
-            ViewBag.Projects = projects;
+            List<RoomType> RoomTypes = (from o in db.RoomTypes where o.DepartmentId == projectid select o).ToList();
+            ViewBag.RoomTypes = RoomTypes;
+            ViewBag.ProjectId = projectid;
             return View();
         }
         [HttpPost]
-        public JsonResult RoomTypeQuery()
+        public JsonResult RoomTypeQuery(int projectid)
         {
-            if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
+            //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
             Result result = new Result();
             result.success = true;
-            var list = (from o in db.RoomTypes select o).ToList();
+            var list = (from o in db.RoomTypes where o.DepartmentId == projectid select o).ToList();
             result.obj = list;
             return Json(result);
         }
 
-        public ActionResult RoomTypeEdit(int id, int? deptid)
+        public ActionResult RoomTypeEdit(int id, int projectid)
         {
             RoomType s = db.RoomTypes.Find(id);
             if (s == null)
             {
-                s = new RoomType { DepartmentId = (int)deptid };
+                s = new RoomType { DepartmentId = (int)projectid };
             }
+            ViewBag.Reload = false;
             ViewBag.Project = db.Departments.Find(s.DepartmentId);
             return View(s);
         }
 
         [Authorize]
         [HttpPost]
-        public ActionResult RoomTypeEdit(int id, int? deptid, FormCollection collection)
+        public ActionResult RoomTypeEdit(int id, int projectid, FormCollection collection)
         {
             RoomType s = db.RoomTypes.Find(id);
             if (s == null)
             {
-                s = new RoomType { DepartmentId = (int)deptid };
+                s = new RoomType { DepartmentId = (int)projectid };
+                ViewBag.Reload = true;
                 db.RoomTypes.Add(s);
             }
+            else if(!collection["Name"].Equals(s.Name)){
+                ViewBag.Reload = true;
+            }
             TryUpdateModel(s, "", new string[] { }, new string[] { "" }, collection);
+            var query = (from o in db.RoomTypes where o.DepartmentId == s.DepartmentId && o.Name == s.Name && o.Id != s.Id select o).FirstOrDefault();
+            if (query != null)
+                ModelState.AddModelError("", "该产品类型已经存在");
             if (ModelState.IsValid)
             {
                 db.SaveChanges();

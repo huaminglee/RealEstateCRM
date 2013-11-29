@@ -1,0 +1,45 @@
+﻿@model OUDAL.Order
+
+@{
+    ViewBag.Title = "签约信息编辑";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    });
+</script>
+<style>
+    .datepicker {
+        position: relative;
+        z-index: 1001;
+    }
+</style>
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.GroupId)
+        @Html.HiddenFor(model => model.ClientId)
+        <fieldset>
+            <legend>签约信息</legend>
+            <div class="form-group">
+                <label>客户姓名</label>
+                <input type="text" disabled value="@Client.GetName(Model.ClientId)" />
+            </div>
+            <div class="form-group">
+                <label>大定时间</label>
+                @Html.TextBox("OrderTime", Model.OrderTime.ToString("yyyy-MM-dd"), new { @readonly = "readonly" })
+            </div>
+            @Html.MyDateFor(model => model.SignTime)
+            <div class="form-group">
+                <label>房间</label>
+                @Html.TextBoxFor(m=>m.Room/*, new { @readonly = "readonly" }*/)
+            </div>
+            @Html.MyTextAreaFor(model => model.Remark, 3)
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+    }
+</div>

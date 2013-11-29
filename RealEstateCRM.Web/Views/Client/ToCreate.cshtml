@@ -43,17 +43,30 @@
         }
         @if (ViewBag.Button)
         {
-            <div style="width:200px;margin:auto;">
-                <form action="./Create?type=1" method="post" style="float:left">
-                    @Html.HiddenFor(m => m.Name)
-                    @Html.HiddenFor(m => m.AllPhone)
-                    <div class="btn-group"><button class="btn btn-primary" type="submit">来电新增</button></div>
-                </form>
-                <form action="./Create?type=2" method="post" style="float:right">
-                    @Html.HiddenFor(m => m.Name)
-                    @Html.HiddenFor(m => m.AllPhone)
-                    <div class="btn-group"><button class="btn btn-primary" type="submit">来访新增</button></div>
-                </form>
+            <div class="btn-toolbar" style="width:300px;margin:auto;">
+                <div class="btn-group">
+                    <form action="./Create?type=1" method="post">
+                        @Html.HiddenFor(m => m.Name)
+                        @Html.HiddenFor(m => m.AllPhone)
+                        <button class="btn btn-primary" type="submit">来电新增</button>
+                    </form>
+                </div>
+                <div class="btn-group">
+                    <form action="./Create?type=2" method="post">
+                        @Html.HiddenFor(m => m.Name)
+                        @Html.HiddenFor(m => m.AllPhone)
+                        <button class="btn btn-primary" type="submit">来访新增</button>
+
+                    </form>
+                </div>
+                <div class="btn-group">
+                    <form action="./Create?type=3" method="post">
+                        @Html.HiddenFor(m => m.Name)
+                        @Html.HiddenFor(m => m.AllPhone)
+                        <button class="btn btn-primary" type="submit">邀约新增</button>
+
+                    </form>
+                </div>
             </div>
 
         }

@@ -30,6 +30,8 @@ namespace OUDAL
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientActivity> ClientActivities { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<ContractPay> ContractPays { get; set; }
         public DbSet<ContractPlan> ContractPlans { get; set; }
@@ -144,6 +146,11 @@ namespace OUDAL
                     );
                 context.DepartmentUsers.Add(new DepartmentUser
                 {
+                    UserId = 1,
+                    DepartmentId = 4
+                });
+                context.DepartmentUsers.Add(new DepartmentUser
+                {
                     UserId = 2,
                     DepartmentId = 4
                 });
@@ -161,7 +168,7 @@ namespace OUDAL
 
                 List<OUDAL.Dictionary> dictionaries = new List<Dictionary>
                                                           {
-                                                              new Dictionary {Catalog = "客户", Name = "意向级别"},
+                                                              new Dictionary {Catalog = "客户", Name = "产品类型"},
                                                               new Dictionary {Catalog = "客户", Name = "渠道类型"},
                                                               new Dictionary {Catalog = "客户", Name = "客户类别",KeyId = 1},
                                                               new Dictionary {Catalog = "客户", Name = "联系类型"},
@@ -169,10 +176,8 @@ namespace OUDAL
                                                           };
                 List<OUDAL.DictionaryItem> dictionaryItems = new List<DictionaryItem>
                                                                {
-                                                                   new DictionaryItem{DictId = 1,IndexNum = 1,Name = "LP"},
-                                                                   new DictionaryItem{DictId = 1,IndexNum = 2,Name = "意向出资"},
-                                                                   new DictionaryItem{DictId = 1,IndexNum = 3,Name = "重点"},
-                                                                   new DictionaryItem{DictId = 1,IndexNum = 4,Name = "一般"},
+                                                                   new DictionaryItem{DictId = 1,IndexNum = 1,Name = "公寓"},
+                                                                   new DictionaryItem{DictId = 1,IndexNum = 2,Name = "别墅"},
                                                                    new DictionaryItem{DictId = 2,IndexNum = 1,Name = "销售员开发"},
                                                                    new DictionaryItem{DictId = 2,IndexNum = 2,Name = "中介开发"},
                                                                    new DictionaryItem{DictId = 2,IndexNum = 3,Name = "公司资源"},

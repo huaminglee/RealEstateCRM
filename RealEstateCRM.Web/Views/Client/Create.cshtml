@@ -102,15 +102,21 @@
                 @Html.TextBoxFor(m => m.Code, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.Code)
             </div>
             @Html.MyTextAreaFor(model => model.Remark, 3)
-            <legend>联系记录</legend>
-            <div class="form-group">
-                @Html.LabelFor(model => model.ContactType)
-                @Html.TextBoxFor(m => m.ContactType, new { @readonly = "readonly" })
-                @Html.ValidationMessageFor(m => m.ContactType)
+            @if (ViewBag.Type != 3)
+            {<legend>联系记录</legend>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContactType)
+                    @Html.TextBoxFor(m => m.ContactType, new { @readonly = "readonly" })
+                    @Html.ValidationMessageFor(m => m.ContactType)
+                </div>
+                @Html.MyDateTimeFor(model => model.ContactActualTime)
+                @Html.MyTextAreaFor(model => model.ContactDetail, 3)
+            }
+            <div @if(ViewBag.Type.Equals(3)){<text>style="display:none;"</text>}>
+                <label class="checkbox-inline" style="min-width:initial;">
+                    <input type="checkbox" id="HasAppointment" name="HasAppointment" onchange="ShowAppointment(this.checked)" value="Add" checked="@ViewBag.HasAppointment" />是否添加邀约信息
+                </label>
             </div>
-            @Html.MyDateTimeFor(model => model.ContactActualTime)
-            @Html.MyTextAreaFor(model => model.ContactDetail, 3)
-            <label class="checkbox-inline" style="min-width:initial;"><input type="checkbox" id="HasAppointment" name="HasAppointment" onchange="ShowAppointment(this.checked)" value="Add" checked="@ViewBag.HasAppointment" />是否添加邀约信息</label>
             <br />
             <br />
             <fieldset id="AppointmentField" style="display:none;">
@@ -126,6 +132,7 @@
                 </div>
                 @Html.MyDateTimeFor(model => model.AppointmentPlanTime)
                 @Html.MyTextAreaFor(model => model.AppointmentDetail, 3)
+                <input hidden value="@ViewBag.Type" name="type" id="type"/>
             </fieldset>
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "history.go(-1)")</p>

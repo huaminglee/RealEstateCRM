@@ -9,13 +9,23 @@
         $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
         @if (ViewBag.Success == true)
         {
-<text>
-        window.opener.SearchClick();
+            if(ViewBag.Reload==true)
+            {
+                <text>
+        window.opener.location.reload();
         window.close();
-</text>
+                </text>
+            }
+            else{
+                <text>
+                    window.opener.SearchClick();
+                    window.close();
+                </text>
+            }
         }
     });
 </script>
+
 <div class="well" style="width:650px;margin:0px auto">
     @using (Html.BeginForm())
     {
@@ -24,8 +34,14 @@
         <fieldset>
             <legend>产品类型配置-@ViewBag.Project.Name</legend>
             @Html.HiddenFor(model => model.DepartmentId)
-            @Html.MyTextFor(model => model.Name)
-            @Html.MyTextFor(model => model.OverDays)
+            @Html.MyDropdownFor(model => model.Name, DictionaryBLL.GetList("产品类型", false), Model.Name)
+            @Html.MyTextFor(model => model.TelToVisitDays)
+            @Html.MyTextFor(model => model.TelToVisitAheads)
+            @Html.MyTextFor(model => model.VisitToCardDays)
+            @Html.MyTextFor(model => model.VisitToCardAheads)
+            @Html.MyTextFor(model => model.CardToOrderDays)
+            @Html.MyTextFor(model => model.CardToOrderAheads)
+            <small style="color:red;">注：设置为0天不作超期检查</small>
         </fieldset>
         @MyControls.FormBtn(true)
     }

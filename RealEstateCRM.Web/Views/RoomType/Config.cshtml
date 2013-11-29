@@ -8,19 +8,19 @@
         jQuery(document).ready(function() {
             var PostData = {};
             $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
-            @if (ViewBag.Projects.Count > 0)
+            @if (ViewBag.RoomTypes.Count > 0)
             {
                 <text>
-                curProject=@ViewBag.Projects[0].Id ;
-                </text>
+            curRoomType=@ViewBag.RoomTypes[0].Id;
+            </text>
             }
             SearchClick();
         });
         var list;
-        var curProject = 0;
+        var curRoomType = 0;
 
         function SearchClick() {
-            $.post("./RoomTypeQuery", function(respDate) {
+            $.post("./RoomTypeQuery",{projectid:@ViewBag.ProjectId}, function(respDate) {
                 if (respDate.success == true) {
                     list = respDate.obj;
                     showEnters(list);
@@ -37,15 +37,15 @@
             element.html(html);
         }
 
-        function selectProject(obj, projectid) {
+        function selectRoomType(obj, roomtypeid) {
             //debugger;
             $(".list-group-item").removeClass("active");
             $(obj).addClass("active");
-            curProject = projectid;
+            curRoomType = roomtypeid;
             SearchClick();
         }
         function AddNew() {
-            OpenLargeWindow("./RoomTypeEdit/0?deptid=" + curProject, "RoomTypeEdit");
+            OpenLargeWindow("./RoomTypeEdit/0", "RoomTypeEdit");
         }
 
         function ToDelete(id) {
@@ -58,7 +58,7 @@
         function Delete(id) {
             $.post("./RoomTypeDelete", { id: id }, function (res) {
                 if (res.success) {
-                    SearchClick();
+                    window.location.reload();
                 }
                 else {
                     alert(res.obj);
@@ -67,37 +67,41 @@
         }
     </script>
     <div class="col-lg-3">
+        <label>产品类型列表</label>
         <div class="list-group">
+            
             @{
                 var isfirst = "active";
-                foreach (Department d in ViewBag.Projects)
+                foreach (RoomType r in ViewBag.RoomTypes)
                 {
-                    <a href="#" class="list-group-item @isfirst" onclick="selectProject(this, @d.Id ); ">@d.Name</a>
+                    <a href="#" class="list-group-item @isfirst" onclick="selectRoomType(this, @r.Id ); ">@r.Name</a>
                     isfirst = "";
                 }
             }
         </div>
-
+        <button class="btn btn-primary" onclick="AddNew()">新增</button>
     </div>
     <div id="resulttable" class="col-lg-6">
 
     </div>
     <script type="text/template" id="tpl">
-        <table class="table table-bordered table-striped ">
-            <thead>
-                <tr>
-                    <th style="width:140px">类型名称</th>
-                    <th style="width:80px">超期天数</th>
-                    <th style="width:80px">动作</th>
-                </tr>
-            </thead>
+        <table class="table table-bordered">
             <tbody>
 
-                <%for(var i=0;i<obj.length;i++){var item=obj[i]; if(item.DepartmentId==curProject){%>
+                <%for(var i=0;i<obj.length;i++){var item=obj[i]; if(item.Id==curRoomType){%>
 
                     <tr>
+                        <th class="tdRight" style="width:140px">类型名称</th>
                         <td><%=item.Name%></td>
-                        <td style="text-align:left"><%=item.OverDays%></td>
+                    </tr>
+                    <tr><th class="tdRight">电转访时限</th><td style="text-align:left"><%=item.TelToVisitDays%></td></tr>
+                    <tr><th class="tdRight">电转访提醒期</th><td style="text-align:left"><%=item.TelToVisitAheads%></td></tr>
+                    <tr><th class="tdRight">访转卡时限</th><td style="text-align:left"><%=item.VisitToCardDays%></td></tr>
+                    <tr><th class="tdRight">访转卡提醒期</th><td style="text-align:left"><%=item.VisitToCardAheads%></td></tr>
+                    <tr><th class="tdRight">卡转大定时限</th><td style="text-align:left"><%=item.CardToOrderDays%></td></tr>
+                    <tr><th class="tdRight">卡转大定提醒期</th><td style="text-align:left"><%=item.CardToOrderAheads%></td></tr>
+                    <tr>
+                        <th class="tdRight">动作</th>
                         <td>
                             <button class="btn btn-default btn-sm" onclick="OpenMiddleWindow('./RoomTypeEdit/<%=item.Id%>');">编辑</button>
                             &nbsp;&nbsp;&nbsp;<button class="btn btn-default btn-sm" onclick="ToDelete(<%=item.Id%>);">删除</button>
@@ -106,7 +110,7 @@
                     <%}}%>
             </tbody>
         </table>
-        <button class="btn btn-primary" onclick="AddNew()">新增</button>
+
     </script>
 
 

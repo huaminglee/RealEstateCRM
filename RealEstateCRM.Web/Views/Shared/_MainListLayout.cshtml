@@ -69,6 +69,18 @@
                                 </ul>
                             </li>
                         }
+                        if (UserInfo.CurUser.HasRight(""))
+                        {
+                            <li class="dropdown">
+                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">项目管理<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    @if (UserInfo.CurUser.HasRight(""))
+                                    {
+                                        <li>@Html.ActionLink("产品类型配置", "Config", "RoomType")</li>}
+
+                                </ul>
+                            </li>
+                        }
                     }
                     else
                     {
@@ -98,10 +110,6 @@
                                     @if (UserInfo.CurUser.HasRight("系统管理-数据字典"))
                                     {
                                         <li>@Html.ActionLink("数据字典", "Dictionary", "System")</li>}
-                                    @if (UserInfo.CurUser.HasRight("系统管理-部门管理"))
-                                    {
-                                        <li>@Html.ActionLink("项目配置", "Config", "RoomType")</li>}
-
                                 </ul>
                             </li>
                         }

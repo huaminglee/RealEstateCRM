@@ -142,6 +142,7 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult Create(int projectid, int type, string Name, string AllPhone)
         {
             ClientCreate c = new ClientCreate();
+            ViewBag.Type = type;
             c.Name = Name;
             c.AllPhone = AllPhone;
             c.ProjectId = projectid;
@@ -152,18 +153,25 @@ namespace RealEstateCRM.Web.Controllers
                     c.ContactType = "来电"; break;
                 case 2:
                     c.ContactType = "来访"; break;
+                case 3:
+                    ViewBag.HasAppointment = true;
+                    return View(c);
             }
             c.ContactActualTime = DateTime.Now;
             ViewBag.HasAppointment = false;
             return View(c);
         }
 
-        public ActionResult CreateClient(FormCollection collection)
+        public ActionResult CreateClient(int type,FormCollection collection)
         {
             ClientCreate cc = new ClientCreate();
-            if (collection["ContactActualTime"] == null || collection["ContactActualTime"].Equals(""))
+            ViewBag.Type = type;
+            if (type != 3)
             {
-                ModelState.AddModelError("ContactActualTime", "联系时间不能为空");
+                if (collection["ContactActualTime"] == null || collection["ContactActualTime"].Equals(""))
+                {
+                    ModelState.AddModelError("ContactActualTime", "联系时间不能为空");
+                }
             }
             bool HasAppointment = (collection["HasAppointment"] != null && collection["HasAppointment"].Equals("Add")) ? true : false;
             if (HasAppointment)
@@ -222,10 +230,16 @@ namespace RealEstateCRM.Web.Controllers
             Client c = db.Clients.Find(id);
             List<ClientActivity> ContactList = new List<ClientActivity>();
             List<ClientActivity> AppointmentList = new List<ClientActivity>();
+            List<Card> CardList = new List<Card>();
+            List<Order> OrderList = new List<Order>();            
             ContactList = (from o in db.ClientActivities where o.ClientId == id && !o.PlanTime.HasValue select o).ToList();
             AppointmentList = (from o in db.ClientActivities where o.ClientId == id && o.PlanTime.HasValue select o).ToList();
+            CardList = (from o in db.Cards where o.ClientId == id select o).ToList();
+            OrderList = (from o in db.Orders where o.ClientId == id select o).ToList();
             ViewBag.Contacts = ContactList;
             ViewBag.Appointments = AppointmentList;
+            ViewBag.Cards = CardList;
+            ViewBag.Orders = OrderList;
             return View(c);
         }
 
