@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "客户转移";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+}
+<script type="text/javascript">
+    function Transfer() {
+        if ($("#newGroupId").val() == "") {
+            alert("请先选择小组");
+            return;
+        }
+        var data = { newGroupId: $("#newGroupId").val(), clientId: @ViewBag.ClientId};
+        $.post('../TransferSingleProcess', data, function (data) {
+            alert(data.obj);
+            if (data.success == true) {
+                window.opener.location.reload();
+                window.close();
+            }
+        });
+    }
+</script>
+<div class="well" style="width:650px;margin:0px auto">
+   
+        <fieldset>
+            <legend>新项目选择</legend>
+            <div class="form-group">
+                @Html.SearchLabel("newGroupId", "所属小组:")@Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
+            </div>
+        </fieldset>
+        <p style="text-align:center">@MyControls.Btn("保存","Transfer();") @MyControls.Btn("取消", "window.close()")</p>
+
+</div>

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "客户清单";
+    ViewBag.Title = "客户转移";
     Layout = "~/Views/Shared/_MainListLayout.cshtml";
 }
 @section Main{
@@ -8,7 +8,8 @@
         jQuery(document).ready(function () {
             var PostData = {};
             $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
-            @Html.Raw(JqGridSimple.OutGrid("ListQuery"))
+            $("input[value='转移']").popover({ html: true, placement: 'bottom', title: '转移选中的客户', content: $("#submitdiv").html(), trigger: "click" });
+            @Html.Raw(JqGridSimple.OutGrid("ListQuery",true));
 
             function AfterInsertRow(rowid, aData) {
                 //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");
@@ -38,20 +39,38 @@
             $('#listGrid').appendPostData({ Name: $("#Name").val() });
             $('#listGrid').appendPostData({ PhoneNumber: $("#PhoneNumber").val() });
             $('#listGrid').appendPostData({ GroupId: $("#GroupId").val() });
+
             $('#listGrid').trigger('reloadGrid');
         }
         function Refresh() {
             SearchClick();
         }
+
+        function Transfer() {
+            if ($("#newGroupId").val() == "") {
+                alert("请先选择小组");
+                return;
+            }
+            var data = { newGroupId: $("#newGroupId").val(), selectedIds: $('#listGrid').getGridParam('selarrrow').toString() };
+            $.post('./TransferBatch', data, function (data) {
+                alert(data.obj);
+                if (data.success == true) {
+                    $("input[value='转移']").popover('hide');
+                    SearchClick();
+                }
+            });
+        }
     </script>
     <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
         @Html.ShortInput("Name", "名 称:")
         @Html.ShortInput("PhoneNumber", "电 话:")
+        @Html.SearchLabel("GroupId", "所属小组:")@Html.DropDownList("GroupId", (ViewBag.Groups as List<SelectListItem>))
         @MyControls.SearchBtn()
-        @if (Request.RequestContext.RouteData.Values["projectid"] != null)
-        {
-            @MyControls.Btn("新增", "AddNew()")
-        }
+        @MyControls.Btn("转移", "")
+        <div style="display:none" id="submitdiv">
+            新小组 :@Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
+            @MyControls.Btn("确定", "Transfer()")
+        </div>
     </div>
     @Html.Raw(JqGridSimple.OutTable())
 

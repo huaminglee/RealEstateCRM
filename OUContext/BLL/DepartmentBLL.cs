@@ -296,6 +296,12 @@ namespace OUDAL
             List<string> types = (from o in db.RoomTypes where o.DepartmentId == deptid select o.Name).ToList();
             return types;
         }
+
+        static public List<Department> GetGroupsByPid(int deptid)
+        {
+            List<Department> list = (from o in db.Departments where o.PId == deptid && o.DepartmentType == "小组" select o).ToList();
+            return list;
+        }
         
     }
 }

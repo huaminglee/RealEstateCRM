@@ -602,6 +602,8 @@
     <Content Include="Views\Order\Cancel.cshtml" />
     <Content Include="Views\Order\Create.cshtml" />
     <Content Include="Views\Order\LevelUp.cshtml" />
+    <Content Include="Views\Client\TransferBatch.cshtml" />
+    <Content Include="Views\Client\TransferSingle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

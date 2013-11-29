@@ -121,13 +121,12 @@ namespace OUDAL
                 List<Department> departments = new List<Department>
                                                    {
                                                        new Department {Name = "XX公司", PId = 0, DepartmentType = "公司"},
-                                                       //1
                                                        new Department {Name = "项目1", PId = 1, DepartmentType = "项目"},
-                                                       //2  
                                                        new Department {Name = "项目2", PId = 1, DepartmentType = "项目"},
-                               
-                                                        new Department {Name = "小组1", PId = 2, DepartmentType = "小组"},
-                                                         new Department {Name = "小组2", PId = 2, DepartmentType = "小组"}
+                                                       new Department {Name = "小组1", PId = 2, DepartmentType = "小组"},
+                                                       new Department {Name = "小组2", PId = 2, DepartmentType = "小组"},
+                                                       new Department {Name = "公共客户", PId = 1, DepartmentType = "项目"},
+                                                       new Department {Name = "沉睡客户", PId = 1, DepartmentType = "项目"}
                                                    };
                 departments.ForEach(o => context.Departments.Add(o));
                 context.SaveChanges();

@@ -9,6 +9,7 @@ using RealEstateCRM.Web.Models;
 using RealEstateCRM.Web.BLL;
 using OUDAL;
 using Dapper;
+using System.Transactions;
 namespace RealEstateCRM.Web.Controllers
 {
     public class ClientController : BaseController
@@ -36,6 +37,7 @@ namespace RealEstateCRM.Web.Controllers
 
             Utilities.AddSqlFilterLike(collection, "Name", ref sql, "c.Name", parameters);
             Utilities.AddSqlFilterLike(collection, "PhoneNumber", ref sql, "c.Allphone", parameters);
+            Utilities.AddSqlFilterInInts(collection, "GroupId", ref sql, "c.GroupId");
             int projectid = 0;//按项目过滤客户
             if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); }
             if (projectid != 0)
@@ -162,7 +164,7 @@ namespace RealEstateCRM.Web.Controllers
             return View(c);
         }
 
-        public ActionResult CreateClient(int type,FormCollection collection)
+        public ActionResult CreateClient(int type, FormCollection collection)
         {
             ClientCreate cc = new ClientCreate();
             ViewBag.Type = type;
@@ -194,6 +196,12 @@ namespace RealEstateCRM.Web.Controllers
             {
                 ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为：" + DepartmentBLL.GetNameById(check));
             }
+            if (type == 3)
+            {
+                ModelState.Remove("ContactType");
+                ModelState.Remove("ContactActualTime");
+                ModelState.Remove("ContactDetail");
+            }
             if (ModelState.IsValid)
             {
                 Client c = new Client();
@@ -201,12 +209,15 @@ namespace RealEstateCRM.Web.Controllers
                 c.CreateTime = DateTime.Now;
                 db.Clients.Add(c);
                 db.SaveChanges();
-                ClientActivity ca = new ClientActivity();
-                ca.ClientId = c.Id;
-                ca.ActualTime = cc.ContactActualTime;
-                ca.Type = cc.ContactType;
-                ca.Detail = cc.ContactDetail;
-                db.ClientActivities.Add(ca);
+                if (type != 3)
+                {
+                    ClientActivity ca = new ClientActivity();
+                    ca.ClientId = c.Id;
+                    ca.ActualTime = cc.ContactActualTime;
+                    ca.Type = cc.ContactType;
+                    ca.Detail = cc.ContactDetail;
+                    db.ClientActivities.Add(ca);
+                }
                 if (HasAppointment)
                 {
                     ClientActivity ap = new ClientActivity();
@@ -231,7 +242,7 @@ namespace RealEstateCRM.Web.Controllers
             List<ClientActivity> ContactList = new List<ClientActivity>();
             List<ClientActivity> AppointmentList = new List<ClientActivity>();
             List<Card> CardList = new List<Card>();
-            List<Order> OrderList = new List<Order>();            
+            List<Order> OrderList = new List<Order>();
             ContactList = (from o in db.ClientActivities where o.ClientId == id && !o.PlanTime.HasValue select o).ToList();
             AppointmentList = (from o in db.ClientActivities where o.ClientId == id && o.PlanTime.HasValue select o).ToList();
             CardList = (from o in db.Cards where o.ClientId == id select o).ToList();
@@ -526,6 +537,94 @@ namespace RealEstateCRM.Web.Controllers
                 }
             }
             result.success = true;
+            return Json(result);
+        }
+
+        public ActionResult TransferBatch(int projectid)
+        {
+            List<SelectListItem> groups = new List<SelectListItem>();
+            groups.Add(new SelectListItem());
+            DepartmentBLL.GetGroupsByPid(projectid).ForEach(o =>
+            {
+                groups.Add(new SelectListItem { Text = o.Name, Value = o.Id.ToString() });
+            });
+            ViewBag.Groups = groups;
+
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult TransferBatch(string selectedIds, int newGroupId)
+        {
+            Result result = new Result();
+            int count = 0;
+            string[] strs = selectedIds.Split(',');
+            using (
+                TransactionScope tran = new TransactionScope(TransactionScopeOption.RequiresNew, new TimeSpan(0, 5, 0)))
+            {
+                foreach (string s in strs)
+                {
+                    int clientId;
+                    if (int.TryParse(s, out clientId))
+                    {
+                        Client client = db.Clients.Find(clientId);
+                        if (client.GroupId != newGroupId)
+                        {
+                            Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
+                                string.Format("从{0}转移到{1}", DepartmentBLL.GetNameById(client.GroupId),
+                                    DepartmentBLL.GetNameById(newGroupId)));
+                            client.GroupId = newGroupId;
+                            count++;
+                        }
+                    }
+                }
+                db.SaveChanges();
+                tran.Complete();
+                result.success = true;
+                result.obj = string.Format("已转移了{0}个客户", count);
+            }
+
+            return Json(result);
+        }
+
+        public ActionResult TransferSingle(int projectid, int id)//此处id为clientid
+        {
+            List<SelectListItem> groups = new List<SelectListItem>();
+            groups.Add(new SelectListItem());
+            DepartmentBLL.GetGroupsByPid(projectid).ForEach(o =>
+            {
+                groups.Add(new SelectListItem { Text = o.Name, Value = o.Id.ToString() });
+            });
+            ViewBag.Groups = groups;
+            ViewBag.ClientId = id;
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult TransferSingleProcess(int newGroupId, int clientId)
+        {
+            Result result = new Result();
+            Client client = db.Clients.Find(clientId);
+            if (client.GroupId != newGroupId)
+            {
+                Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
+                    string.Format("从{0}转移到{1}", DepartmentBLL.GetNameById(client.GroupId),
+                        DepartmentBLL.GetNameById(newGroupId)));
+                client.GroupId = newGroupId;
+
+            }
+            else
+            {
+                result.success = false;
+                result.obj = string.Format("此客户已在{0}中，不需要转移", DepartmentBLL.GetNameById(client.GroupId));
+                return Json(result);
+            }
+
+            db.SaveChanges();
+            result.success = true;
+            result.obj = string.Format("转移客户成功");
+
+
             return Json(result);
         }
 
