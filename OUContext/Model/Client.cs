@@ -149,4 +149,23 @@ namespace OUDAL
         [DisplayName("邀约情况说明")]
         public string AppointmentDetail { get; set; }
     }
+
+    public class ClientTransformLog
+    {
+        [DisplayName("客户姓名")]
+        public string ClientName { get; set; }
+        [DisplayName("转移时间")]
+        public DateTime TransferTime { get; set; }
+        [DisplayName("转移原因")]
+        public string Reason { get; set; }
+        [DisplayName("转出销售组")]
+        public string OutGroup { get; set; }
+        [DisplayName("转入销售组")]
+        public string InGroup { get; set; }
+        [DisplayName("操作人")]
+        public string Person { get; set; }
+
+        public static string sqlIn = @"select Clients.Name as ClientName,AccessTime as TransferTime,SUBSTRING(AccessInfo,(CHARINDEX('从',AccessInfo)+1),(CHARINDEX('转移到',AccessInfo)-CHARINDEX('从',AccessInfo)-1)) as OutGroup,SUBSTRING(AccessInfo,PATINDEX('%转移到%',AccessInfo)+3,LEN(AccessInfo)) as InGroup, AccessPerson as Person from AccessLogs join Clients on KeyId=Clients.Id where AccessClass='客户' and AccessAction='客户转移' and AccessInfo LIKE '从%转移到{0}'";
+        public static string sqlOut = @"select Clients.Name as ClientName,AccessTime as TransferTime,SUBSTRING(AccessInfo,(CHARINDEX('从',AccessInfo)+1),(CHARINDEX('转移到',AccessInfo)-CHARINDEX('从',AccessInfo)-1)) as OutGroup,SUBSTRING(AccessInfo,PATINDEX('%转移到%',AccessInfo)+3,LEN(AccessInfo)) as InGroup, AccessPerson as Person from AccessLogs join Clients on KeyId=Clients.Id where AccessClass='客户' and AccessAction='客户转移' and AccessInfo LIKE '从{0}转移到%'";
+    }
 }

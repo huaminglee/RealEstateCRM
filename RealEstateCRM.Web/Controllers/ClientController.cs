@@ -628,6 +628,61 @@ namespace RealEstateCRM.Web.Controllers
             return Json(result);
         }
 
+        public ActionResult ClientTransferIn()
+        {
+            ViewBag.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult ClientTransferInQuery(FormCollection collection)
+        {
+            //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
+            Result result = new Result();
+            List<object> parameters = new List<object>();
+            int GroupId = int.Parse(collection["groupId"]);
+            string GroupName = DepartmentBLL.GetNameById(GroupId);
+            string sql = string.Format(ClientTransformLog.sqlIn,GroupName);
+            Utilities.AddSqlFilterDateGreaterThen(collection, "from", ref sql, "AccessTime", parameters);
+            Utilities.AddSqlFilterDateLessThen(collection, "to", ref sql, "AccessTime", parameters);
+            
+            db.Database.Connection.Open();
+            var dynamicParams = new DynamicParameters();
+            parameters.ForEach(o => { var p = o as SqlParameter; dynamicParams.Add(p.ParameterName, p.Value, p.DbType); });
+            var query = db.Database.Connection.Query<ClientTransformLog>(sql, param: dynamicParams);
+            db.Database.Connection.Close();
+            result.success = true;
+            result.obj = query;
+            return Json(result);
+        }
+
+        public ActionResult ClientTransferOut()
+        {
+            ViewBag.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult ClientTransferOutQuery(FormCollection collection)
+        {
+            //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
+            Result result = new Result();
+            List<object> parameters = new List<object>();
+            int GroupId = int.Parse(collection["groupId"]);
+            string GroupName = DepartmentBLL.GetNameById(GroupId);
+            string sql = string.Format(ClientTransformLog.sqlOut, GroupName);
+            Utilities.AddSqlFilterDateGreaterThen(collection, "from", ref sql, "AccessTime", parameters);
+            Utilities.AddSqlFilterDateLessThen(collection, "to", ref sql, "AccessTime", parameters);
+
+            db.Database.Connection.Open();
+            var dynamicParams = new DynamicParameters();
+            parameters.ForEach(o => { var p = o as SqlParameter; dynamicParams.Add(p.ParameterName, p.Value, p.DbType); });
+            var query = db.Database.Connection.Query<ClientTransformLog>(sql, param: dynamicParams);
+            db.Database.Connection.Close();
+            result.success = true;
+            result.obj = query;
+            return Json(result);
+        }
     }
 
 }

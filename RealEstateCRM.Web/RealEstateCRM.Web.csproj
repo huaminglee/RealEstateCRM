@@ -604,6 +604,8 @@
     <Content Include="Views\Order\LevelUp.cshtml" />
     <Content Include="Views\Client\TransferBatch.cshtml" />
     <Content Include="Views\Client\TransferSingle.cshtml" />
+    <Content Include="Views\Client\ClientTransferIn.cshtml" />
+    <Content Include="Views\Client\ClientTransferOut.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />
