@@ -8,7 +8,11 @@
     <script type="text/javascript">
         jQuery(document).ready(function () {
             $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        });
+            $("#DateFromTransferTime").val('@ViewBag.Date1');
+            $("#DateToTransferTime").val('@ViewBag.Date2');
+            SearchClick();
+        });
+
         function SearchClick() {
             var postData={groupid:@ViewBag.GroupId,from:$("#DateFromTransferTime").val(),to:$("#DateToTransferTime").val()};
             $.post("./ClientTransferInQuery",postData, function(respDate) {
@@ -54,11 +58,11 @@
 
                     <tr>
                         <td><%=item.ClientName%></td>
-                        <td style="text-align:left"><%=Date2String(item.TransferTime)%></td>
+                        <td style="text-align:left"><%=Date2String(item.TransferDate)%></td>
                         <td style="text-align:left"><%=item.Reason%></td>
                         <td style="text-align:left"><%=item.OutGroup%></td>
                         <td style="text-align:left"><%=item.InGroup%></td>
-                        <td style="text-align:left"><%=item.Person%></td>
+                        <td style="text-align:left"><%=item.PersonName%></td>
                     </tr>
                     <%}%>
             </tbody>

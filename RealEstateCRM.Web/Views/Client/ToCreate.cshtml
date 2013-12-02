@@ -1,7 +1,7 @@
 ﻿@model OUDAL.Client
 @{
     ViewBag.Title = "创建客户";
-    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
 }
 @section Main{
 
@@ -17,27 +17,45 @@
                 <p style="text-align:center">@MyControls.SubmitBtn("查找")</p>
             }
         </div>
-        @if (ViewBag.Message)
+        @if (ViewBag.Message==true&&ViewBag.Button == false)
         {
-            <p style="color:red">没有找到完全符合条件的客户</p>
+            <p style="color:red">找到完全符合条件的客户,无法创建新客户</p>
+        }
+        else if (ViewBag.Message)
+        {
+            <p style="color:red">找到相似条件的客户,请核对</p>
         }
         @if (ViewBag.Show)
         {
             <div id="Clients">
-                @if (ViewBag.Clients.Count != 0)
+                @if (ViewBag.Clients1.Count != 0)
                 {
                     <table class="table table-bordered table-striped">
-                        <tr><th>姓名</th><th>电话</th><th>所属项目</th></tr>
-                        @foreach (ClientView c in ViewBag.Clients)
+                        <tr><th>姓名</th><th>电话</th></tr>
+                        @foreach (ClientView c in ViewBag.Clients1)
                         {
                             <tr>
                                 <td><a href="./View/@c.Id">@c.Name</a></td>
                                 <td>@c.AllPhone</td>
-                                <td>@c.ProjectName</td>
+                               
                             </tr>
                         }
                     </table>
                 }
+                @if (ViewBag.Clients2.Count != 0)
+{
+    <table class="table table-bordered table-striped">
+        <tr><th>姓名</th><th>电话</th></tr>
+        @foreach (ClientView c in ViewBag.Clients2)
+        {
+            <tr>
+                <td><a href="./View/@c.Id">@c.Name</a></td>
+                <td>@c.AllPhone</td>
+                
+            </tr>
+        }
+    </table>
+}
             </div>
 
         }

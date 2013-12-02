@@ -35,7 +35,7 @@
                 @Html.ValidationMessageFor(m => m.Type)
             </div>
             @Html.MyDateTimeFor(model => model.PlanTime)
-            @Html.MyDateTimeFor(model => model.ActualTime)
+            @* @Html.MyDateTimeFor(model => model.ActualTime)*@
             @Html.MyTextAreaFor(model => model.Detail, 3)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>

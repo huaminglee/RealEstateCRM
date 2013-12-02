@@ -115,7 +115,7 @@
         });
     </script>
     <div class="btn-toolbar well">
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../Edit/@Model.Id');">修改</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');">修改</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="ToDelete(@Model.Id)">删除</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/@Model.Id');">添加联系记录</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
@@ -142,8 +142,12 @@
                 @Html.MyDisplayFor(m => m.Way)@Html.MyDisplayFor(m => m.WayExtend)
             </tr>
             <tr>
-                @Html.MyDisplayFor(m => m.ProjectId, DepartmentBLL.GetNameById(Model.ProjectId))
+                
                 @Html.MyDisplayFor(m => m.GroupId, DepartmentBLL.GetNameById(Model.GroupId))
+                @Html.MyDisplayFor(m=>m.CreateTime)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.State)@Html.MyDisplayFor(m => m.StateDate)
             </tr>
             <tr>
                 @Html.MyDisplayFor(m => m.Code)@Html.MyDisplayFor(m => m.Remark)
@@ -311,6 +315,9 @@
             </table>
         }
     </div>
+<div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+    <div>@MyControls.AccessLogTable(AccessLog.GetByClass(@Model.Id, Client.LogClass))</div>
+</div>
 }
 
 

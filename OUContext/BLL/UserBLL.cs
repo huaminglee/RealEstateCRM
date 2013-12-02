@@ -34,7 +34,7 @@ namespace OUDAL
             List<SelectListItem> list = new List<SelectListItem>();
             using(Context db=new Context())
             {
-                var query = (from o in db.SystemUsers orderby o.Name select new { o.Id, o.Name });
+                var query = (from o in db.SystemUsers orderby o.LoginName select new { o.Id, Name = o.Name });
                     
                 foreach (dynamic o in query)
                 {
@@ -44,6 +44,20 @@ namespace OUDAL
             }
         }
 
+        public static List<IdName> GetSales()
+        {
+            List<IdName> list = new List<IdName>();
+            using (Context db = new Context())
+            {
+                var query =
+                    db.Database.SqlQuery<IdName>(
+                        @"select u.id,u.name from systemusers u join roleusers ru on ru.userid=u.id
+join rolefunctions rf on rf.roleid=ru.roleid join functions f on f.id=rf.functionid where f.ParentName='客户管理' and f.name='查看级别:本人客户'")
+                        .ToList();
+               
+               return query;
+            }
+        }
 
         
     }

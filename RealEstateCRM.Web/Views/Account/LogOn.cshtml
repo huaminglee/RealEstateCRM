@@ -3,73 +3,109 @@
 @{
     ViewBag.Title = "登录";
 }
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
-<style type="text/css">
-html,body{	}
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
 
-#mainBody{
-	width:900px;
-	margin:0px auto;
-	margin-top:20px;	
-}
-#mainBody div{	margin:5px 0px 5px 0px;
-}
-</style>
 
-@Styles.Render("~/bundles/BootstrapCss")
+    @Styles.Render("~/bundles/BootstrapCss")
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/redmond")
     @Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/BootstrapJs")
     @Scripts.Render("~/bundles/MyJs")
-<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+    <style type="text/css">
+        html, body {background-color: #F1F1F1;
+        width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+         #mainBody {
+            width: 100%;
+            margin: 0px auto;
+           
+            background: url(@Url.Content("~/Content/Images/indexBanner3.jpg")) no-repeat center top;
+
+        }
+        #mainBody div {
+            margin: 5px 0px 5px 0px;
+        }
+
+        #foot {
+            position: absolute;
+            bottom: 0px;
+            right: 16px;
+            width: 100%;
+            height: 20px;
+            text-align: center;
+            z-index: 2;
+            overflow: hidden;
+            border-top: 1px solid #E0E0E0;
+            color: #888888;
+        }
+    </style>
+
 </head>
 <body>
-    <div id="mainBody">
+<div id="mainBody">
+    @using (Html.BeginForm())
+{
+    <div style="width:960px;margin: 0px auto;padding: 380px 0px 0px 0px">
+        <table>
+            <tr>
+                <td>
+                    <img src='@Url.Content("~/content/images/logo.png")' />
 
-        <img style="display:none" src="@Url.Content("~/")Content/Images/logo800.png">
-        <div style="width:460px;margin: 0px auto;">
-            
+                </td>
+                <td>
+                    <div class="form-group" style="margin-bottom:30px">
+                        <label for="UserName">用户名</label>
+                        @Html.TextBoxFor(m => m.UserName, new { autofocus = "autofocus" })
+                        @Html.ValidationMessageFor(m => m.UserName)
+                    </div>
 
-            @using (Html.BeginForm()) {
-                <div>
-                    <fieldset>
-                        <legend>登录</legend>
 
-                        <div class="form-group">
-                            <label for="UserName">用户名</label>
-                            @Html.TextBoxFor(m => m.UserName,new {autofocus="autofocus"})
-                            @Html.ValidationMessageFor(m => m.UserName)
-                        </div><p></p><p></p>
-                        
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password)
+                        @Html.PasswordFor(m => m.Password)
+                        @Html.ValidationMessageFor(m => m.Password)
+                        @Html.ValidationSummary(true, "用户名或密码错误，请再试一次")
+                    </div>
+                </td>
+                <td>
+                    &nbsp;&nbsp;
+                    <input type="submit" style=" width: 80px;height:60px" class="btn btn-primary" value="确 定" />
+                    
+                </td>
+            </tr>
+        </table>
 
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.Password) 
-                            @Html.PasswordFor(m => m.Password)
-                            @Html.ValidationMessageFor(m => m.Password)
-                        </div>
-<p></p><p></p>
-                        <p style="width: 60px;margin:auto">
-                            <input type="submit" style="margin-left: -70px;width: 170px" class="btn btn-primary" value="确 定" />
-                        </p>
-                    </fieldset>
-                </div>
-            }@Html.ValidationSummary(true, "用户名或密码错误，请再试一次")
-        </div>
     </div>
-<script type="text/javascript">
-    var rootpath = '@Url.Content("~")';
-    var formsubmited=false;
-    $(document).ready(function () {
-        $("form").addClass("form-horizontal");
 
-        $("input[type='text']").addClass("form-control");
-        $("input[type='password']").addClass("form-control");
-    });
-        </script>
+}
+        
+    </div>
+    <div id="foot" style="position: absolute;">
+        @@Copyright 上海虬溪软件 2013
+
+    </div>
+    <script type="text/javascript">
+        var rootpath = '@Url.Content("~")';
+        var formsubmited = false;
+        $(document).ready(function () {
+            $("form").addClass("form-horizontal");
+
+            $("input[type='text']").addClass("form-control");
+            $("input[type='password']").addClass("form-control");
+            $("#UserName").focus();
+        });
+    </script>
 </body>
+</html>

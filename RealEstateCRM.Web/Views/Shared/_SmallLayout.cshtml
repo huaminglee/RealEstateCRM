@@ -10,53 +10,58 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/BootstrapJs")
     @Scripts.Render("~/bundles/MyJs")
-   
     @RenderSection("scripts", required: false)
-<script type="text/javascript">
-    var formsubmited = false;
-    $(document).ready(function () {
-        $("form").addClass("form-horizontal");
-        $("form").submit(function () {
-            if (formsubmited) {
-                alert("请勿重复提交数据");
-                return false;
-            } else {
-                formsubmited = true;
-                setTimeout(function () { $("input:submit").disabled = true; }, 100);
-                //$("body").html("<div>提交中...</div>");
-                return true;
+    <script type="text/javascript">
+        var formsubmited = false;
+        $(document).ready(function () {
+            $("form").addClass("form-horizontal");
+            $("input[type='text']").addClass("form-control");
+            $("select").addClass("form-control");
+            var getArgs = GetUrlArgs();
+            if (getArgs.reload == "1") {
+                if (window.opener.opener == 'undefined' || window.opener.opener == null) {
+                } else {
+                    window.opener.location.reload();
+                }
             }
+            $("form").submit(function () {
+                if (formsubmited) {
+                    alert("请勿重复提交数据");
+                    return false;
+                } else {
+                    formsubmited = true;
+                    setTimeout(function () { $("input:submit").disabled = true; }, 100);
+                    //$("body").html("<div>提交中...</div>");
+                    return true;
+                }
+            });
         });
-    });
-</script>
+    </script>
 </head>
-
 <body>
-<div >
-  <div class="navbar   navbar-inverse">
-    <div class="navbar-inner">
-      <div style="width: auto;" class="container">
-        <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
-          <span class="icon-bar"></span>
-        </a>
-        <div class="nav-collapse">
-            <ul class="nav navbar-brand">
-                <li class="brand">@ViewBag.Title</li>
-            </ul>
-            <ul class="nav pull-right active navbar-brand">
-                <li class="brand">@System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>
-            </ul>
+
+    <div class="">
+        <div class="navbar navbar-inverse">
+            
+
+            <div class="navbar-collapse">
+                <ul class="nav  navbar-nav navbar-brand">
+                    <li>@ViewBag.Title</li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right  navbar-brand pull-right">
+                    <li class="brand"><img src="@Url.Content("~/content/images/glcp.png")" style="float: left; height: 30px; margin-top: -7px; "" /> @System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>
+                </ul>
+
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
+
         @RenderBody()
         @RenderSection("Main", false)
-      
-</div>
-<footer>
-@RenderSection("Footer",false)
-</footer>
+    </div>
+
+    <footer>
+        @RenderSection("Footer", false)
+    </footer>
 </body>
 </html>
 

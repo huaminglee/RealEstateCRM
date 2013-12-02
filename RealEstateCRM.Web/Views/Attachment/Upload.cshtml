@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Upload";
+    ViewBag.Title = "附件上传";
     Layout = "~/Views/Shared/_SmallLayout.cshtml";
 }
 
@@ -27,16 +27,17 @@
     {
         @Html.ValidationSummary(true)
         <fieldset>
-            <legend>上传附件</legend>
+            <legend>请选择文件</legend>
             <input type="hidden" name="fileNum" id="fileNum" value="0" />
             <ol id="filediv">
                 
             </ol>
             
         </fieldset>
-        <input type='button' onclick='addFile(1);' value='增加文件' />
+        <input type='button' class="btn btn-default"  onclick='addFile(1);' value='增加文件' />
         <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>
-        <input type="submit" value=" 保 存 " />
+        <input type="submit" class="btn btn-primary"  value=" 保 存 " /><br /><br />
+        <div class="alert alert-info">提示：附件文件长度合计不能超过10M</div>
     }
    </div>
 }

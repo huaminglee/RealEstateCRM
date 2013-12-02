@@ -20,10 +20,12 @@ jQuery(document).ready(function () {
         grid.setCell(rowid,"State",aData.State==0?"正常":"禁用");        
      }
 }); 
-var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
-,{ name: 'Name',label:"用户名", index: 'Name', align: 'left' ,width:85}
-,{ name: 'Roles',label:"角色",sortable:false, align: 'left',width:85 }
-,{ name: 'State',label:"状态", index: 'State', align: 'left',width:40 }];
+    var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+    
+,{ name: 'LoginName',label:"登录名", index: 'LoginName', align: 'left' ,width:95}
+,{ name: 'Name',label:"用户名", index: 'Name', align: 'left' ,width:95}
+,{ name: 'Roles',label:"角色",sortable:false, align: 'left',width:150 }
+,{ name: 'State',label:"状态", index: 'State', align: 'left',width:44 }];
 function rowclick(id)
 {   
 }
@@ -101,7 +103,7 @@ function removemanager()
     });
 }
 </script>
-<div  style="width:260px;margin:0px auto;float:left">
+<div  style="width:500px;margin:0px auto;float:left">
 <div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
 <label>用户名称</label><input id="Name" type="text" style="width:80px" />
 
@@ -114,8 +116,8 @@ function removemanager()
 </div>
 <div  style="width:60px; height:400px; margin:0px auto;margin-top:10px; padding :5px; vertical-align:middle; float:left">
 <br /><br /><br /><br /><br /><br />
-<button  onclick="adduser();">添加<br />选中<br />人员<br />》》</button><br /><br /><br /><br /><br />
-<button  onclick="removeuser();">移除<br />选中<br />人员<br />《《</button><br />
+<button class="btn btn-primary"  onclick="adduser();">添加<br />选中<br />人员<br />》》</button><br /><br /><br /><br /><br />
+<button class="btn btn-primary"  onclick="removeuser();">移除<br />选中<br />人员<br />《《</button><br />
 </div> 
 <div style="width:240px;float:right">
 <div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
@@ -126,11 +128,11 @@ function removemanager()
 <script id="tmplView" type="text/x-jquery-tmpl">
 <option value='${userid}'>${username} {{if ismanager==1}}经理{{/if}} </option>     
 </script>
-<select multiple="multiple" size="20" style="width:100%" id="selectuser">
+<select multiple="multiple" size="25" style="width:100%" id="selectuser">
 
 </select></div>
 <div style="padding-left:5px"><br /><br />
-<button onclick="setmanager();" style="width:50px">将选中人员设置为部门经理</button><br /><br /> <button onclick="removemanager();" style="width:50px">将选中人员取消部门经理</button>
+    <button class="btn btn-primary" onclick="setmanager();" style="width:40px">选<br />中<br />人<br />员<br />设<br />为<br />经<br />理</button><br /><br /> <button class="btn btn-primary" onclick="removemanager();" style="width:40px" />选<br />中<br />人<br />员<br />取<br />消<br />经<br />理</button>
 </div>
 </div>
 <div style="clear:both"></div>

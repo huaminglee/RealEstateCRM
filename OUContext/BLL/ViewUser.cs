@@ -8,12 +8,12 @@ namespace OUDAL
     public class ViewUser
     {
         
-        public static string BaseSql= @"select id,name,state,password,email,workno from systemusers u where 1=1";
+        public static string BaseSql= @"select id,loginname,name,state,password,email from systemusers u where 1=1";
         public int id{get;set;}
         public string Name {get;set;}
         public string Email { get; set; }
         public int State { get; set; }
-        public string WorkNO { get; set; }
+        public string LoginName { get; set; }
         public string Roles { get; set; }
         public string Departments { get; set; }
     }

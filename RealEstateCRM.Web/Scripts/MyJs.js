@@ -194,4 +194,21 @@ return args; // 返回此对象
          return number;
      }
  }
+//返回或关闭 .如不能返回则关闭
+// history.length Note: Internet Explorer and Opera start at 0, while Firefox, Chrome, and Safari start at 1.
+ function GoBack() {
+     if (document.all) {//ie
+         if (window.history.length > 0) {
+             window.history.back();
+             return;
+         }
+     } else {
+         
+         if (window.history.length > 1) {
+             window.history.back();
+             return;
+         }
+     }
+     window.close();
+ }
  

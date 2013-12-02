@@ -252,8 +252,7 @@ namespace OUDAL
             }
             return list;
         }
-
-        static public List<SelectListItem> GetDepartmentByType(int deptid)
+              static public List<SelectListItem> GetDepartmentByType(int deptid)
         {
             List<Department> list = new List<Department>();
             string type = db.Departments.Find(deptid).DepartmentType;
@@ -265,6 +264,7 @@ namespace OUDAL
             }
             return res;
         }
+
 
         static public List<SelectListItem> GetDepartmentByType(int pid,int deptid)
         {
@@ -290,7 +290,12 @@ namespace OUDAL
             }
             return res;
         }
-
+        static public List<Department> GetDepartments(string type)
+        {
+            List<Department> list = new List<Department>();
+            list = (from o in db.Departments where o.DepartmentType == type select o).ToList();
+            return list;
+        }
         static public List<string> GetRoomType(int deptid)
         {
             List<string> types = (from o in db.RoomTypes where o.DepartmentId == deptid select o.Name).ToList();
@@ -302,6 +307,6 @@ namespace OUDAL
             List<Department> list = (from o in db.Departments where o.PId == deptid && o.DepartmentType == "小组" select o).ToList();
             return list;
         }
-        
+
     }
 }

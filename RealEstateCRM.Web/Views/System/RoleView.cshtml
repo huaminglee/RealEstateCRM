@@ -14,8 +14,8 @@
 <div>
     @*<input type="button" value="角色修改" onclick="$.colorbox({iframe:true, width:'600px', height:'80%',href:'../RoleEdit/@Model.Id'});" />
     <input type="button" value="权限修改" onclick="$.colorbox({iframe:true, width:'600px', height:'80%',href:'../RoleFunctionEdit/@Model.Id'});" />*@
-   <input type="button" value="角色修改" onclick="PopWindow('../RoleEdit/@Model.Id');" />
-    <input type="button" value="权限修改" onclick="PopWindow('../RoleFunctionEdit/@Model.Id');" />
+   <input type="button" class="btn btn-primary"  value="角色修改" onclick="PopWindow('../RoleEdit/@Model.Id');" />
+    <input type="button" class="btn btn-primary" value="权限修改" onclick="PopWindow('../RoleFunctionEdit/@Model.Id');" />
 </div>
 <hr />
     @Html.HiddenFor(model => model.Id)

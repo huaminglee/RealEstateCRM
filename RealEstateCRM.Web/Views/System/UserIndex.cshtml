@@ -16,8 +16,10 @@ jQuery(document).ready(function () {
         grid.setCell(rowid,"State",aData.State==0?"正常":"禁用");        
      }
 }); 
-var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
-,{ name: 'Name',label:"用户名", index: 'Name', align: 'left',width:200 }
+    var colModelGrid = [{ name: 'id', index: 'id', width: 1, align: 'left', hidden: true }
+
+, { name: 'LoginName', label: "登录名", index: 'LoginName', align: 'left', width: 150 }
+,{ name: 'Name',label:"用户名", index: 'Name', align: 'left',width:150 }
 ,{ name: 'Email',label:"邮箱",sortable:false,align: 'left',width:250 }
 ,{ name: 'Departments',label:"所属部门",sortable:false,align: 'left',width:200 }
 

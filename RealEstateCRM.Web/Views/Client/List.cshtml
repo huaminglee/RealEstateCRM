@@ -13,7 +13,7 @@
             function AfterInsertRow(rowid, aData) {
                 //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");
                 //grid.setCell(rowid,"FoodType",  TypeName(aData.FoodType));
-                //grid.setCell(rowid,"State", StateName(aData.State));
+                grid.setCell(rowid,"State", StateName(aData.State));
             }
 
         });
@@ -21,13 +21,15 @@
         @Html.JqFieldString("Name","名称",150,"c.Name")
         @Html.JqFieldString("Sex","性别",50,"c.Sex")
         @Html.JqFieldString("AllPhone","电话",250,"c.AllPhone")
-        @Html.JqFieldString("ProjectName","所属项目",150,"c.ProjectName")
+        
         @Html.JqFieldString("GroupName","所属小组",150,"c.GroupName")
         @Html.JqFieldString("Way","渠道",150,"c.Way")
         @Html.JqFieldString("WayExtend","渠道说明",150,"c.WayExtend")
         @Html.JqFieldString("Code","编码",100,"c.Code")
-        @Html.JqFieldString("Remark","备注",150,"c.Remark")];
-
+        @Html.JqFieldString("State","当前状态",150,"c.State")
+        @Html.JqFieldDate("StateDate","状态日期")
+        ];
+        @Html.EnumNameFunction("State",typeof(ClientStateEnum))
         function rowclick(id) {
             OpenFullWindow("./View/" + id, "_blank");
         }
@@ -51,6 +53,7 @@
         @if (Request.RequestContext.RouteData.Values["projectid"] != null)
         {
             @MyControls.Btn("新增", "AddNew()")
+             @MyControls.Btn("导入", "Import()")
         }
     </div>
     @Html.Raw(JqGridSimple.OutTable())

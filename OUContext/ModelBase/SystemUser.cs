@@ -16,48 +16,57 @@ namespace OUDAL
         /// </summary>
         public int State{get;set;}
         [Required]
-        [DisplayName("姓名")]
+        [DisplayName("登录名")]
         [MaxLength(50)]
-        public string Name { get; set; }
+        public string LoginName { get; set; }
         [Required]
         [DisplayName("密码")]
         [MaxLength(100)]
         public string Password { get; set; }
-        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        [Required]
         [MaxLength(50)]
-        [DisplayName("AD账号")]
-        public string WorkNO { get; set; }
+        [DisplayName("姓名")]
+        public string Name { get; set; }
         [DisplayName("邮箱")]
         [MaxLength(50)]
         public string Email { get; set; }
         public SystemUser()
         {
-            WorkNO = ""; Email = "";
+            Name = ""; Email = "";
         }
         public bool CheckPassword(string password)
         {
-            return Password == EncryptPassword(Name.ToLower(), password);
+            return Password == EncryptPassword(LoginName.ToLower(), password);
         }
         /// <summary>
         /// 修改密码或用户名时候调用。调用时password应该是加密前password
         /// </summary>
         /// <param name="db"></param>
         /// <returns></returns>
-        public bool Save(Context db)
+        public void Save(Context db,SystemUser newValue)
         {
-            Name = Name.Trim();
-            int count =
-                db.Database.SqlQuery<int>("select count(1) from systemusers where id!={0} and (name={1} )", Id,
-                                          Name).FirstOrDefault();
-            if (count > 0)
+            if (Id == 0)
             {
-                return false;
+                db.SystemUsers.Add(this);
             }
-            Password = EncryptPassword(Name.ToLower(), Password);
-            if (Id == 0) db.SystemUsers.Add(this);
+            newValue.LoginName = newValue.LoginName.Trim();
+            if (LoginName != newValue.LoginName || string.IsNullOrEmpty(newValue.Password) == false)
+            {
+                LoginName = newValue.LoginName;
+                Password = EncryptPassword(LoginName.ToLower(),newValue.Password);
+            }
+
+            Name = newValue.Name;
+            Email = newValue.Email;
+            State = newValue.State;
             db.SaveChanges();
-            return true;
         }
+
+        public void ChangePassword(Context db, string password)
+        {
+            Password = EncryptPassword(LoginName.ToLower(), password);
+            db.SaveChanges();
+        }        
         static string EncryptPassword(string pre, string password)
         {
             System.Security.Cryptography.SHA1 sha = System.Security.Cryptography.SHA1.Create();
@@ -76,7 +85,7 @@ namespace OUDAL
                 }
             }
             Context db = new Context();
-            user = (from o in db.SystemUsers where o.State == (int)UserState.Enabled && (name == o.Name ) select o).FirstOrDefault();
+            user = (from o in db.SystemUsers where o.State == (int)UserState.Enabled && (name == o.LoginName ) select o).FirstOrDefault();
             if (user != null)
             {
                 if (user.CheckPassword(password))

@@ -119,7 +119,7 @@
             var pid = $("#pid").val();
 
             $.post("updatedepartment"
-            , { id: id, pid: pid, name: document.getElementById('txtName').value ,departmentType:$('#txtType').val(),RoomType:$("#RoomType").val()}
+            , { id: id, pid: pid, name: document.getElementById('txtName').value ,departmentType:$('#txtType').val()}
             , function (data, textStatus) {
                 this;
                 var a = eval(data);
@@ -130,7 +130,6 @@
                 if ($('#pid').val() == '') {
                     node.name = document.getElementById('txtName').value;
                     zTree.updateNode(node);
-                    nodeClick(node);
                 } else {
                     var c = { id: a.obj.Id, pId: a.obj.PId, name: a.obj.Name };
                     var n = zTree.addNodes(node, c, false);
@@ -150,7 +149,6 @@
             var node = nodes[0];
             EditNode();
             $('#txtName').val('');
-            $('#RoomType').val('');
             $('#deptid').val(0);
             $('#pid').val(node.id);
             
@@ -192,7 +190,7 @@
         function EditUser() {
             var id = $("#deptid").val();
             if (id == "") { alert("请先选择一个部门"); return; }
-            $.colorbox({ iframe: true, width: '750px', height: '90%', href: 'DepartmentUserEdit/'+id });
+            $.colorbox({ iframe: true, width: '900px', height: '90%', href: 'DepartmentUserEdit/'+id });
         }
 		//-->
     </script>
@@ -227,8 +225,8 @@
                     <td><select name="txtType" id="txtType">
                             <option></option>
                             <option>总部</option>
-                            <option>项目</option>
-                            <option>小组</option>
+                            <option>分公司</option>
+                            <option>部门</option>
                         </select>
                     </td>
                 </tr>

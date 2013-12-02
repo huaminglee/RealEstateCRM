@@ -41,8 +41,15 @@ namespace RealEstateCRM.Web.Controllers
             {
                 ModelState.AddModelError("", "该客户已有卡");
             }
+            Client client = db.Clients.Find(c.ClientId);
             if (ModelState.IsValid)
             {
+                if ((client.State != ClientStateEnum.办卡客户))
+                {
+                    client.State = ClientStateEnum.办卡客户;
+                    client.StateDate = DateTime.Today;
+                    Utilities.AddLog(db, client.Id, Client.LogClass, "转办卡客户", "");
+                }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -104,6 +111,7 @@ namespace RealEstateCRM.Web.Controllers
             result.obj = "已删除";
             return Json(result);
         }
+        //ToDo:要检查办卡对应客户状态
     }
 
 }

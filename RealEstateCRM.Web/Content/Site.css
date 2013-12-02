@@ -3,6 +3,9 @@
     padding-left:0.1em;
     padding-right:0.1em;
 }
+ol li {
+    padding-bottom: 10px;
+}
 .tdRight {
 	background-color: #FFEBCD;
 	text-align: right !important;	
@@ -30,7 +33,7 @@ div.searchdiv input[type="text"]
 }
 div.searchdiv select
 {
-    width:150px;
+    min-width:110px;
 }
 div.searchdiv input[type="button"]
 {
@@ -48,13 +51,13 @@ input[type="submit"]
 .len80
 {
     min-width:80px;
-    padding-left:10px;
+    padding-left:4px;
     padding-right:4px;
     display:inline-block;
 }
 .len60
 {
-    min-width:50px;
+    min-width:60px;
     padding-left:4px;
     padding-right:4px;
     display:inline-block;
@@ -110,10 +113,7 @@ label {
     padding-right: 15px;
     font-weight: normal;
 }
-
-.field-validation-error{
-    color:red;
-}
-.validation-summary-errors{
-    color:red;
+.text-box
+{
+    width:300px;
 }

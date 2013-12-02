@@ -44,7 +44,7 @@
   <ItemGroup>
     <Reference Include="Dapper, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\BMS.Web\bin\Dapper.dll</HintPath>
+      <HintPath>..\RealEstateCRM.Web\bin\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -90,6 +90,7 @@
     <Compile Include="Context.cs" />
     <Compile Include="BLL\DepartmentBLL.cs" />
     <Compile Include="ModelBase\Attachment.cs" />
+    <Compile Include="Model\ClientTransfer.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\Card.cs" />
     <Compile Include="Model\Client.cs" />

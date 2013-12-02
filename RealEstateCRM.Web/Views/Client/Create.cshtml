@@ -50,7 +50,7 @@
         }
     }
 </script>
-<div class="well" style="width:650px;margin:0px auto">
+<div class="well" style="margin:0px auto">
     @using (Html.BeginForm("CreateClient", "Client"))
     {
         @Html.ValidationSummary(true)
@@ -59,10 +59,9 @@
         @Html.HiddenFor(model => model.GroupId)
         <input id="RoomType" type="text" style="display:none" />
         <fieldset>
-            <legend>客户信息</legend>
+            <legend>@ViewBag.Msg</legend>
             <div class='form-group'>
-                @Html.LabelFor(m => m.Name)
-                @Html.TextBox("Name", Model.Name, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.Name)
+                @Html.MyTextFor(model => model.Name)
             </div>
             <div class='form-group'>
                 @Html.LabelFor(m => m.Sex)
@@ -80,7 +79,7 @@
                        onchange="PhoneCheck(this.value);" />
                 @Html.ValidationMessageFor(m => m.AllPhone)
             </div>
-            @Html.MyDropdownFor(model => model.Way, DictionaryBLL.GetList("渠道类型", false), Model.Way)
+            @Html.MyDropdownFor(model => model.Way,ViewBag.QuDao as List<SelectListItem> , Model.Way)
             @Html.MyTextFor(model => model.WayExtend)
             @*<div class='form-group'>
                     @Html.LabelFor(m => m.RoomType)

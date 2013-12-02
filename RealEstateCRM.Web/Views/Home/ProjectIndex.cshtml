@@ -1,76 +1,167 @@
 ﻿@using RealEstateCRM.Web
 @using RealEstateCRM.Web.BLL
 @using OUDAL
+
 @{
-    ViewBag.Title = "商场管理";
+    ViewBag.Title = "首页";
     Layout = "~/Views/Shared/_MainListLayout.cshtml";
 }
+<script type="text/javascript">
+        jQuery(document).ready(function () {
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        });
 
-    <div class="container">
-
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h2>欢迎使用 绿地商业集团.运营管理系统</h2>
-      </div>
-
-      <!-- Example row of columns -->
-        <div class="row">
-            <div class="span4">
-          <h2>注意，系统新增权限控制</h2>
-           <p>因为系统各项功能均有权限控制，如果您找不到需要的菜单项，请联系集团IT部为您开通权限。
-           </p>
-          
-        </div>
-            <div class="span4">
-                <h2>物资及设备种类维护</h2>
-                <p>将物资及设备分类，有助于物资的管理与统计分析。注意，各商场的物资设备种类是一致的，设置好了不要轻易改动。
-                </p>
-          
-            </div>
-            <div class="span4">
-                <h2>物资物料管理模块</h2>
-                <p>首先设置物资物料名称。</p>
-                <p>新增物资物料时，输入“物资入库”信息。如果是报损，也输入“物资入库”信息，在数量栏输入负数即可。同样，因为盘点差异而需要调整物资数量，也是输入“物资入库”信息。</p>
-          
-            </div>
-            <div class="span4">
-                <h2>提醒</h2>
-                @{
-                    List<Asset> outGuaranteeAsset = ViewBag.OutGuaranteeAsset;
-                    if (outGuaranteeAsset != null && outGuaranteeAsset.Count > 0)
-                    {
-                        <span>一个月内保修到期或超期的设备</span>
-                        <ul>
-                            @foreach (var item in outGuaranteeAsset)
-                            {
-                                <li>@Html.ActionLink(item.Name,"AssetView","Asset", new {id=item.Id},new {target="_blank"})</li>
-                            }
-                        </ul>
-                    }
-                    List<Asset> maintain = ViewBag.MaintainAlert;
-                    if (maintain != null && maintain.Count > 0)
-                    {
-                        <span>一个月内需要保修保养的设备</span>
-                        <ul>
-                            @foreach (var item in maintain)
-                            {
-                                <li>@Html.ActionLink(item.Name, "AssetView", "Asset", new { id = item.Id }, new { target = "_blank" })</li>
-                            }
-                        </ul>
-                    }
-                }
-          
-            </div>
-        </div>
-
-      <hr>
-
-      
-
-    </div>
-@section Footer{
-@@copyright xxx
-<script language="javascript">
-  
+    function gotoUrl(url) {
+        window.location.href = url;
+    }
 </script>
-}
+<div class="container">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="">
+        
+    </div>
+    <!-- Example row of columns -->
+<div class="row">
+    <div class="col-xs-3">
+        <h3>快速通道</h3>
+        @if (UserInfo.CurUser.HasRight("辅助功能-销售员面板"))
+        {
+            <div style="width: 40px; margin: auto">
+                <button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick=" OpenFullWindow('@Url.Content("../Client/ToCreate")', '_blank'); ">新客户登记</button>
+                <button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick="window.location.href = ('@Url.Content("../Client/List")'); ">客户资料查询</button>
+                <button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick="window.location.href = ('@Url.Content("../Client/ClientTransferIn")'); ">转入客户查询</button>
+                <button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick="window.location.href = ('@Url.Content("../Client/ClientTransferOut")'); ">转出客户查询</button>
+            </div>
+        }
+    </div>
+    <div class="col-xs-3">
+        <h3>当日邀约</h3><div class="pull-right">
+                         [<a href="../Client/InviteReport">报表</a>] [<a href="../Client/InviteList">明细</a>]
+                     </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>邀约类型</th>
+                <td>组数</td>
+                <td>到访</td>
+                <td>完成</td>
+            </thead>
+            <tbody>
+                @foreach (ClientActivityReportView item in ViewBag.InviteList)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td style="text-align:right">@item.Num</td>
+                        <td style="text-align:right">@item.VisitNum</td>
+                        <td style="text-align:right">@item.DoneNum</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-xs-2">
+        <h3>转移预警</h3><div class="pull-right">
+                         [<a href="../Client/InviteList">明细</a>]
+                     </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>转移类型</th>
+                <td>预警数量</td>
+            </thead>
+            <tbody>
+                @foreach (ClientTransferAlertReport item in ViewBag.transferAlerts)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td style="text-align:right">@item.Num</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-xs-2">
+        <h3>昨日转入</h3><div class="pull-right">
+                         [<a href="../Client/InviteList">明细</a>]
+                     </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>转移类型</th>
+                <td>数量</td>
+            </thead>
+            <tbody>
+                @foreach (ClientTransferAlertReport item in ViewBag.transferIns)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td style="text-align:right">@item.Num</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-xs-2">
+        <h3>昨日转出</h3><div class="pull-right">
+            [<a href="../Client/InviteList">明细</a>]
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <th>转移类型</th>
+            <td>数量</td>
+            </thead>
+            <tbody>
+                @foreach (ClientTransferAlertReport item in ViewBag.transferOuts)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td style="text-align:right">@item.Num</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="span6">
+        <h2>提醒消息</h2>
+        <ul>
+            <li>。。。</li>
+            <li>。。。</li>
+        </ul>
+        <blockquote>消息是与具体业务相关的提醒，每个用户根据权限不同而显示不同提醒<br /></blockquote>
+    </div>
+    <hr />
+</div>
+    @section Footer{
+        <style type="text/css">
+            .foot {
+                border-top: 1px solid #E0E0E0;
+                padding: 5px 10px;
+                text-align: right;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+
+
+            #foot {
+                position: absolute;
+                bottom: 0px;
+                right: 16px;
+                width: 100%;
+                height: 20px;
+                text-align: center;
+                z-index: 2;
+                overflow: hidden;
+                border-top: 1px solid #E0E0E0;
+                color: #999999;
+            }
+        </style>
+        <div id="foot" style="position: absolute;">
+            @@Copyright 上海虬溪软件 2013
+        </div>
+
+       
+    }

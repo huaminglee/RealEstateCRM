@@ -23,7 +23,7 @@ namespace RealEstateCRM.Web.Controllers
 
         }
 
-        [MyAuthorize("客户管理-客户查看")]
+        [MyAuthorize("客户管理-客户查询")]
         public ActionResult List()
         {
             return View();
@@ -31,7 +31,6 @@ namespace RealEstateCRM.Web.Controllers
         [HttpPost]
         public JsonResult ListQuery(string sidx, string sord, int page, int rows, FormCollection collection)
         {
-            if (!UserInfo.CurUser.HasRight("租赁管理-客户查看")) return Json(new Result { obj = "没有权限" });
             List<object> parameters = new List<object>();
             string sql = ClientView.sql;
 
@@ -43,6 +42,10 @@ namespace RealEstateCRM.Web.Controllers
             if (projectid != 0)
             {
                 sql += string.Format(" and c.ProjectId={0}", projectid);
+            }
+            if (UserInfo.CurUser.GetClientRight(projectid) < ClientViewScopeEnum.查看项目)
+            {
+                sql += string.Format(" and c.groupid={0}", UserInfo.CurUser.GetGroup(projectid));
             }
             if (!string.IsNullOrEmpty(sidx) && !sidx.Contains(';') && !sord.Contains(';'))
             {
@@ -60,8 +63,8 @@ namespace RealEstateCRM.Web.Controllers
                             select o).Take(rows * page).Skip(page * rows - rows).ToList();// 这种写法是在内存中运算
             newquery.ForEach(o =>
             {
-                o.ProjectName = DepartmentBLL.GetNameById(o.ProjectId);
-                o.GroupName = DepartmentBLL.GetNameById(o.GroupId);
+                //o.ProjectName = DepartmentBLL.GetNameById(o.ProjectId);
+                //o.GroupName = DepartmentBLL.GetNameById(o.GroupId);
             });
             var jsonData = new
             {
@@ -109,54 +112,61 @@ namespace RealEstateCRM.Web.Controllers
                 return View(new Client() { Name = Name, AllPhone = PhoneNumber });
             }
             ViewBag.Show = true;
-            ClientView c = db.Database.SqlQuery<ClientView>(string.Format("select * from Clients where (AllPhone like'{0},%' or AllPhone like '%,{0}' or AllPhone ='{0}' ) and Name='{1}'", PhoneNumber, Name)).FirstOrDefault();
-            List<ClientView> Clients = new List<ClientView>();
-            if (c != null)
+            //ToDo:这里有注入漏洞
+            List<ClientView> clients1 = db.Database.SqlQuery<ClientView>(
+                    string.Format(
+                        "select * from Clients where (AllPhone like'{0},%' or AllPhone like '%,{0}' or AllPhone ='{0}' ) ",
+                        PhoneNumber)).ToList();
+            List<ClientView> clients2 = db.Database.SqlQuery<ClientView>(
+                    string.Format(
+                        "select * from Clients where (Name like'{0}' ) ",
+                        Name)).ToList();
+            if (clients1.Count > 0)
             {
-                Clients.Add(c);
+                ViewBag.Button = false;
+                ViewBag.Message = true;
             }
             else
             {
-                Clients = db.Database.SqlQuery<ClientView>(string.Format(@"select * from Clients where AllPhone like'%{0}%' or Name='{1}'", PhoneNumber, Name)).ToList();
                 ViewBag.Button = true;
-                ViewBag.Message = true;
-                if (db.Database.SqlQuery<ClientView>(string.Format("select * from Clients where (AllPhone like'{0},%' or AllPhone like '%,{0}' or AllPhone ='{0}' )", PhoneNumber)).Count() > 0)
-                {
-                    ViewBag.Button = false;
-                }
             }
-            Clients.ForEach(
-                o =>
-                {
-                    o.ProjectName = DepartmentBLL.GetNameById(o.ProjectId);
-                    var PhoneList = o.AllPhone.Split(',').ToList();
-                    o.AllPhone = "";
-                    foreach (string s in PhoneList)
-                    {
-                        o.AllPhone += (s.Substring(0, s.Length - 3) + "***,");
-                    }
-                    o.AllPhone = o.AllPhone.Equals("") ? "" : o.AllPhone.Remove(o.AllPhone.Length - 1);
-                });
-            ViewBag.Clients = Clients;
+            if (clients2.Count > 0)
+            {
+                ViewBag.Message = true;
+            }
+            
+            ViewBag.Clients1 = clients1;
+            ViewBag.Clients2 = clients2;
             return View(new Client() { Name = Name, AllPhone = PhoneNumber });
         }
 
         public ActionResult Create(int projectid, int type, string Name, string AllPhone)
         {
             ClientCreate c = new ClientCreate();
+            c.AppointmentType = "来访邀约";
             ViewBag.Type = type;
             c.Name = Name;
             c.AllPhone = AllPhone;
             c.ProjectId = projectid;
-            c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            c.GroupId = UserInfo.CurUser.GetGroup(projectid);
+            ViewBag.QuDao = DictionaryBLL.GetList("渠道类型", false);
             switch (type)
             {
                 case 1:
-                    c.ContactType = "来电"; break;
+                    c.ContactType = "来电"; 
+                    ViewBag.Msg = "来电客户登记";break;
                 case 2:
-                    c.ContactType = "来访"; break;
+                    c.ContactType = "来访";
+                    ViewBag.Msg = "直访客户登记"; break;
                 case 3:
                     ViewBag.HasAppointment = true;
+                    ViewBag.QuDao = new List<SelectListItem>
+                                    {
+                                        new SelectListItem {Text = "电话中心", Value = "电话中心"},
+                                        new SelectListItem {Text = "中介", Value = "中介"}
+                                    };
+                    ViewBag.Msg = "邀约客户报备";
+                    //ToDo:如果邀约客户未到访，然后再次报备如何处理？
                     return View(c);
             }
             c.ContactActualTime = DateTime.Now;
@@ -207,28 +217,42 @@ namespace RealEstateCRM.Web.Controllers
                 Client c = new Client();
                 UpdateModel(c, collection);
                 c.CreateTime = DateTime.Now;
+                c.StateDate = DateTime.Today;
                 db.Clients.Add(c);
                 db.SaveChanges();
                 if (type != 3)
                 {
+                    if (type == 1)
+                    {
+                        c.State = ClientStateEnum.来电客户;
+                    }
+                    else
+                    {
+                        c.State = ClientStateEnum.来访客户;
+                    }
                     ClientActivity ca = new ClientActivity();
                     ca.ClientId = c.Id;
                     ca.ActualTime = cc.ContactActualTime;
                     ca.Type = cc.ContactType;
                     ca.Detail = cc.ContactDetail;
                     db.ClientActivities.Add(ca);
+                    Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记", cc.AppointmentType);
                 }
                 if (HasAppointment)
                 {
+                    c.State = ClientStateEnum.邀约客户;
                     ClientActivity ap = new ClientActivity();
                     ap.ClientId = c.Id;
                     ap.PlanTime = cc.AppointmentPlanTime;
                     ap.Detail = cc.AppointmentDetail;
                     ap.Type = cc.AppointmentType;
                     db.ClientActivities.Add(ap);
+                    Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记", "邀约报备");
                 }
                 db.SaveChanges();
+                
                 return Redirect("./View/" + c.Id);
+                //ToDo：这个地方有BUG，提交不成功后出错 
             }
             else
             {
@@ -311,7 +335,7 @@ namespace RealEstateCRM.Web.Controllers
                 db.SaveChanges();
                 //if (id == 0)
                 //    return Redirect("../View/" + c.Id);
-                return Redirect("~/Content/close.htm");
+                return Redirect("../View/"+c.Id);
             }
             else
             {
@@ -353,8 +377,16 @@ namespace RealEstateCRM.Web.Controllers
             {
                 ModelState.AddModelError("ActualTime", "联系时间不能为空");
             }
+            Client client = db.Clients.Find(c.ClientId);
             if (ModelState.IsValid)
             {
+                if (c.Type == "来访" && (client.State == ClientStateEnum.邀约客户 || client.State == ClientStateEnum.来电客户))
+                {
+                    client.State = ClientStateEnum.来访客户;
+                    client.StateDate = DateTime.Today;
+                    Utilities.AddLog(db, client.Id, Client.LogClass, "转来访客户", "");
+                }
+
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -380,6 +412,7 @@ namespace RealEstateCRM.Web.Controllers
             result.success = false;
             result.obj = "删除失败";
             return Json(result);
+            //ToDo:来访记录删除后要处理客户状态
         }
 
         public ActionResult AddAppointment(int id)//id为client的id
@@ -455,6 +488,7 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult FinishAppointment(int id)//id为Appointment的id
         {
             ClientActivity c = db.ClientActivities.Find(id);
+            c.ActualTime = DateTime.Today;
             return View(c);
         }
 
@@ -463,8 +497,28 @@ namespace RealEstateCRM.Web.Controllers
         {
             ClientActivity c = db.ClientActivities.Find(id);
             TryUpdateModel(c, collection);
+            if (c.ActualTime == null)
+            {
+                ModelState.AddModelError("ActualTime", "请输入到访时间");
+            }
+            DateTime d = (DateTime) c.ActualTime;
+            if (d.Date != ((DateTime) c.PlanTime).Date)
+            {
+                ModelState.AddModelError("ActualTime", "到访日期不能与邀约日期不同");
+            }
+            Client client = db.Clients.Find(c.ClientId);
             if (ModelState.IsValid)
             {
+                if ( (client.State == ClientStateEnum.邀约客户 || client.State == ClientStateEnum.来电客户))
+                {
+                    client.State = ClientStateEnum.来访客户;
+                    client.StateDate = DateTime.Today;
+                    Utilities.AddLog(db, client.Id, Client.LogClass, "转来访客户", "");
+                }
+                if (c.Type == "来访邀约")
+                {
+                    c.IsDone = true;
+                }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -482,7 +536,6 @@ namespace RealEstateCRM.Web.Controllers
 
             var result = new Result();
             Client s = db.Clients.Find(id);
-            if (!UserInfo.CurUser.HasRight("租赁管理-客户维护")) return Json(new Result { obj = "没有权限" });
             ClientActivity c = (from o in db.ClientActivities where o.ClientId == id select o).FirstOrDefault();
             if (c != null)
             {
@@ -570,10 +623,20 @@ namespace RealEstateCRM.Web.Controllers
                         Client client = db.Clients.Find(clientId);
                         if (client.GroupId != newGroupId)
                         {
+                            ClientTransfer ct = new ClientTransfer
+                                                {
+                                                    ClientId = clientId,
+                                                    InGroup = newGroupId,
+                                                    OutGroup = client.GroupId,
+                                                    Person = UserInfo.CurUser.Id,
+                                                    TransferDate=DateTime.Today
+                                                };
+                            db.ClientTransfers.Add(ct);
                             Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
                                 string.Format("从{0}转移到{1}", DepartmentBLL.GetNameById(client.GroupId),
                                     DepartmentBLL.GetNameById(newGroupId)));
                             client.GroupId = newGroupId;
+                            client.StateDate = DateTime.Today;
                             count++;
                         }
                     }
@@ -607,10 +670,20 @@ namespace RealEstateCRM.Web.Controllers
             Client client = db.Clients.Find(clientId);
             if (client.GroupId != newGroupId)
             {
+                ClientTransfer ct = new ClientTransfer
+                {
+                    ClientId = clientId,
+                    InGroup = newGroupId,
+                    OutGroup = client.GroupId,
+                    Person = UserInfo.CurUser.Id,
+                    TransferDate=DateTime.Today
+                };
+                db.ClientTransfers.Add(ct);
                 Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
                     string.Format("从{0}转移到{1}", DepartmentBLL.GetNameById(client.GroupId),
                         DepartmentBLL.GetNameById(newGroupId)));
                 client.GroupId = newGroupId;
+                client.StateDate = DateTime.Today;
 
             }
             else
@@ -631,21 +704,32 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult ClientTransferIn()
         {
             ViewBag.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            ViewBag.Date1 = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
+            ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
             return View();
         }
 
         [HttpPost]
-        public JsonResult ClientTransferInQuery(FormCollection collection)
+        public JsonResult ClientTransferInQuery(int projectid,FormCollection collection)
         {
             //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
             Result result = new Result();
             List<object> parameters = new List<object>();
-            int GroupId = int.Parse(collection["groupId"]);
-            string GroupName = DepartmentBLL.GetNameById(GroupId);
-            string sql = string.Format(ClientTransformLog.sqlIn,GroupName);
-            Utilities.AddSqlFilterDateGreaterThen(collection, "from", ref sql, "AccessTime", parameters);
-            Utilities.AddSqlFilterDateLessThen(collection, "to", ref sql, "AccessTime", parameters);
+            //int GroupId = int.Parse(collection["groupId"]);
+            //string GroupName = DepartmentBLL.GetNameById(GroupId);
             
+
+            string sql = ClientTransformLog.sql;
+            if (UserInfo.CurUser.GetClientRight(projectid) > ClientViewScopeEnum.查看本组)
+            {
+            }
+            else
+            {
+                sql += " and cf.ingroup =" + UserInfo.CurUser.GetGroup(projectid).ToString();
+            }
+            Utilities.AddSqlFilterDateGreaterThen(collection, "from", ref sql, "cf.TransferDate", parameters);
+            Utilities.AddSqlFilterDateLessThen(collection, "to", ref sql, "cf.TransferDate", parameters);
+
             db.Database.Connection.Open();
             var dynamicParams = new DynamicParameters();
             parameters.ForEach(o => { var p = o as SqlParameter; dynamicParams.Add(p.ParameterName, p.Value, p.DbType); });
@@ -658,21 +742,30 @@ namespace RealEstateCRM.Web.Controllers
 
         public ActionResult ClientTransferOut()
         {
-            ViewBag.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            //ViewBag.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
+            ViewBag.Date1 = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
+            ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
             return View();
         }
 
         [HttpPost]
-        public JsonResult ClientTransferOutQuery(FormCollection collection)
+        public JsonResult ClientTransferOutQuery(int projectid,FormCollection collection)
         {
             //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
             Result result = new Result();
             List<object> parameters = new List<object>();
-            int GroupId = int.Parse(collection["groupId"]);
-            string GroupName = DepartmentBLL.GetNameById(GroupId);
-            string sql = string.Format(ClientTransformLog.sqlOut, GroupName);
-            Utilities.AddSqlFilterDateGreaterThen(collection, "from", ref sql, "AccessTime", parameters);
-            Utilities.AddSqlFilterDateLessThen(collection, "to", ref sql, "AccessTime", parameters);
+            //int GroupId = int.Parse(collection["groupId"]);
+            //string GroupName = DepartmentBLL.GetNameById(GroupId);
+            string sql = ClientTransformLog.sql;
+            if (UserInfo.CurUser.GetClientRight(projectid) > ClientViewScopeEnum.查看本组)
+            {
+            }
+            else
+            {
+                sql += " and cf.outgroup =" + UserInfo.CurUser.GetGroup(projectid).ToString();
+            }
+            Utilities.AddSqlFilterDateGreaterThen(collection, "from", ref sql, "cf.TransferDate", parameters);
+            Utilities.AddSqlFilterDateLessThen(collection, "to", ref sql, "cf.TransferDate", parameters);
 
             db.Database.Connection.Open();
             var dynamicParams = new DynamicParameters();
@@ -683,6 +776,95 @@ namespace RealEstateCRM.Web.Controllers
             result.obj = query;
             return Json(result);
         }
+
+        public ActionResult InviteList()
+        {
+            ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
+            return View();
+        }
+
+        public ActionResult InviteListQuery(int projectid,string dateFrom,string dateTo,FormCollection collection)
+        {
+           Result result = new Result();
+            DateTime date1 = new DateTime();
+            DateTime date2 = new DateTime();
+            if (!DateTime.TryParse(dateFrom, out date1))
+            {
+                result.obj = "请输入有效日期";
+                return Json(result);
+            }
+            if (!DateTime.TryParse(dateTo, out date2))
+            {
+                result.obj = "请输入有效日期";
+                return Json(result);
+            }
+            int groupid = 0;
+            if (UserInfo.CurUser.GetClientRight(projectid) < ClientViewScopeEnum.查看项目)
+            {
+                groupid = UserInfo.CurUser.GetGroup(projectid);
+            }
+            var list = ClientActivityListView.GetReport(projectid, groupid, date1, date2, collection["client"]);
+            
+            
+            result.obj = list;
+            result.success = true;
+            return Json(result);
+        }
+        public ActionResult InviteReport(int projectid)
+        {
+            ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
+            return View();
+        }
+
+        public ActionResult InviteReportQuery(int projectid,string dateFrom,string dateTo,FormCollection collection)
+        {
+           Result result = new Result();
+            DateTime date1 = new DateTime();
+            DateTime date2 = new DateTime();
+            if (!DateTime.TryParse(dateFrom, out date1))
+            {
+                result.obj = "请输入有效日期";
+                return Json(result);
+            }
+            if (!DateTime.TryParse(dateTo, out date2))
+            {
+                result.obj = "请输入有效日期";
+                return Json(result);
+            }
+            int groupid = 0;
+            if (UserInfo.CurUser.GetClientRight(projectid) <= ClientViewScopeEnum.查看本组)
+            {
+                groupid = UserInfo.CurUser.GetGroup(projectid);
+            }
+
+            List<ClientActivityReportView> inviteList = new List<ClientActivityReportView>();
+            List<string> yaoyueTypes = DictionaryBLL.GetByName("邀约类型", false);
+            yaoyueTypes.ForEach(o =>
+            {
+                inviteList.Add(new ClientActivityReportView { Type = o });
+            });
+            List<ClientActivityReportView> caList = ClientActivityReportView.GetReport(projectid, groupid,
+                DateTime.Today, DateTime.Today);
+            foreach (var i in caList)
+            {
+                foreach (var j in inviteList)
+                {
+                    if (i.Type == j.Type)
+                    {
+                        j.Num += i.Num;
+                        j.VisitNum += i.VisitNum;
+                        j.DoneNum += i.DoneNum;
+                    }
+                }
+            }
+            
+            result.obj = new{Total=inviteList,list=caList};
+            result.success = true;
+            return Json(result);
+        }
+        
     }
 
 }

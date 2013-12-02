@@ -45,8 +45,28 @@ namespace RealEstateCRM.Web.Controllers
                 }
             }
             TryUpdateModel(c, "", new string[] { }, new string[] { "" }, collection);
+            Client client = db.Clients.Find(c.ClientId);
             if (ModelState.IsValid)
             {
+                if (c.SignTime != null)
+                {
+                    if ((client.State != ClientStateEnum.签约客户))
+                    {
+                        client.State = ClientStateEnum.签约客户;
+                        client.StateDate = DateTime.Today;
+                        Utilities.AddLog(db, client.Id, Client.LogClass, "转签约客户", "");
+                    }
+                }
+                else
+                {
+                    if ((client.State != ClientStateEnum.签约客户 && client.State != ClientStateEnum.大定客户))
+                    {
+                        client.State = ClientStateEnum.大定客户;
+                        client.StateDate = DateTime.Today;
+                        Utilities.AddLog(db, client.Id, Client.LogClass, "转大定客户", "");
+                    }
+                }
+                
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -67,8 +87,15 @@ namespace RealEstateCRM.Web.Controllers
             if (collection["SignTime"] == null || collection["SignTime"].Equals(""))
                 ModelState.AddModelError("SignTime", "签约时间是必须填写的");
             TryUpdateModel(c, "", new string[] { }, new string[] { "" }, collection);
+            Client client = db.Clients.Find(c.ClientId);
             if (ModelState.IsValid)
             {
+                if ((client.State != ClientStateEnum.签约客户))
+                {
+                    client.State = ClientStateEnum.签约客户;
+                    client.StateDate = DateTime.Today;
+                    Utilities.AddLog(db, client.Id, Client.LogClass, "转签约客户", "");
+                }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }

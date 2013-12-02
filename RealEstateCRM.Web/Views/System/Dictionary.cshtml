@@ -22,13 +22,13 @@
         $.each(items, function (i) {
             str += "<li><span id='span" + this.Id + "' style='min-width:210px;display: inline-block;'>" + this.Name
                 + "</span><input type='text' id='text" + this.Id + "'  style='display:none' value='"
-                + this.Name + "'/><input type='button' id='" + this.Id + "' onclick='edititem(this);' value='修改'/>" +
-                "<a href='#' onclick='UpItem(" + this.Id + ")'><i class='icon-arrow-up'></i></a> " +
-                "<a href='#' onclick='DownItem(" + this.Id + ")'><i class='icon-arrow-down'></i></a>" +
-                "<a href='#' onclick='DeleteItem(" + this.Id + ")'><i class='icon-remove'></i></a>" +
+                + this.Name + "'/><input class='btn btn-default' type='button' id='" + this.Id + "' onclick='edititem(this);' value='修改'/>" +
+                "<a href='#' onclick='UpItem(" + this.Id + ")'><span class='glyphicon glyphicon-arrow-up'></span></a> " +
+                "<a href='#' onclick='DownItem(" + this.Id + ")'><span class='glyphicon glyphicon-arrow-down'></span></a> " +
+                "<a href='#' onclick='DeleteItem(" + this.Id + ")'><span class='glyphicon glyphicon-remove'></span></a>" +
                 "</li>";
         });
-        str += "<li><input type='text' id='newitem'> <input type='button' onclick='addnewitem();' value='添加'/></li><ol>";
+        str += "<li><input type='text' id='newitem' style='min-width:200px;'> <input type='button' class='btn btn-default' onclick='addnewitem();' value='添加'/></li><ol>";
         $("#divItems").html(str);
     }
 
@@ -110,41 +110,48 @@
         });
     }
     </script>
-    <p>数据字典维护</p>
-    <div style="width: 800px; margin: auto">
-    <div style="width: 300px; min-height: 300px; float: left;">
+    <div class="container">
+        <p>数据字典维护</p><div style="width: 900px; margin: auto">
+    <div class="col-xs-3" style=" min-height: 300px; ">
         @*
-    <ul>@foreach(string s in Model.Keys)
-        {
-            <li>
-                @s <ol>
-                       @foreach(Dictionary dict in Model[s])
-                       {
-                           <li><a href="#" onclick="SelectDict(@dict.Id,'@dict.Name');">@dict.Name</a> </li>
-                       }
-                   </ol>
-            </li>
-        }
-        
-       
-    </ul> *@
-        <ul  class="nav nav-list">@foreach (string s in Model.Keys)
-                                  {
-                                      <li  class="nav-header"> @s</li>
-
-                                      foreach (Dictionary dict in Model[s])
-                                      {
-                                          <li><a href="#" onclick="SelectDict(@dict.Id, '@dict.Name');">@dict.Name</a> </li>
-                                      }
+            <ul>@foreach(string s in Model.Keys)
+                {
+                    <li>
+                        @s <ol>
+                               @foreach(Dictionary dict in Model[s])
+                               {
+                                   <li><a href="#" onclick="SelectDict(@dict.Id,'@dict.Name');">@dict.Name</a> </li>
+                               }
+                           </ol>
+                    </li>
+                }
 
 
-                                  }
-        
-       
-        </ul>
-    </div>
-    <div>
-        <input type="hidden" id="dictId"/><span id="spanDict"></span><br/>
-        <div id="divItems"></div>
-    </div>
+            </ul> *@
+        <ul class="nav nav-list">
+            @foreach (string s in Model.Keys)
+            {
+                <li class="nav-header"> @s</li>
+
+                foreach (Dictionary dict in Model[s])
+                {
+                    <li><a href="#" onclick="SelectDict(@dict.Id, '@dict.Name');">@dict.Name</a> </li>
+                }
+
+
+            }
+
+
+    </ul>
+</div>
+<div class="col-xs-8">
+    <input type="hidden" id="dictId" /><span id="spanDict"></span><br />
+    <div id="divItems"></div>
+</div>
+</div>
+
+
+
+    
+    
 }

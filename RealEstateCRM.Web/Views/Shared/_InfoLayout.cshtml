@@ -16,7 +16,6 @@
     var formsubmited=false;
     $(document).ready(function () {
         $("form").addClass("form-horizontal");
-
         $("input[type='text']").addClass("form-control");
         $("select").addClass("form-control");
         var getArgs = GetUrlArgs();
@@ -43,26 +42,26 @@
 
     <body>
         
-            <div class="container"><div class="navbar navbar-inverse">
-                <div class="navbar-header">
-                    
-                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-       
-                <div class="navbar-collapse collapse">
-                    <ul class="nav  navbar-nav navbar-brand">
-                        <li>@ViewBag.Title</li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right  navbar-brand">
-                        <li class="brand"><img src="@Url.Content("~/content/images/glcp.png")" style="float:left;margin-top: -7px;" /> @System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>            
-                    </ul>
-       
-                </div>
-            </div>
+        <div class="container"><div class="navbar navbar-inverse"><div style="padding:0px 10px 0px 10px">
+                                                                      <div class="navbar-header">
+
+                                                                          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                                                                              <span class="icon-bar"></span>
+                                                                              <span class="icon-bar"></span>
+                                                                              <span class="icon-bar"></span>
+                                                                          </button>
+                                                                      </div>
+
+                                                                      <div class="navbar-collapse collapse">
+                                                                          <ul class="nav  navbar-nav navbar-brand">
+                                                                              <li>@ViewBag.Title</li>
+                                                                          </ul>
+                                                                          <ul class="nav navbar-nav navbar-right  navbar-brand">
+                                                                              <li class="brand"><img src="@Url.Content("~/content/images/glcp.png")" style="float: left; height: 30px; margin-top: -7px;" /> @System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>
+                                                                          </ul>
+
+                                                                      </div>
+                                                                  </div></div>
 
             @RenderBody()
             @RenderSection("Main", false)

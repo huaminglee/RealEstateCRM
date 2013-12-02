@@ -37,7 +37,7 @@
         };
     });
 </script>
-<div class="well" style="width:650px;margin:0px auto">
+<div class="well" style="margin:0px auto">
     @using (Html.BeginForm())
     {
         @Html.ValidationSummary(true)
@@ -135,6 +135,6 @@
                         </table>*@
 
         </fieldset>
-        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+        <p style="text-align:center">@MyControls.FormBtn(false)</p>
     }
 </div>

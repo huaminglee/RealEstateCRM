@@ -73,7 +73,6 @@ namespace RealEstateCRM.Web.Controllers
 
             return Json(result);
         }
-
         [HttpPost]
         public JsonResult UpdateDepartment(int id, FormCollection collection)
         {
@@ -142,16 +141,6 @@ namespace RealEstateCRM.Web.Controllers
                 {
                     db.Database.ExecuteSqlCommand(string.Format("delete departmentusers where departmentid={0}", id));
                     db.Departments.Remove(dept);
-                    var query = (from o in db.Projects where o.DepartmentId == id select o).FirstOrDefault();
-                    if(query!=null)
-                    {
-                        var RoomTypes = (from o in db.RoomTypes where o.DepartmentId == id select o).ToList();
-                        foreach (RoomType r in RoomTypes)
-                        {
-                            db.RoomTypes.Remove(r);
-                        }
-                        db.Projects.Remove(query);
-                    }
                     db.SaveChanges();
                     DepartmentBLL.UpdateDepartments();
                     result.success = true;
@@ -171,7 +160,7 @@ namespace RealEstateCRM.Web.Controllers
         {
             if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result { success = false, obj = "没有权限" });
             Models.Result result = new Models.Result();
-            var list = from o in db.DepartmentUsers join u in db.SystemUsers on o.UserId equals u.Id where o.DepartmentId == id select new { userid = o.UserId, username = u.Name, workno = u.WorkNO, ismanager = o.IsManager };
+            var list = from o in db.DepartmentUsers join u in db.SystemUsers on o.UserId equals u.Id where o.DepartmentId == id select new { userid = o.UserId, username = u.LoginName, workno = u.Name, ismanager = o.IsManager };
             result.success = true;
             result.obj = list;
             return Json(result);
@@ -540,16 +529,19 @@ namespace RealEstateCRM.Web.Controllers
                 if (roles.Count > 1) ViewBag.Role2 = roles[1];
                 if (roles.Count > 2) ViewBag.Role3 = roles[2];
             }
+            r.Password = null;
             return View(r);
         }
         [HttpPost]
-        public ActionResult UserEdit(int id, string name, string password, int state, int role1, int role2, int role3, string email, string workno, FormCollection collection)
+        public ActionResult UserEdit(int id,string loginname, string name, string password, int state, int role1, int role2, int role3, string email,  FormCollection collection)
         {
             if (!UserInfo.CurUser.HasRight("系统管理-用户管理")) return Redirect("~/content/AccessDeny.htm");
-            SystemUser r = (from o in db.SystemUsers where o.Id == id select o).FirstOrDefault();
-            if (r == null)
+            SystemUser r = db.SystemUsers.Find(id);
+            if (r == null) r = new SystemUser();
+            
+            if (loginname.Length == 0)
             {
-                r = new SystemUser(); db.SystemUsers.Add(r);
+                ModelState.AddModelError("LoginName", "用户姓名不能为空");
             }
             if (name.Length == 0)
             {
@@ -558,35 +550,39 @@ namespace RealEstateCRM.Web.Controllers
             if (role1 == 0 && role2 == 0 && role3 == 0)
             {
                 ModelState.AddModelError("Role", "请选择至少一个角色");
-            }
-            if (name != r.Name && password == "")
+            }if (id == 0 && string.IsNullOrEmpty(password))
+            {
+                ModelState.AddModelError("Password", "请输入密码");
+            }else  if (name != r.LoginName && string.IsNullOrEmpty(password))
             {
                 ModelState.AddModelError("Password", "修改用户名时，需要重置密码");
             }
-            r.Name = name;
-            r.State = state;
-            r.WorkNO = workno;
-            r.Email = email;
+            string checkuser =
+                (from o in db.SystemUsers where o.Id != id && o.LoginName == loginname select name).FirstOrDefault();
+            if (checkuser != null)
+            {
+                ModelState.AddModelError("Name", "该用户已存在");
+            }
+            
             if (ModelState.IsValid == false)
             {
                 ViewBag.Role1 = role1;
                 ViewBag.Role2 = role2;
                 ViewBag.Role3 = role3;
+                r.Password = null;
                 return View(r);
             }
             else
             {
-                //if (r.Password == null) r.Password = "11";
-                if (r.Name != name || password != "")
-                {
-                    r.Password = password;
-                    r.Save(db);
-                }
-                else
-                {
-                    if (r.Id == 0) db.SystemUsers.Add(r);
-                    db.SaveChanges();
-                }
+                
+                SystemUser vo = new SystemUser();
+                vo.LoginName = loginname;
+                vo.Password = password;
+                    vo.State = state;
+                    vo.Name = name;
+                    vo.Email = email;
+                r.Save(db, vo);
+                
                 var query = (from o in db.RoleUsers where o.UserId == r.Id select o);
                 foreach (RoleUser ru in query) db.RoleUsers.Remove(ru);
                 if (role1 != 0) db.RoleUsers.Add(new RoleUser { UserId = r.Id, RoleId = role1 });
@@ -594,14 +590,8 @@ namespace RealEstateCRM.Web.Controllers
                 if (role3 != 0 && role3 != role2 && role3 != role1) db.RoleUsers.Add(new RoleUser { UserId = r.Id, RoleId = role3 });
                 db.SaveChanges();
                 UserBLL.UpdateUsers();
-                if (id == 0)
-                {
-                    return Redirect("../UserView/" + r.Id);
-                }
-                else
-                {
-                    return Redirect("~/content/close.htm");
-                }
+                return Redirect("../UserView/" + r.Id);
+                
             }
 
         }
@@ -677,7 +667,7 @@ namespace RealEstateCRM.Web.Controllers
             var query = (from o in db.SystemUsers
                          join p in db.DepartmentUsers on o.Id equals p.UserId
                          join q in db.Departments on p.DepartmentId equals q.Id
-                         select new { id = o.Id, Name = o.Name, Department = q.Name, DeptId = q.Id });
+                         select new { id = o.Id, Name = o.LoginName, Department = q.Name, DeptId = q.Id });
 
             string name = collection["name"] + ""; ;
             string depart = collection["department"] + "";
