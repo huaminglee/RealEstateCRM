@@ -58,15 +58,15 @@
     if (list.Count > 0)
     {
         <span>操作日志</span>
-        <table class="form">
+        <table class="table table-bordered table-striped" >
             <thead>
-                <tr><td style="width:150px">时间</td><td style="width:150px">操作人</td><td>动作</td><td>说明</td></tr>
+                <tr><td style="width:150px">时间</td><td style="width:100px">操作人</td><td>动作</td><td>说明</td></tr>
             </thead>
             <tbody>
             @foreach (OUDAL.AccessLog log in list)
             {
                 <tr>
-                    <td>@log.AccessTime.ToString("yyyy-MM-dd hh:mm")</td>
+                    <td>@log.AccessTime.ToString("yyyy-MM-dd HH:mm")</td>
                     <td>@log.AccessPerson</td>
                     <td>@log.AccessAction</td>
                     <td>@log.AccessInfo</td>

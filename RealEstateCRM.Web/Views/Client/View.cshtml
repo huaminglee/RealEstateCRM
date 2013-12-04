@@ -117,14 +117,14 @@
     <div class="btn-toolbar well">
         <div class="btn-group"><button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');">修改</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="ToDelete(@Model.Id)">删除</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/@Model.Id');">添加联系记录</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/0?clientid=@Model.Id');">添加联系记录</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
         @if (ViewBag.Cards.Count == 0)
         {
             <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Card/Create/@Model.Id');">办卡</button></div>
         }
         <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=1');">大定</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=2');">签约</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=2');">直签</button></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../TransferSingle/@Model.Id');">客户转移</button></div>
     </div>
     <div>
@@ -154,6 +154,55 @@
             </tr>
 
         </table>
+        @if (ViewBag.Orders.Count != 0)
+        {
+            <strong>大定签约信息</strong>
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th width="180px">大定时间</th>
+                    <th width="180px">签约时间</th>
+                    <th width="180px">房间</th>
+                    <th>备注</th>
+                    <th width="180px">取消时间</th>
+                    <th width="160px">操作</th>
+                </tr>
+                @foreach (Order c in ViewBag.Orders)
+                {
+                    <tr>
+                        <td>@c.OrderTime.ToString("yyyy-MM-dd")</td>
+                        @if (c.SignTime.HasValue)
+                        {
+                            <td>@c.SignTime.GetValueOrDefault().ToString("yyyy-MM-dd")</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>@c.Room</td>
+                        <td>@c.Remark</td>
+                        @if (c.CancelTime.HasValue)
+                        {
+                            <td>@c.CancelTime.GetValueOrDefault().ToString("yyyy-MM-dd")</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>
+                            @if (!c.SignTime.HasValue)
+                            {
+                                <button class="btn-default" onclick="OpenLargeWindow('../../Order/LevelUp/@c.Id');">签约</button>
+                            }
+                            @if (!c.CancelTime.HasValue)
+                            {
+                                <button class="btn-default" onclick="OpenLargeWindow('../../Order/Cancel/@c.Id');">退单</button>
+                            }
+                            <button class="btn-default" onclick="ToDeleteOrder(@c.Id)">删除</button>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
         @if (ViewBag.Cards.Count != 0)
         {
             <strong>卡信息</strong>
@@ -217,17 +266,18 @@
                         <td>@c.Type</td>
                         <td>@c.ActualTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
                         <td>@c.Detail</td>
-                        <td><button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button></td>
+                        
+                        <td><button class="btn-default" onclick="OpenLargeWindow('../AddContact/@c.Id');">修改</button> &nbsp;&nbsp;<button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button></td>
                     </tr>
                 }
             </table>
         }
         @if (ViewBag.Appointments.Count != 0)
         {
-            <strong>邀约记录</strong>
+            <strong>邀约及联系记录</strong>
             <table class="table table-bordered table-striped">
                 <tr>
-                    <th width="200px">邀约类型</th>
+                    <th width="200px">类型</th>
                     <th width="200px">预约时间</th>
                     <th width="200px">实际时间</th>
                     <th width="100px">是否完成</th>
@@ -238,82 +288,52 @@
                 {
                     <tr>
                         <td>@c.Type</td>
-                        <td>@c.PlanTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
+                        <td>@if (c.PlanTime.HasValue){@c.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")}</td>
+                        
+                        <td>
                         @if (c.ActualTime.HasValue)
                         {
-                            <td>@c.ActualTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
+                            @c.ActualTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")
                         }
-                        else
+                        </td>
+                        <td>
+                            
+                       
+                        @if (c.IsDone!=null)
                         {
-                            <td></td>
+                            if (c.IsDone == true)
+                            {
+                                <text>完成</text>
+                            }
+                            else
+                            {
+                                <text>未完成</text>
+                            }
                         }
-                        @if (c.IsDone.GetValueOrDefault())
-                        {
-                            <td>完成</td>
-                        }
-                        else
-                        {
-                            <td>未完成</td>
-                        }
+                        </td>
+                        
                         <td>@c.Detail</td>
                         <td>
-                            <button class="btn-default" onclick="OpenLargeWindow('../FinishAppointment/@c.Id');">完成</button>
-                            <button class="btn-default" onclick="OpenLargeWindow('../EditAppointment/@c.Id');">修改</button>
-                            <button class="btn-default" onclick="ToDeleteAppointment(@c.Id)">删除</button>
+                            @if (c.PlanTime == null)
+                            {
+                                <button class="btn-default" onclick="OpenLargeWindow('../AddContact/@c.Id');">修改</button> <button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button>
+                            }
+                            else
+                            {
+                                if (UserInfo.CurUser.HasRight("客户管理-客户到访记录"))
+                                {
+                                    <button class="btn-default" onclick="OpenLargeWindow('../FinishAppointment/@c.Id');">完成</button>
+                                }  
+                                <button class="btn-default" onclick="OpenLargeWindow('../EditAppointment/@c.Id');">修改</button>
+                                <button class="btn-default" onclick="ToDeleteAppointment(@c.Id)">删除</button>
+                            }
+                            
                         </td>
                     </tr>
                 }
             </table>
         }
-        @if (ViewBag.Orders.Count != 0)
-        {
-            <strong>大定签约信息</strong>
-            <table class="table table-bordered table-striped">
-                <tr>
-                    <th width="180px">大定时间</th>
-                    <th width="180px">签约时间</th>
-                    <th width="180px">房间</th>
-                    <th>备注</th>
-                    <th width="180px">取消时间</th>
-                    <th width="160px">操作</th>
-                </tr>
-                @foreach (Order c in ViewBag.Orders)
-                {
-                    <tr>
-                        <td>@c.OrderTime.ToString("yyyy-MM-dd")</td>
-                        @if (c.SignTime.HasValue)
-                        {
-                            <td>@c.SignTime.GetValueOrDefault().ToString("yyyy-MM-dd")</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        <td>@c.Room</td>
-                        <td>@c.Remark</td>
-                        @if (c.CancelTime.HasValue)
-                        {
-                            <td>@c.CancelTime.GetValueOrDefault().ToString("yyyy-MM-dd")</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        <td>
-                            @if (!c.SignTime.HasValue)
-                            {
-                                <button class="btn-default" onclick="OpenLargeWindow('../../Order/LevelUp/@c.Id');">签约</button>
-                            }
-                            @if (!c.CancelTime.HasValue)
-                            {
-                                <button class="btn-default" onclick="OpenLargeWindow('../../Order/Cancel/@c.Id');">取消</button>
-                            }
-                            <button class="btn-default" onclick="ToDeleteOrder(@c.Id)">删除</button>
-                        </td>
-                    </tr>
-                }
-            </table>
-        }
+        
     </div>
 <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
     <div>@MyControls.AccessLogTable(AccessLog.GetByClass(@Model.Id, Client.LogClass))</div>

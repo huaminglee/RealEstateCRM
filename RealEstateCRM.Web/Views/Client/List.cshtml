@@ -33,8 +33,8 @@
         function rowclick(id) {
             OpenFullWindow("./View/" + id, "_blank");
         }
-        function AddNew() {
-            OpenFullWindow("./ToCreate", "_blank");
+        function AddNew(_type) {
+            OpenFullWindow("./ToCreate?type="+_type, "_blank");
         }
         function SearchClick() {
             $('#listGrid').appendPostData({ Name: $("#Name").val() });
@@ -52,7 +52,9 @@
         @MyControls.SearchBtn()
         @if (Request.RequestContext.RouteData.Values["projectid"] != null)
         {
-            @MyControls.Btn("新增", "AddNew()")
+            @MyControls.Btn("新增来电", "AddNew(1)")
+            @MyControls.Btn("新增来访", "AddNew(2)")
+            @MyControls.Btn("渠道报备", "AddNew(3)")
              @MyControls.Btn("导入", "Import()")
         }
     </div>

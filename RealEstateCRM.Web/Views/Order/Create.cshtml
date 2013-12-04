@@ -55,5 +55,11 @@
             @Html.MyTextAreaFor(model => model.Remark, 3)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+        if(ViewBag.Type == 2)
+         {
+             <div class="alert alert-dismissable alert-danger">
+                这里是直签。 如是大定转合同，请在客户信息页面上，大定合同列表中找到大定记录，点击记录右侧的“签约”按钮。
+             </div>
+        }
     }
 </div>

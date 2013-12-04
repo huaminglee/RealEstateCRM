@@ -56,20 +56,18 @@ namespace RealEstateCRM.Web.Controllers
                 }
             }
             ViewBag.InviteList = inviteList;
-            List<ClientTransferAlertReport> transferAlerts = new List<ClientTransferAlertReport>
-                                                             {
-                                                                 new ClientTransferAlertReport {Type = "电转访超期", Num = 2},
-                                                                 new ClientTransferAlertReport {Type = "办卡超期", Num = 1}
-                                                             };
+            Project project = Project.Get(projectid);
+
+            List<ClientTransferAlertReport> transferAlerts = project.GetOutTimeAlertNum(projectid, groupid);
             List<ClientTransferAlertReport> transferOuts = new List<ClientTransferAlertReport>
                                                              {
-                                                                 new ClientTransferAlertReport {Type = "电转访超期", Num = 1},
-                                                                 new ClientTransferAlertReport {Type = "办卡超期", Num = 1}
+                                                                 new ClientTransferAlertReport {TransferType = "电转访超期", Num = 1},
+                                                                 new ClientTransferAlertReport {TransferType = "办卡超期", Num = 1}
                                                              };
             List<ClientTransferAlertReport> transferIns = new List<ClientTransferAlertReport>
                                                              {
-                                                                 new ClientTransferAlertReport {Type = "来电客户", Num = 1},
-                                                                 new ClientTransferAlertReport {Type = "来访客户", Num = 1}
+                                                                 new ClientTransferAlertReport {TransferType = "来电客户", Num = 1},
+                                                                 new ClientTransferAlertReport {TransferType = "来访客户", Num = 1}
                                                              };
             ViewBag.transferAlerts = transferAlerts;
             ViewBag.transferOuts = transferOuts;

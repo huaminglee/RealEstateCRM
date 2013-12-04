@@ -76,31 +76,51 @@ namespace RealEstateCRM.Web.Controllers
             return Json(jsonData);
         }
 
-        public ActionResult ToCreate()
+        public ActionResult ToCreate(int projectid, string type)
         {
+            ViewBag.Type = type;
+            if (projectid == 0)
+            {
+                if (!UserInfo.CurUser.HasRight("客户管理-电话中心"))
+                {
+                    return Redirect("~/content/AccessDeny.htm");
+                }
+
+                ViewBag.Projects = DepartmentBLL.GetDepartmentByType("项目");
+            }
             ViewBag.Show = false;
             ViewBag.Button = false;
             ViewBag.Message = false;
-            return View();
+            return View(new Client { });
         }
 
         [HttpPost]
-        public ActionResult ToCreate(FormCollection collection)
+        public ActionResult ToCreate(int projectid, string type, FormCollection collection)
         {
             ViewBag.Show = false;
             ViewBag.Button = false;
-            ViewBag.Message = false;
-            string Name = collection["Name"];
-            string PhoneNumber = collection["AllPhone"];
-            if (Name == null || Name.Equals(""))
+            ViewBag.Type = type;
+            string name = collection["Name"];
+            string phoneNumber = collection["AllPhone"];
+            string projectId = collection["ProjectId"];
+            if (type == "4")
             {
-                ModelState.AddModelError("Name", "名称不能为空");
+                if (string.IsNullOrEmpty(projectId))
+                {
+                    ModelState.AddModelError("ProjectId", "请选择项目");
+                }
+                else
+                {
+                    projectid = int.Parse(projectId);
+                }
+                ViewBag.Projects = DepartmentBLL.GetDepartmentByType("项目");
             }
-            if (PhoneNumber == null || PhoneNumber.Equals(""))
+
+            if (phoneNumber == null || phoneNumber.Equals(""))
             {
                 ModelState.AddModelError("AllPhone", "电话不能为空");
             }
-            JsonResult check = PhoneCheck(0, PhoneNumber);
+            JsonResult check = PhoneCheck(0, phoneNumber);
             Result result = (Result)check.Data;
             if (!result.success)
             {
@@ -109,148 +129,232 @@ namespace RealEstateCRM.Web.Controllers
             }
             if (!ModelState.IsValid)
             {
-                return View(new Client() { Name = Name, AllPhone = PhoneNumber });
-            }
-            ViewBag.Show = true;
-            //ToDo:这里有注入漏洞
-            List<ClientView> clients1 = db.Database.SqlQuery<ClientView>(
-                    string.Format(
-                        "select * from Clients where (AllPhone like'{0},%' or AllPhone like '%,{0}' or AllPhone ='{0}' ) ",
-                        PhoneNumber)).ToList();
-            List<ClientView> clients2 = db.Database.SqlQuery<ClientView>(
-                    string.Format(
-                        "select * from Clients where (Name like'{0}' ) ",
-                        Name)).ToList();
-            if (clients1.Count > 0)
-            {
-                ViewBag.Button = false;
-                ViewBag.Message = true;
             }
             else
             {
-                ViewBag.Button = true;
+                ViewBag.Show = true;
+                SqlParameter pName = new SqlParameter { ParameterName = "Name", Value = name };
+                SqlParameter pPhone = new SqlParameter
+                {
+                    ParameterName = "Phone",
+                    Value = string.Format("%{0}%", phoneNumber)
+                };
+                //ToDo:这里有注入漏洞
+                List<ClientView> clients1 = db.Database.SqlQuery<ClientView>(
+                        string.Format(
+                            "select * from Clients where projectid={0} and (Phone1 like @Phone or Phone2 like @Phone ) ", projectid
+                            ), pPhone).ToList();
+                if (clients1.Count > 0)
+                {
+                    ViewBag.Button = false;
+
+                }
+                else
+                {
+                    ViewBag.Button = true;
+                }
+                ViewBag.Clients1 = clients1;
+                if (name != null && name.Length > 1)
+                {
+                    List<ClientView> clients2 = db.Database.SqlQuery<ClientView>(
+                        string.Format(
+                            "select * from Clients  where projectid={0} and Name like @Name  ", projectid), pName).ToList();
+                    ViewBag.Clients2 = clients2;
+                }
             }
-            if (clients2.Count > 0)
-            {
-                ViewBag.Message = true;
-            }
-            
-            ViewBag.Clients1 = clients1;
-            ViewBag.Clients2 = clients2;
-            return View(new Client() { Name = Name, AllPhone = PhoneNumber });
+            return View(new Client() { Name = name, AllPhone = phoneNumber, ProjectId = projectid });
         }
 
-        public ActionResult Create(int projectid, int type, string Name, string AllPhone)
+        public ActionResult Create(int projectid, int type, string name, string phone)
         {
-            ClientCreate c = new ClientCreate();
-            c.AppointmentType = "来访邀约";
+            ClientCreate cc = new ClientCreate();
+            cc.AppointmentType = "来访邀约";
             ViewBag.Type = type;
-            c.Name = Name;
-            c.AllPhone = AllPhone;
-            c.ProjectId = projectid;
-            c.GroupId = UserInfo.CurUser.GetGroup(projectid);
-            ViewBag.QuDao = DictionaryBLL.GetList("渠道类型", false);
+            cc.Name = name;
+            cc.Phone1 = phone;
+            cc.ProjectId = projectid;
+            
+            ViewBag.QuDao = DictionaryBLL.GetList("渠道类型", true);
+            ViewBag.HasAppointment = false;
             switch (type)
             {
                 case 1:
-                    c.ContactType = "来电"; 
-                    ViewBag.Msg = "来电客户登记";break;
+                    ViewBag.Msg = "来电客户登记";
+                    cc.AppointmentType = "";break;
                 case 2:
-                    c.ContactType = "来访";
-                    ViewBag.Msg = "直访客户登记"; break;
+                    ViewBag.Msg = "直访客户登记";
+                    cc.AppointmentType = "";
+                    if (!UserInfo.CurUser.HasRight("客户管理-前台"))//非前台不能做来访登记
+                    {
+                        return Redirect("~/content/AccessDeny.htm");
+                    }
+                    break;
                 case 3:
                     ViewBag.HasAppointment = true;
                     ViewBag.QuDao = new List<SelectListItem>
                                     {
-                                        new SelectListItem {Text = "电话中心", Value = "电话中心"},
                                         new SelectListItem {Text = "中介", Value = "中介"}
                                     };
-                    ViewBag.Msg = "邀约客户报备";
+                    ViewBag.Msg = "中介邀约客户报备";
+                    break;
+                case 4:
+                    ViewBag.HasAppointment = true;
+                    ViewBag.QuDao = new List<SelectListItem>
+                                    {
+                                        new SelectListItem {Text = "电话中心", Value = "电话中心"}
+                                    };
+                    ViewBag.Msg = "电话中心客户报备";
                     //ToDo:如果邀约客户未到访，然后再次报备如何处理？
-                    return View(c);
+                    break;
             }
-            c.ContactActualTime = DateTime.Now;
-            ViewBag.HasAppointment = false;
-            return View(c);
-        }
+            cc.ContactActualTime = DateTime.Now;
 
-        public ActionResult CreateClient(int type, FormCollection collection)
+            return View(cc);
+        }
+        [HttpPost]
+        public ActionResult Create(int projectid, int type, FormCollection collection)
         {
-            ClientCreate cc = new ClientCreate();
+            ViewBag.QuDao = DictionaryBLL.GetList("渠道类型", true);
+            ViewBag.HasAppointment = false;
+
             ViewBag.Type = type;
-            if (type != 3)
-            {
-                if (collection["ContactActualTime"] == null || collection["ContactActualTime"].Equals(""))
-                {
-                    ModelState.AddModelError("ContactActualTime", "联系时间不能为空");
-                }
-            }
             bool HasAppointment = (collection["HasAppointment"] != null && collection["HasAppointment"].Equals("Add")) ? true : false;
-            if (HasAppointment)
-            {
-                if (collection["AppointmentPlanTime"] == null || collection["AppointmentPlanTime"].Equals(""))
-                {
-                    ModelState.AddModelError("AppointmentPlanTime", "邀约时间不能为空");
-                }
-                if (collection["AppointmentType"] == null || collection["AppointmentType"].Equals(""))
-                {
-                    ModelState.AddModelError("AppointmentType", "邀约类型不能为空");
-                }
-            }
             ViewBag.HasAppointment = HasAppointment;
-            if (collection["AllPhone1"] != null && !collection["AllPhone1"].Equals(""))
-                collection["AllPhone"] = collection["AllPhone"].ToString() + "," + collection["AllPhone1"].ToString();
+            ClientCreate cc = new ClientCreate();
+            cc.ProjectId = projectid;
+            switch (type)
+            {
+                case 1:
+                    cc.GroupId = UserInfo.CurUser.GetGroup(projectid);
+                    ViewBag.Msg = "来电客户登记"; break;
+                case 2:
+                    ViewBag.Msg = "直访客户登记";//直访客户要选择小组
+                    if (!UserInfo.CurUser.HasRight("客户管理-前台"))//非前台不能做来访登记
+                    {
+                        return Redirect("~/content/AccessDeny.htm");
+                    }
+                    break;
+                case 3:
+                    cc.GroupId = UserInfo.CurUser.GetGroup(projectid);
+                    ViewBag.HasAppointment = true;
+                    ViewBag.QuDao = new List<SelectListItem>
+                                    {
+                                        new SelectListItem {Text = "中介", Value = "中介"}
+                                    };
+                    ViewBag.Msg = "中介邀约客户报备";
+                    break;
+                case 4:
+                    cc.GroupId = Project.GetGroupByName(projectid, "前台");
+                    ViewBag.HasAppointment = true;
+                    ViewBag.QuDao = new List<SelectListItem>
+                                    {
+                                        new SelectListItem {Text = "电话中心", Value = "电话中心"}
+                                    };
+                    ViewBag.Msg = "电话中心客户报备";
+                    //ToDo:如果邀约客户未到访，然后再次报备如何处理？
+                    break;
+            }
+            ClientStateEnum state = ClientStateEnum.邀约客户;
             TryUpdateModel(cc, collection);
-            int check = CheckClientByPhone(cc.AllPhone);
+            switch (type)
+            {
+                case 1:
+                    state = ClientStateEnum.来电客户;
+                    if (cc.AppointmentPlanTime != null || cc.AppointmentType != null)
+                    {
+                        if (cc.AppointmentPlanTime == null)
+                        {
+                            ModelState.AddModelError("AppointmentPlanTime", "请输入邀约时间");
+                        }
+                        if (cc.AppointmentType == null)
+                        {
+                            ModelState.AddModelError("AppointmentType", "请输入邀约类型");
+                        }
+                    }
+                    break;
+                case 2:
+                    state = ClientStateEnum.来访客户;
+                    if (cc.AppointmentPlanTime != null || cc.AppointmentType != null)
+                    {
+                        if (cc.AppointmentPlanTime == null)
+                        {
+                            ModelState.AddModelError("AppointmentPlanTime", "请输入邀约时间");
+                        }
+                        if (cc.AppointmentType == null)
+                        {
+                            ModelState.AddModelError("AppointmentType", "请输入邀约类型");
+                        }
+                    }
+                    break;
+                case 3:
+                case 4:
+                    state = ClientStateEnum.邀约客户;
+                    if (cc.AppointmentPlanTime == null)
+                    {
+                        ModelState.AddModelError("AppointmentPlanTime", "请输入邀约时间");
+                    }
+                    if (cc.AppointmentType == null)
+                    {
+                        ModelState.AddModelError("AppointmentType", "请输入邀约类型");
+                    }
+                    break;
+            }
+            Client checkClient = new Client
+                                 {
+                                     Id = cc.Id,
+                                     ProjectId = cc.ProjectId,
+                                     Phone1 = cc.Phone1,
+                                     Phone2 = cc.Phone2
+                                 };
+            int check = CheckClientByPhone(checkClient);
             if (check != 0)
             {
-                ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为：" + DepartmentBLL.GetNameById(check));
-            }
-            if (type == 3)
-            {
-                ModelState.Remove("ContactType");
-                ModelState.Remove("ContactActualTime");
-                ModelState.Remove("ContactDetail");
+                ModelState.AddModelError("", "同电话号码客户已经存在，所在组为：" + DepartmentBLL.GetNameById(check));
             }
             if (ModelState.IsValid)
             {
                 Client c = new Client();
                 UpdateModel(c, collection);
+                c.ProjectId = cc.ProjectId;
+                c.GroupId = cc.GroupId;
                 c.CreateTime = DateTime.Now;
                 c.StateDate = DateTime.Today;
+                c.State = state;
                 db.Clients.Add(c);
                 db.SaveChanges();
-                if (type != 3)
+                ClientActivity ca = new ClientActivity();
+                ca.ClientId = c.Id;
+                switch (type)
                 {
-                    if (type == 1)
-                    {
-                        c.State = ClientStateEnum.来电客户;
-                    }
-                    else
-                    {
-                        c.State = ClientStateEnum.来访客户;
-                    }
-                    ClientActivity ca = new ClientActivity();
-                    ca.ClientId = c.Id;
-                    ca.ActualTime = cc.ContactActualTime;
-                    ca.Type = cc.ContactType;
-                    ca.Detail = cc.ContactDetail;
-                    db.ClientActivities.Add(ca);
-                    Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记", cc.AppointmentType);
+                    case 1:
+                        db.ClientActivities.Add(ca);
+                        ca.ActualTime = DateTime.Today;
+                        ca.Type = "来电";
+                        break;
+                    case 2:
+                        db.ClientActivities.Add(ca);
+                        ca.ActualTime = DateTime.Today;
+                        ca.Type = "来访";
+                        break;
+                    case 3:
+                    case 4:
+                        break;
                 }
-                if (HasAppointment)
+                if (cc.AppointmentType != null)
                 {
-                    c.State = ClientStateEnum.邀约客户;
-                    ClientActivity ap = new ClientActivity();
-                    ap.ClientId = c.Id;
-                    ap.PlanTime = cc.AppointmentPlanTime;
-                    ap.Detail = cc.AppointmentDetail;
-                    ap.Type = cc.AppointmentType;
-                    db.ClientActivities.Add(ap);
-                    Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记", "邀约报备");
+                    ClientActivity appoint = new ClientActivity();
+                    appoint.ClientId = c.Id;
+                    appoint.PlanTime = cc.AppointmentPlanTime;
+                    appoint.Type = cc.AppointmentType;
+                    appoint.Detail = cc.AppointmentDetail;
+
+                    db.ClientActivities.Add(appoint);
                 }
+                c.AllPhone = string.Format("{0},{1}", c.Phone1, c.Phone2);
+                Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记",string.Format("{0} 姓名:{1} 电话:{2}", ca.Type??cc.AppointmentType,c.Name,c.AllPhone));
+
                 db.SaveChanges();
-                
+
                 return Redirect("./View/" + c.Id);
                 //ToDo：这个地方有BUG，提交不成功后出错 
             }
@@ -267,8 +371,8 @@ namespace RealEstateCRM.Web.Controllers
             List<ClientActivity> AppointmentList = new List<ClientActivity>();
             List<Card> CardList = new List<Card>();
             List<Order> OrderList = new List<Order>();
-            ContactList = (from o in db.ClientActivities where o.ClientId == id && !o.PlanTime.HasValue select o).ToList();
-            AppointmentList = (from o in db.ClientActivities where o.ClientId == id && o.PlanTime.HasValue select o).ToList();
+            //ContactList = (from o in db.ClientActivities where o.ClientId == id && !o.PlanTime.HasValue select o).ToList();
+            AppointmentList = (from o in db.ClientActivities where o.ClientId == id select o).ToList();
             CardList = (from o in db.Cards where o.ClientId == id select o).ToList();
             OrderList = (from o in db.Orders where o.ClientId == id select o).ToList();
             ViewBag.Contacts = ContactList;
@@ -281,30 +385,7 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult Edit(/*int projectid,*/int id)//仅作为编辑使用
         {
             Client c = db.Clients.Find(id);
-            //int projectid = 0;
-            //if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); }
-            //if (c == null)
-            //{
-            //    c = new Client();
-            //    c.ProjectId = projectid;
-            //    c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
-            //    c.AllPhone = "";
-            //    c.RoomType = "";
-            //}
-            List<string> phoneList = c.AllPhone.Split(',').ToList();
-            while (phoneList.Count != 2)
-            {
-                phoneList.Add("");
-            }
-            ViewBag.Phones = phoneList;
-
-            //List<SelectListItem> typelist = new List<SelectListItem>();
-            //List<string> hastype = c.RoomType.Split(',').ToList();
-            //foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
-            //{
-            //    typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
-            //}
-            //ViewBag.RoomTypes = typelist;
+            
             return View(c);
         }
 
@@ -313,71 +394,114 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult Edit(int id, FormCollection collection)
         {
             Client c = db.Clients.Find(id);
-            var a = collection["AllPhone"];
-            while (!a.Equals("") && a[a.Length - 1] == ',')
-                a = a.Remove(a.Length - 1);
-            collection["AllPhone"] = a;
-            //if (c == null)
-            //{
-            //    c = new Client();
-            //    c.CreateTime = DateTime.Now;
-            //    db.Clients.Add(c);
-            //    int check = CheckClientByPhone(collection["AllPhone"]);
-            //    if (check != 0)
-            //    {
-            //        ModelState.AddModelError("AllPhone", "该客户已经存在，所在项目组为：" + DepartmentBLL.GetNameById(check));
-            //    }
-            //}
 
+            string oldname = c.Name;
+            string oldphone1 = c.Phone1;
+            string oldphone2 = c.Phone2;
+            string oldwayextend = c.WayExtend;
             TryUpdateModel(c, "", new string[] { }, new string[] { }, collection);
+            int check = CheckClientByPhone(c);
+            if (check != 0)
+            {
+                ModelState.AddModelError("", "同电话号码客户已经存在，所在组为：" + DepartmentBLL.GetNameById(check));
+            }
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
+                c.AllPhone = string.Format("{0},{1}", c.Phone1, c.Phone2);
+                StringBuilder sb = new StringBuilder();
+                if (c.Name != oldname) sb.Append(string.Format(" 姓名:{0} 改为{1}", oldname, c.Name));
+                if (c.Phone1 != oldphone1) sb.Append(string.Format(" 电话1:{0} 改为{1}", oldphone1, c.Phone1));
+                if (c.Phone2 != oldphone2) sb.Append(string.Format(" 电话2:{0} 改为{1}", oldphone2, c.Phone2));
+                if (c.WayExtend != oldwayextend) sb.Append(string.Format(" 渠道说明:{0} 改为{1}", oldwayextend, c.WayExtend));
+                Utilities.AddLog(db, c.Id, Client.LogClass, "客户修改", sb.ToString());
+                db.SaveChanges();
                 //if (id == 0)
                 //    return Redirect("../View/" + c.Id);
-                return Redirect("../View/"+c.Id);
+                return Redirect("../View/" + c.Id);
             }
             else
             {
-                c.AllPhone = c.AllPhone ?? "";
-                List<string> phoneList = c.AllPhone.Split(',').ToList();
-                while (phoneList.Count != 2)
-                {
-                    phoneList.Add("");
-                }
-                ViewBag.Phones = phoneList;
-                //c.RoomType = c.RoomType ?? "";
-                //List<SelectListItem> typelist = new List<SelectListItem>();
-                //List<string> hastype = c.RoomType.Split(',').ToList();
-                //foreach (string s in DepartmentBLL.GetRoomType(c.ProjectId))
-                //{
-                //    typelist.Add(new SelectListItem() { Text = s, Value = s, Selected = hastype.Contains(s) });
-                //}
-                //ViewBag.RoomTypes = typelist;
+              
                 return View(c);
             }
         }
 
-        public ActionResult AddContact(int id)//id为client的id
+        public ActionResult AddContact(int id,int? clientid)//id为client的id
         {
-            ClientActivity c = new ClientActivity();
-            c.ActualTime = DateTime.Now;
-            c.ClientId = id;
+            ClientActivity c = db.ClientActivities.Find(id);
+            if (c != null)
+            {
+                if (c.PlanTime != null)
+                {
+                    return View("ShowError", "", "邀约记录不能通过这个入口修改");
+                }
+            }
+            else
+            {
+                c = new ClientActivity();
+                 c.ActualTime = DateTime.Now;
+                c.ClientId =(int)clientid;
+            }
+            Client client = db.Clients.Find(c.ClientId);
+            ViewBag.ProjectId = client.ProjectId;
+            if (DepartmentBLL.GetById(client.GroupId).Name == "前台")
+            {
+                ViewBag.ChangeGroup = true;
+
+            }
             return View(c);
         }
 
         [HttpPost]
-        public ActionResult AddContact(FormCollection collection)
+        public ActionResult AddContact(int id,int? clientid,FormCollection collection)
         {
-            ClientActivity c = new ClientActivity();
-            db.ClientActivities.Add(c);
-
+            ClientActivity c = db.ClientActivities.Find(id);
+            if (c != null)
+            {
+                if (c.PlanTime != null)
+                {
+                    return View("ShowError", "", "邀约记录不能通过这个入口修改");
+                }
+            }
+            else
+            {
+                c = new ClientActivity();
+                c.ClientId = (int)clientid;
+                db.ClientActivities.Add(c);
+            }
             TryUpdateModel(c, collection);
+            if (c.Id == 0&&c.Type=="来访")
+            {
+                if (!UserInfo.CurUser.HasRight("客户管理-客户来访记录"))
+                {
+                    return View("ShowError", "", "无权新增来访联系记录");
+                }
+            }
             if (!c.ActualTime.HasValue)
             {
                 ModelState.AddModelError("ActualTime", "联系时间不能为空");
             }
+            else if (((DateTime) c.ActualTime).Date != DateTime.Today)
+            {
+                ModelState.AddModelError("ActualTime", "联系日期只能为当天");
+            }
             Client client = db.Clients.Find(c.ClientId);
+            ViewBag.ProjectId = client.ProjectId;
+            if (DepartmentBLL.GetById(client.GroupId).Name == "前台")
+            {
+                ViewBag.ChangeGroup = true;
+                int group = 0;
+                if (int.TryParse(collection["GroupId"], out group))
+                {
+                    client.GroupId = group;
+                }
+                else
+                {
+                    ModelState.AddModelError("", "请选择小组");
+                    ViewBag.GroupPrompt = "请选择小组";
+                }
+            }
             if (ModelState.IsValid)
             {
                 if (c.Type == "来访" && (client.State == ClientStateEnum.邀约客户 || client.State == ClientStateEnum.来电客户))
@@ -450,7 +574,7 @@ namespace RealEstateCRM.Web.Controllers
         {
             Result result = new Result();
             ClientActivity c = db.ClientActivities.Find(id);
-            if (c != null)
+            if (c != null&&c.ActualTime!=null)
             {
                 db.ClientActivities.Remove(c);
                 db.SaveChanges();
@@ -458,7 +582,7 @@ namespace RealEstateCRM.Web.Controllers
                 return Json(result);
             }
             result.success = false;
-            result.obj = "删除失败";
+            result.obj = "已有到访记录，不能删除";
             return Json(result);
         }
 
@@ -489,6 +613,13 @@ namespace RealEstateCRM.Web.Controllers
         {
             ClientActivity c = db.ClientActivities.Find(id);
             c.ActualTime = DateTime.Today;
+            Client client = db.Clients.Find(c.ClientId);
+            ViewBag.ProjectId = client.ProjectId;
+            if (DepartmentBLL.GetById(client.GroupId).Name == "前台")
+            {
+                ViewBag.ChangeGroup = true;
+
+            }
             return View(c);
         }
 
@@ -496,20 +627,35 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult FinishAppointment(int id, FormCollection collection)//id为Appointment的id
         {
             ClientActivity c = db.ClientActivities.Find(id);
+            Client client = db.Clients.Find(c.ClientId);
+            ViewBag.ProjectId = client.ProjectId;
+            if (DepartmentBLL.GetById(client.GroupId).Name == "前台")
+            {
+                ViewBag.ChangeGroup = true;
+                int group = 0;
+                if (int.TryParse(collection["GroupId"], out group))
+                {
+                    client.GroupId = group;
+                }
+                else
+                {
+                    ModelState.AddModelError("", "请选择小组");
+                    ViewBag.GroupPrompt = "请选择小组";
+                }
+            }
             TryUpdateModel(c, collection);
             if (c.ActualTime == null)
             {
                 ModelState.AddModelError("ActualTime", "请输入到访时间");
             }
-            DateTime d = (DateTime) c.ActualTime;
-            if (d.Date != ((DateTime) c.PlanTime).Date)
+            DateTime d = (DateTime)c.ActualTime;
+            if (d.Date != ((DateTime)c.PlanTime).Date)
             {
                 ModelState.AddModelError("ActualTime", "到访日期不能与邀约日期不同");
             }
-            Client client = db.Clients.Find(c.ClientId);
             if (ModelState.IsValid)
             {
-                if ( (client.State == ClientStateEnum.邀约客户 || client.State == ClientStateEnum.来电客户))
+                if ((client.State == ClientStateEnum.邀约客户 || client.State == ClientStateEnum.来电客户))
                 {
                     client.State = ClientStateEnum.来访客户;
                     client.StateDate = DateTime.Today;
@@ -552,21 +698,33 @@ namespace RealEstateCRM.Web.Controllers
 
             return Json(result);
         }
-        public int CheckClientByPhone(string allphone)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns>同电话的组</returns>
+        public int CheckClientByPhone(Client c)
         {
             int check = 0;
-            if (allphone == null || allphone.Equals("")) return check;
-            List<string> forcheck = allphone.Split(',').ToList();
-            foreach (string s in forcheck)
+            
+            var query = (from o in db.Clients where o.ProjectId==c.ProjectId && o.Id!=c.Id &&( o.Phone1==c.Phone1 || (o.Phone2!=null &&o.Phone2==c.Phone1)) select o).FirstOrDefault();
+            if (query != null)
             {
-                if (!s.Equals(""))
+                return query.GroupId;
+            }
+            if (!string.IsNullOrEmpty(c.Phone2))
+            {
+                var query2 = (from o in db.Clients
+                    where
+                        o.ProjectId == c.ProjectId && o.Id != c.Id &&
+                        (o.Phone1 == c.Phone2 || (o.Phone2 != null && o.Phone2 == c.Phone2))
+                    select o).FirstOrDefault();
+                if (query2 != null)
                 {
-                    var query = (from o in db.Clients where o.AllPhone.Contains(s) select o).FirstOrDefault();
-                    if (query != null)
-                        return query.ProjectId;
+                   return query2.GroupId;
                 }
             }
-            return check;
+            return 0;
         }
         [HttpPost]
         public JsonResult PhoneCheck(int id, string phone)
@@ -629,7 +787,7 @@ namespace RealEstateCRM.Web.Controllers
                                                     InGroup = newGroupId,
                                                     OutGroup = client.GroupId,
                                                     Person = UserInfo.CurUser.Id,
-                                                    TransferDate=DateTime.Today
+                                                    TransferDate = DateTime.Today
                                                 };
                             db.ClientTransfers.Add(ct);
                             Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
@@ -676,7 +834,7 @@ namespace RealEstateCRM.Web.Controllers
                     InGroup = newGroupId,
                     OutGroup = client.GroupId,
                     Person = UserInfo.CurUser.Id,
-                    TransferDate=DateTime.Today
+                    TransferDate = DateTime.Today
                 };
                 db.ClientTransfers.Add(ct);
                 Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
@@ -710,14 +868,14 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult ClientTransferInQuery(int projectid,FormCollection collection)
+        public JsonResult ClientTransferInQuery(int projectid, FormCollection collection)
         {
             //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
             Result result = new Result();
             List<object> parameters = new List<object>();
             //int GroupId = int.Parse(collection["groupId"]);
             //string GroupName = DepartmentBLL.GetNameById(GroupId);
-            
+
 
             string sql = ClientTransformLog.sql;
             if (UserInfo.CurUser.GetClientRight(projectid) > ClientViewScopeEnum.查看本组)
@@ -749,7 +907,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult ClientTransferOutQuery(int projectid,FormCollection collection)
+        public JsonResult ClientTransferOutQuery(int projectid, FormCollection collection)
         {
             //if (!UserInfo.CurUser.HasRight("系统管理-部门管理")) return Json(new Result {success=false, obj = "没有权限" });
             Result result = new Result();
@@ -784,9 +942,9 @@ namespace RealEstateCRM.Web.Controllers
             return View();
         }
 
-        public ActionResult InviteListQuery(int projectid,string dateFrom,string dateTo,FormCollection collection)
+        public ActionResult InviteListQuery(int projectid, string dateFrom, string dateTo, FormCollection collection)
         {
-           Result result = new Result();
+            Result result = new Result();
             DateTime date1 = new DateTime();
             DateTime date2 = new DateTime();
             if (!DateTime.TryParse(dateFrom, out date1))
@@ -805,8 +963,8 @@ namespace RealEstateCRM.Web.Controllers
                 groupid = UserInfo.CurUser.GetGroup(projectid);
             }
             var list = ClientActivityListView.GetReport(projectid, groupid, date1, date2, collection["client"]);
-            
-            
+
+
             result.obj = list;
             result.success = true;
             return Json(result);
@@ -818,9 +976,9 @@ namespace RealEstateCRM.Web.Controllers
             return View();
         }
 
-        public ActionResult InviteReportQuery(int projectid,string dateFrom,string dateTo,FormCollection collection)
+        public ActionResult InviteReportQuery(int projectid, string dateFrom, string dateTo, FormCollection collection)
         {
-           Result result = new Result();
+            Result result = new Result();
             DateTime date1 = new DateTime();
             DateTime date2 = new DateTime();
             if (!DateTime.TryParse(dateFrom, out date1))
@@ -859,12 +1017,12 @@ namespace RealEstateCRM.Web.Controllers
                     }
                 }
             }
-            
-            result.obj = new{Total=inviteList,list=caList};
+
+            result.obj = new { Total = inviteList, list = caList };
             result.success = true;
             return Json(result);
         }
-        
+
     }
 
 }

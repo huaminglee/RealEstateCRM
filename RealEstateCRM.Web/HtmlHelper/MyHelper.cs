@@ -36,7 +36,7 @@ namespace RealEstateCRM.Web
             {
                 if (metadata.PropertyName.Contains("Time"))
                 {
-                    text = ((DateTime)metadata.Model).ToString("yyyy/MM/dd hh:mm");
+                    text = ((DateTime)metadata.Model).ToString("yyyy/MM/dd HH:mm");
                 }
                 else
                 {
@@ -287,10 +287,13 @@ namespace RealEstateCRM.Web
 
         }
         
-        public static MvcHtmlString MyDropdownFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression, List<SelectListItem> list, string defaultValue="")
+        public static MvcHtmlString MyDropdownFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression, List<SelectListItem> list, string defaultValue="",bool appendBlank=true)
         {
-
-            if (list.Count == 0 || list.Count > 0 && list[0].Value != "") list.Insert(0, new SelectListItem() { Value = "", Text = "----" });
+            if (appendBlank)
+            {
+                if (list.Count == 0 || list.Count > 0 && list[0].Value != "") list.Insert(0, new SelectListItem() { Value = "", Text = "----" });
+            }
+            
             if (!string.IsNullOrEmpty(defaultValue))
             {
                 foreach (var selectListItem in list)

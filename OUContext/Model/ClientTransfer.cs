@@ -26,7 +26,7 @@ namespace OUDAL
 
     public class ClientTransferAlertReport
     {
-        public string Type { get; set; }
+        public string TransferType { get; set; }
         public string GroupName { get; set; }
         public int Num { get; set; }
     }

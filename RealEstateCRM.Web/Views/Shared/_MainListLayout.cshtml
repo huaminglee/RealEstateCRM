@@ -94,7 +94,7 @@
                             <li class="dropdown">
                                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("客户列表", "List", "Client")</li>
+                                    <li><a href="@Url.Content("~/Client/ToCreate?projectid=0&type=4")">客户报备</a></li>
                                 </ul>
                             </li>
                         }
@@ -137,7 +137,7 @@
                             <b class="caret"></b>
                         </a>
                     <ul class="dropdown-menu">
-                        <li><a href="@Url.Content("~")">主页</a></li>
+                        <li><a href="@Url.Content("~")">公司</a></li>
                         @foreach (var p in UserInfo.CurUser.GetProjects())
                         {
                             <li><a href="@Url.Content("~/Project/"+p.Id.ToString()+"/Home/ProjectIndex")">@p.Name</a></li>

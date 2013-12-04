@@ -34,6 +34,23 @@
                 @Html.TextBox("PlanTime",Model.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm"), new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.PlanTime)
             </div>
             @Html.MyDateTimeFor(model => model.ActualTime)@Html.ValidationMessageFor(m => m.ActualTime)
+            @if (ViewBag.ChangeGroup == true)
+            {
+                var list = Project.GetSalesGroup(ViewBag.ProjectId);
+                <div class="form-group">
+                <label for="GroupId">接待小组</label>
+                    <select id="GroupId" class="form-control" name="GroupId">
+                        <option></option>
+                        @foreach (var item in list)
+                    {
+                        <option value='@item.Id'>@item.Name</option>
+                    }
+                    </select>
+
+                    <span style="color:red">*</span>
+                    <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+                    </div>
+            }
             @Html.MyTextAreaFor(model => model.Detail, 3)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>

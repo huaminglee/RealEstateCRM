@@ -27,16 +27,44 @@
             <legend>联系信息</legend>
             <div class="form-group">
                 @Html.LabelFor(model => model.Type)
-                @foreach (SelectListItem s in DictionaryBLL.GetList("联系类型", false))
+                @if (Model.Id == 0)
                 {
-                    <label class="radio-inline" style="min-width:initial;"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)"/>@s.Text</label>
+                    foreach (SelectListItem s in DictionaryBLL.GetList("联系类型", false))
+                    {
+                        <label class="radio-inline" style="min-width: 40px;"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)"/>@s.Text</label>
 
+                    } @Html.ValidationMessageFor(m => m.Type)
                 }
-                @Html.ValidationMessageFor(m => m.Type)
+                else
+                {
+                    <span>@Model.Type</span>
+                }
             </div>
             @Html.MyDateTimeFor(model => model.ActualTime)
+            @if (ViewBag.ChangeGroup == true)
+            {
+                var list = Project.GetSalesGroup(ViewBag.ProjectId);
+                <div class="form-group">
+                    <label for="GroupId">接待小组</label>
+                    <select id="GroupId" class="form-control" name="GroupId">
+                        <option></option>
+                        @foreach (var item in list)
+                        {
+                            <option value='@item.Id'>@item.Name</option>
+                        }
+                    </select>
+
+                    <span style="color:red">*</span>
+                    <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+                </div>
+            }
             @Html.MyTextAreaFor(model => model.Detail, 3)
         </fieldset>
         <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+    <div class="alert alert-dismissable alert-success">
+        备注：只有前台才能新增“来访”类型的联系记录，销售员只可修改“来访联系记录”<br />
+        这里是未邀约记录。如邀约来访，请在客户信息页面上，找到对应邀约记录，点击右侧的“完成”按钮填写信息。
+    </div>
+        <br /><span></span>
     }
 </div>

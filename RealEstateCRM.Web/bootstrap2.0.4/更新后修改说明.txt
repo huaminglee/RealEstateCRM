@@ -55,3 +55,11 @@ v2.3.1
   -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
           transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
+
+.form-horizontal .checkbox-inline {
+  padding-top: 9px;   -- 改为 padding-top: 3px;
+  margin-top: 0;               padding-bottom: 6px;
+  margin-bottom: 0;
+   
+   
+}

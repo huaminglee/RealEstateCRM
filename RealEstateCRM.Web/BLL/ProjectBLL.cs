@@ -9,11 +9,11 @@ using System.Data.SqlClient;
 using OUDAL;
 namespace RealEstateCRM.Web.BLL
 {
-    public class ClientBLL
+    public class ProjectBLL
     {
-        
-
-   
-
+        public Project Project { get; set; }
+       
+       
     }
+   
 }

@@ -8,11 +8,11 @@
 <script type="text/javascript">
     jQuery(document).ready(function () {
         $(".datepicker").datetimepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
-        var show = "@ViewBag.HasAppointment";
-        if (show == "True") {
+        
             $("#AppointmentField").show();
-        }
-
+        
+            $("#Phone1").attr("readonly", "readonly");
+            $(".form-group").addClass("col-md-6");
     });
     //function RoomTypeChanged() {
     //    var roomtype = "";
@@ -50,36 +50,24 @@
         }
     }
 </script>
-<div class="well" style="margin:0px auto">
-    @using (Html.BeginForm("CreateClient", "Client"))
+<div class="well container" style="margin:0px auto">
+    @using (Html.BeginForm())
     {
-        @Html.ValidationSummary(true)
+        @Html.ValidationSummary(false)
         @Html.HiddenFor(model => model.Id)
-        @Html.HiddenFor(model => model.ProjectId)
-        @Html.HiddenFor(model => model.GroupId)
         <input id="RoomType" type="text" style="display:none" />
         <fieldset>
             <legend>@ViewBag.Msg</legend>
-            <div class='form-group'>
-                @Html.MyTextFor(model => model.Name)
-            </div>
+            @Html.MyTextFor(m => m.Name)
             <div class='form-group'>
                 @Html.LabelFor(m => m.Sex)
-                <label class="radio-inline" style="min-width:initial"><input name="Sex" type="radio" value="男" checked />男</label>
-                <label class="radio-inline" style="min-width:initial"><input name="Sex" type="radio" value="女" />女</label>
+                <label class="radio-inline" style="min-width:30px"><input name="Sex" type="radio" value="男" checked />男</label>
+                <label class="radio-inline" style="min-width:30px;"><input name="Sex" type="radio" value="女" />女</label>
                 @Html.ValidationMessageFor(m => m.Sex)
             </div>
-            <div class='form-group'>
-                @Html.LabelFor(m => m.AllPhone)
-                <input class="text-box" type="text" name="AllPhone" value="@Model.AllPhone.Split(',')[0]" readonly="readonly" />
-                <input class="text-box" type="text" name="AllPhone1" value="@if(Model.AllPhone.Split(',').Count()==2)
-                                                                           {
-                                                                               @Model.AllPhone.Split(',')[1]
-                                                                                                         }"
-                       onchange="PhoneCheck(this.value);" />
-                @Html.ValidationMessageFor(m => m.AllPhone)
-            </div>
-            @Html.MyDropdownFor(model => model.Way,ViewBag.QuDao as List<SelectListItem> , Model.Way)
+            @Html.MyTextFor(m=>m.Phone1)
+            @Html.MyTextFor(m=>m.Phone2)
+            @Html.MyDropdownFor(model => model.Way,ViewBag.QuDao as List<SelectListItem> , Model.Way,appendBlank:false)
             @Html.MyTextFor(model => model.WayExtend)
             @*<div class='form-group'>
                     @Html.LabelFor(m => m.RoomType)
@@ -92,45 +80,33 @@
                 @Html.LabelFor(m => m.RoomType)
                 @foreach (string s in DepartmentBLL.GetRoomType(Model.ProjectId))
                 {
-                    <label class="radio-inline" style="min-width:initial;"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
+                    <label class="radio-inline" style="min-width:30px;"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
                 }
                 @Html.ValidationMessageFor(m => m.RoomType)
             </div>
-            <div class='form-group'>
-                @Html.LabelFor(m => m.Code)
-                @Html.TextBoxFor(m => m.Code, new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.Code)
-            </div>
-            @Html.MyTextAreaFor(model => model.Remark, 3)
-            @if (ViewBag.Type != 3)
-            {<legend>联系记录</legend>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.ContactType)
-                    @Html.TextBoxFor(m => m.ContactType, new { @readonly = "readonly" })
-                    @Html.ValidationMessageFor(m => m.ContactType)
-                </div>
-                @Html.MyDateTimeFor(model => model.ContactActualTime)
-                @Html.MyTextAreaFor(model => model.ContactDetail, 3)
+            @if (ViewBag.Type == 2)
+            {
+                @Html.MyDropdownFor(m=>m.GroupId,Project.GetSalesGroup(Model.ProjectId).ToSelectLists(true) );
             }
-            <div @if(ViewBag.Type.Equals(3)){<text>style="display:none;"</text>}>
-                <label class="checkbox-inline" style="min-width:initial;">
-                    <input type="checkbox" id="HasAppointment" name="HasAppointment" onchange="ShowAppointment(this.checked)" value="Add" checked="@ViewBag.HasAppointment" />是否添加邀约信息
-                </label>
-            </div>
-            <br />
-            <br />
+            <div class="clearfix"></div>
+            @Html.MyTextAreaFor(model => model.Remark, 3)
+            <div class="clearfix"></div>
+            
             <fieldset id="AppointmentField" style="display:none;">
-                <legend>邀约记录</legend>
-                <div class="form-group">
+                <legend>邀约信息</legend>
+                <div class="">
                     @Html.LabelFor(model => model.AppointmentType)
                     @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
                     {
-                        <label class="radio-inline" style="min-width:initial;"><input type="radio" name="AppointmentType" value="@s.Value" checked="@s.Value.Equals(Model.AppointmentType)" />@s.Text</label>
+                        <label class="radio-inline" style="min-width:15px;"><input type="radio" name="AppointmentType" value="@s.Value" checked="@s.Value.Equals(Model.AppointmentType)" />@s.Text</label>
 
                     }
+                    <label class="radio-inline" style="min-width:15px;"><input type="radio" name="AppointmentType" />无</label>
+
                     @Html.ValidationMessageFor(m => m.AppointmentType)
                 </div>
                 @Html.MyDateTimeFor(model => model.AppointmentPlanTime)
-                @Html.MyTextAreaFor(model => model.AppointmentDetail, 3)
+                @Html.MyTextFor(model => model.AppointmentDetail)
                 <input hidden value="@ViewBag.Type" name="type" id="type"/>
             </fieldset>
         </fieldset>

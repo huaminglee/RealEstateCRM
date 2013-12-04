@@ -180,7 +180,7 @@
     <Compile Include="BLL\IntStringItem.cs" />
     <Compile Include="BLL\JsonFormatter.cs" />
     <Compile Include="BLL\MyFilter.cs" />
-    <Compile Include="BLL\ClientBLL.cs" />
+    <Compile Include="BLL\ProjectBLL.cs" />
     <Compile Include="BLL\UserInfo.cs" />
     <Compile Include="BLL\Utilities.cs" />
     <Compile Include="BLL\DictionaryBLL.cs" />
@@ -202,6 +202,7 @@
     <Compile Include="HtmlHelper\JqGridHelper.cs" />
     <Compile Include="HtmlHelper\JqGridSimple.cs" />
     <Compile Include="HtmlHelper\MultiButtonAttribute.cs" />
+    <Compile Include="HtmlHelper\OtherHelpers.cs" />
     <Compile Include="HtmlHelper\MvcHelpers.cs" />
     <Compile Include="HtmlHelper\MyHelper.cs" />
     <Compile Include="HtmlHelper\QueryHelper.cs" />
@@ -243,6 +244,7 @@
     <Content Include="Content\jqgrid.htm" />
     <Content Include="Content\jquery.jqGrid\ellipsis-xbl.xml" />
     <Content Include="Content\jquery.jqGrid\ui.jqgrid.css" />
+    <Content Include="Content\p1.html" />
     <Content Include="Content\Print.html" />
     <Content Include="Content\redmond\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\redmond\images\ui-bg_flat_55_fbec88_40x100.png" />
