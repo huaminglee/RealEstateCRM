@@ -120,7 +120,7 @@ namespace RealEstateCRM.Web.Controllers
             {
                 ModelState.AddModelError("AllPhone", "电话不能为空");
             }
-            JsonResult check = PhoneCheck(0, phoneNumber);
+            JsonResult check = PhoneCheck(phoneNumber);
             Result result = (Result)check.Data;
             if (!result.success)
             {
@@ -306,6 +306,23 @@ namespace RealEstateCRM.Web.Controllers
                                      Phone1 = cc.Phone1,
                                      Phone2 = cc.Phone2
                                  };
+            JsonResult numcheck = PhoneCheck(checkClient.Phone1);
+            Result result = (Result)numcheck.Data;
+            if (!result.success)
+            {
+                if (result.obj.Equals("号码格式错误"))
+                    ModelState.AddModelError("Phone1", result.obj.ToString());
+            }
+            if (!string.IsNullOrEmpty(checkClient.Phone2))
+            {
+                numcheck = PhoneCheck(checkClient.Phone2);
+                result = (Result)numcheck.Data;
+                if (!result.success)
+                {
+                    if (result.obj.Equals("号码格式错误"))
+                        ModelState.AddModelError("Phone2", result.obj.ToString());
+                }
+            }
             int check = CheckClientByPhone(checkClient);
             if (check != 0)
             {
@@ -703,7 +720,7 @@ namespace RealEstateCRM.Web.Controllers
         /// </summary>
         /// <param name="c"></param>
         /// <returns>同电话的组</returns>
-        public int CheckClientByPhone(Client c)
+        public int CheckClientByPhone(Client c)//检查是否重复
         {
             int check = 0;
             
@@ -727,26 +744,37 @@ namespace RealEstateCRM.Web.Controllers
             return 0;
         }
         [HttpPost]
-        public JsonResult PhoneCheck(int id, string phone)
+        public JsonResult PhoneCheck(string phone)//检查格式是否正确
         {
             Result result = new Result();
-            long i;
-            if (!long.TryParse(phone, out i) || phone.Length < 8 || (phone[0].Equals('1') && phone.Length != 11))
+            if (phone.Length < 8 || (phone[0].Equals('1') && phone.Length != 11))
             {
                 result.success = false;
                 result.obj = "号码格式错误";
                 return Json(result);
             }
-            if (id == 0)
+            else
             {
-                var query = (from o in db.Clients where o.AllPhone.Contains(phone) select o).FirstOrDefault();
-                if (query != null)
+                foreach (char c in phone)
                 {
-                    result.success = false;
-                    result.obj = "该号码已经存在用户，所在项目为：" + DepartmentBLL.GetNameById(query.ProjectId);
-                    return Json(result);
+                    if(!Char.IsDigit(c)&&!c.Equals('*')&&!c.Equals('-'))
+                    {
+                        result.success = false;
+                        result.obj = "号码格式错误";
+                        return Json(result);
+                    }
                 }
             }
+            //if (id == 0)
+            //{
+            //    var query = (from o in db.Clients where o.AllPhone.Contains(phone) select o).FirstOrDefault();
+            //    if (query != null)
+            //    {
+            //        result.success = false;
+            //        result.obj = "该号码已经存在用户，所在项目为：" + DepartmentBLL.GetNameById(query.ProjectId);
+            //        return Json(result);
+            //    }
+            //}
             result.success = true;
             return Json(result);
         }
@@ -754,13 +782,13 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult TransferBatch(int projectid)
         {
             List<SelectListItem> groups = new List<SelectListItem>();
-            groups.Add(new SelectListItem());
+            //groups.Add(new SelectListItem());
             DepartmentBLL.GetGroupsByPid(projectid).ForEach(o =>
             {
                 groups.Add(new SelectListItem { Text = o.Name, Value = o.Id.ToString() });
             });
             ViewBag.Groups = groups;
-
+            ViewBag.Default = (from o in groups where o.Text.Equals("公共客户") select o.Value).FirstOrDefault();
             return View();
         }
 
@@ -935,14 +963,15 @@ namespace RealEstateCRM.Web.Controllers
             return Json(result);
         }
 
-        public ActionResult InviteList()
+        public ActionResult InviteList(string type)
         {
             ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
             ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.Type = type;
             return View();
         }
 
-        public ActionResult InviteListQuery(int projectid, string dateFrom, string dateTo, FormCollection collection)
+        public ActionResult InviteListQuery(int projectid, string dateFrom, string dateTo, FormCollection collection,string type)
         {
             Result result = new Result();
             DateTime date1 = new DateTime();
@@ -963,8 +992,10 @@ namespace RealEstateCRM.Web.Controllers
                 groupid = UserInfo.CurUser.GetGroup(projectid);
             }
             var list = ClientActivityListView.GetReport(projectid, groupid, date1, date2, collection["client"]);
-
-
+            if(!string.IsNullOrEmpty(type))
+            {
+                list = (from o in list where o.Type.Equals(type) select o).ToList();
+            }
             result.obj = list;
             result.success = true;
             return Json(result);
@@ -1019,6 +1050,48 @@ namespace RealEstateCRM.Web.Controllers
             }
 
             result.obj = new { Total = inviteList, list = caList };
+            result.success = true;
+            return Json(result);
+        }
+
+        public ActionResult AlertList(string type)
+        {
+            ViewBag.Type = type;
+            return View();
+        }
+
+        public ActionResult AlertListQuery(int projectid, string dateFrom, string dateTo, FormCollection collection, string type)
+        {
+            Result result = new Result();
+            int groupid = 0;
+            if (UserInfo.CurUser.GetClientRight(projectid) < ClientViewScopeEnum.查看项目)
+            {
+                groupid = UserInfo.CurUser.GetGroup(projectid);
+            }
+            Project project = Project.Get(projectid);
+            List<OutTimeClient> list = new List<OutTimeClient>(); 
+            if (string.IsNullOrEmpty(type))
+            {
+                list=(project.GetOutTimeAlert(projectid, groupid, ClientStateEnum.来电客户));
+                list.AddRange(project.GetOutTimeAlert(projectid, groupid, ClientStateEnum.来访客户));
+                list.AddRange(project.GetOutTimeAlert(projectid, groupid, ClientStateEnum.办卡客户));
+            }
+            else
+            {
+                switch (type)
+                {
+                    case "电转访超期预警":
+                        list = project.GetOutTimeAlert(projectid, groupid, ClientStateEnum.来电客户);
+                        break;
+                    case "访转卡超期预警":
+                        list = project.GetOutTimeAlert(projectid, groupid, ClientStateEnum.来访客户);
+                        break;
+                    case "卡转定超期预警":
+                        list = project.GetOutTimeAlert(projectid, groupid, ClientStateEnum.办卡客户);
+                        break;
+                }
+            }
+            result.obj = list;
             result.success = true;
             return Json(result);
         }

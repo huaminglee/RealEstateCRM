@@ -75,6 +75,13 @@ function Time2String(jsondate) {
     var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
     var hour = date.getHours()  < 10 ? "0" + date.getHours() : date.getHours();
     var minute = date.getMinutes < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    if (hour == "0") {
+        hour += "0";
+    }
+    if (minute == "0")
+    {
+        minute += "0";
+    }
     return date.getFullYear() + "-" + month + "-" + currentDate+ " " + hour+":"+minute;
 
 }

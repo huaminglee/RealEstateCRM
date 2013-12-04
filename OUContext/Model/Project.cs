@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace OUDAL
 {
@@ -71,7 +72,7 @@ namespace OUDAL
                      {
                          TransferType = "访转卡超期预警",Num= GetOutTimeAlert(project, group, ClientStateEnum.来访客户).Count});
    
-        list.Add (new ClientTransferAlertReport
+            list.Add (new ClientTransferAlertReport
                      {
                          TransferType = "卡转定超期预警",Num= GetOutTimeAlert(project , group , ClientStateEnum.办卡客户 ).Count });
         return list;
@@ -81,22 +82,26 @@ namespace OUDAL
         {
             string field="";
             string alertField = "";
+            string type = "";
             switch (state)
             {
                 case ClientStateEnum.来电客户:
                     field = "TelToVisitDays";
                     alertField = "TelToVisitAheads";
+                    type = "电转访超期预警";
                     break;
                     case ClientStateEnum.来访客户:
                     field = "VisitToCardDays";
                     alertField = "VisitToCardAheads";
+                    type = "访转卡超期预警";
                     break;
                     case ClientStateEnum.办卡客户:
                     field = "CardToOrderDays";
                     alertField = "CardToOrderAheads";
+                    type = "卡转定超期预警";
                     break;
             }
-            string sql = @"select c.name,c.state,d.name as groupname from clients c join departments d on c.groupid=d.id 
+            string sql = @"select c.id as clientid,c.name,c.state,d.name as groupname ,'{5}' as type from clients c join departments d on c.groupid=d.id 
 join roomtypes t on t.departmentid=c.projectid and t.name=c.roomtype
 where c.projectid={0} and  c.state={1} {2} and t.{3} >0 and  DATEADD(dd,t.{3}-t.{4},c.statedate)<=getdate() 
 order by DATEADD(dd,t.{3}-t.{4},c.statedate)-getdate()";
@@ -105,7 +110,7 @@ order by DATEADD(dd,t.{3}-t.{4},c.statedate)-getdate()";
             {
                 groupSql = "and c.groupid=" + group.ToString();
             }
-            sql = string.Format(sql, project, (int) state, groupSql, field, alertField);
+            sql = string.Format(sql, project, (int) state, groupSql, field, alertField,type);
             using (Context db = new Context())
             {
                 List<OutTimeClient> list = db.Database.SqlQuery<OutTimeClient>(sql).ToList();
@@ -113,8 +118,18 @@ order by DATEADD(dd,t.{3}-t.{4},c.statedate)-getdate()";
             }
             
         }
+        static public List<SelectListItem> GetOutTimeType(bool appendblank)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            if (appendblank == true) list.Add(new SelectListItem { Value = "", Text = "---" });
+            list.Add(new SelectListItem { Value = "电转访超期预警", Text = "电转访超期预警" });
+            list.Add(new SelectListItem { Value = "访转卡超期预警", Text = "访转卡超期预警" });
+            list.Add(new SelectListItem { Value = "卡转定超期预警", Text = "卡转定超期预警" });
+            return list;
+        }
     }
 
+    
 
     public class OutTimeClient
     {

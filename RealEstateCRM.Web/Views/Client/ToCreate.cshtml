@@ -15,7 +15,7 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#AllPhone").attr("placeholder", "手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式");
+            //$("#AllPhone").attr("placeholder", "手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式");
         });
 
         function add() {
@@ -36,7 +36,7 @@
             {
                 if (ViewBag.Projects != null)
                 {
-                    @Html.MyDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>)
+                    @Html.MyDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>,appendBlank :false)
                 }
                 @Html.MyTextFor(m => m.Name)
                 @Html.MyTextFor(m => m.AllPhone)
@@ -48,7 +48,7 @@
                     }
                 </p>
             }
-            <div>备注：</div>
+            <div>备注：手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式</div>
         </div>
         @if (ViewBag.Button == true)
         {
@@ -68,7 +68,7 @@
                 @if (ViewBag.Clients1.Count != 0)
                 {
                     <table class="table table-bordered table-striped">
-                        <tr><th>姓名</th><th>电话</th><th>销售组</th></tr>
+                        <tr><th width="150px">姓名</th><th>电话</th><th width="250px">销售组</th></tr>
                         @foreach (ClientView c in ViewBag.Clients1)
                         {
                             <tr>
@@ -82,7 +82,7 @@
                 @if (ViewBag.Clients2 != null && ViewBag.Clients2.Count != 0)
                 {
                     <table class="table table-bordered table-striped">
-                        <tr><th>姓名</th><th>电话</th><th>销售组</th></tr>
+                        <tr><th width="150px">姓名</th><th>电话</th><th width="250px">销售组</th></tr>
                         @foreach (ClientView c in ViewBag.Clients2)
                         {
                             <tr>

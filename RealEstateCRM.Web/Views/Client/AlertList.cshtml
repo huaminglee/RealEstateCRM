@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "客户邀约明细表";
+    ViewBag.Title = "客户转移预警明细表";
     Layout = "~/Views/Shared/_MainListLayout.cshtml";
 }
 @section Main{
@@ -7,29 +7,13 @@
     <script type="text/javascript">
         jQuery(document).ready(function () {
             var PostData = {};
-            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
-            $("#DateFrom").val('@ViewBag.Date1');
-            $("#DateTo").val('@ViewBag.Date2');
             SearchClick();
             });
         var list;
         function SearchClick() {
             var PostData = {};
             PostData.Type=$("#Type").val();
-            PostData.Client = $("#Client").val();
-            
-            PostData.DateFrom = $("#DateFrom").val();
-            if (PostData.DateFrom == "") {
-                alert("请选择日期");
-                return;
-            }
-            PostData.DateTo = $("#DateTo").val();
-            if (PostData.DateTo == "") {
-                alert("请选择日期");
-                return;
-            }
-
-            $.post("./InviteListQuery", PostData, function (respDate) {
+            $.post("./AlertListQuery", PostData, function (respDate) {
                 if (respDate.success == true) {
                     list = respDate.obj;
                     showEnters(list);
@@ -49,11 +33,8 @@
         }
     </script>
     <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
-         @Html.SearchDateRange("", "邀约日期：")
-       
-        @Html.ShortInput("Client", "客户名称：")
-        邀约类型：
-        @Html.MyDropdown("Type",DictionaryBLL.GetList("邀约类型",true))
+        转移类型：
+        @Html.MyDropdown("Type", Project.GetOutTimeType(false))
         @MyControls.SearchBtn()
     </div>
     <div id="resulttable">
@@ -63,13 +44,9 @@
         <table class="table table-bordered table-striped ">
             <thead>
                 <tr>
-                    <th style="width:120px">邀约时间</th>
-                    <th style="width:80px">邀约类型</th>
                     <th style="width:100px">姓名</th>
-                    <th style="width:120px">电话</th>
                     <th style="width:80px">销售组</th>
-                    <th style="width:120px">到访时间</th>
-                    <th style="width:80px">完成情况</th>
+                    <th style="width:120px">转移类型</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,13 +57,9 @@
                 <obj.length;i++){var item=obj[i]; %>
 
                     <tr onclick="showClient(<%=item.ClientId%>)">
-                        <td><%=Time2String(item.PlanTime)%></td>
-                        <td><%=item.Type%></td>
-                        <td><%=item.Client%></td>
-                        <td><%=item.AllPhone%></td>
+                        <td><%=item.Name%></td>
                         <td><%=item.GroupName%></td>
-                        <td><%=Time2String(item.ActualTime)%></td>
-                        <td><%=item.Done%></td>
+                        <td><%=item.Type%></td>
                     </tr>
 
                     <%}%>

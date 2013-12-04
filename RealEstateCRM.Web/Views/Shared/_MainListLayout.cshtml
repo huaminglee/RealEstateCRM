@@ -66,7 +66,9 @@
                                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li>@Html.ActionLink("客户列表", "List", "Client")</li>
-                                    <li>@Html.ActionLink("客户录入", "ToCreate", "Client",null, new {onclick="OpenFullWindow('"+Url.Content("~/Project/"+projectid+"/Client/ToCreate")+"');return false;" })</li>
+                                    <li>@Html.ActionLink("来电客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=1") + "');return false;" })</li>
+                                    <li>@Html.ActionLink("来访客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=2") + "');return false;" })</li>
+                                    <li>@Html.ActionLink("中介客户报备", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=3") + "');return false;" })</li>
                                     <li>@Html.ActionLink("客户转移", "TransferBatch", "Client")</li>
                                     <li>@Html.ActionLink("客户转入表", "ClientTransferIn", "Client")</li>
                                     <li>@Html.ActionLink("客户转出表", "ClientTransferOut", "Client")</li>

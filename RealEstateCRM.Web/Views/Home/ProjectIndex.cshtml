@@ -53,7 +53,16 @@
                 {
                     <tr>
                         <td>@item.Type</td>
-                        <td style="text-align:right">@item.Num</td>
+                        <td style="text-align:right">
+                            @if (@item.Num != 0)
+                            {
+                                <a href="../Client/InviteList?type=@item.Type" target="_blank">@item.Num</a>
+                            }
+                            else
+                            {
+                                @item.Num
+                            }
+                        </td>
                         <td style="text-align:right">@item.VisitNum</td>
                         <td style="text-align:right">@item.DoneNum</td>
                     </tr>
@@ -63,19 +72,30 @@
     </div>
     <div class="col-xs-2">
         <h3>转移预警</h3><div class="pull-right">
-                         [<a href="../Client/InviteList">明细</a>]
+                         [<a href="../Client/AlertList">明细</a>]
                      </div>
         <table class="table table-bordered table-striped">
             <thead>
-                <th>转移类型</th>
-                <td>预警数量</td>
+                <tr>
+                    <th>转移类型</th>
+                    <td>预警数量</td>
+                </tr>
             </thead>
             <tbody>
                 @foreach (ClientTransferAlertReport item in ViewBag.transferAlerts)
                 {
                     <tr>
                         <td>@item.TransferType</td>
-                        <td style="text-align:right">@item.Num</td>
+                        <td style="text-align:right">
+                            @if (@item.Num != 0)
+                            {
+                                <a href="../Client/AlertList?type=@item.TransferType" target="_blank">@item.Num</a>
+                            }
+                            else
+                            {
+                                @item.Num
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -83,12 +103,14 @@
     </div>
     <div class="col-xs-2">
         <h3>昨日转入</h3><div class="pull-right">
-                         [<a href="../Client/InviteList">明细</a>]
+                         [<a href="../Client/ClientTransferIn">明细</a>]
                      </div>
         <table class="table table-bordered table-striped">
             <thead>
-                <th>转移类型</th>
-                <td>数量</td>
+                <tr>
+                    <th>转移类型</th>
+                    <td>数量</td>
+                </tr>
             </thead>
             <tbody>
                 @foreach (ClientTransferAlertReport item in ViewBag.transferIns)
@@ -103,12 +125,14 @@
     </div>
     <div class="col-xs-2">
         <h3>昨日转出</h3><div class="pull-right">
-            [<a href="../Client/InviteList">明细</a>]
+            [<a href="../Client/ClientTransferOut">明细</a>]
         </div>
         <table class="table table-bordered table-striped">
             <thead>
-            <th>转移类型</th>
-            <td>数量</td>
+                <tr>
+                    <th>转移类型</th>
+                    <td>数量</td>
+                </tr>
             </thead>
             <tbody>
                 @foreach (ClientTransferAlertReport item in ViewBag.transferOuts)

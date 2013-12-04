@@ -15,7 +15,7 @@
     <AssemblyName>RealEstateCRM.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -610,6 +610,7 @@
     <Content Include="Views\Client\ClientTransferOut.cshtml" />
     <Content Include="Views\Client\InviteList.cshtml" />
     <Content Include="Views\Client\InviteReport.cshtml" />
+    <Content Include="Views\Client\AlertList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />
@@ -724,7 +725,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>19717</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/RealEstateCRM</IISUrl>
+          <IISUrl>http://localhost:19717/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

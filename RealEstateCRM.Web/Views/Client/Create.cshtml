@@ -93,7 +93,13 @@
             <div class="clearfix"></div>
             
             <fieldset id="AppointmentField" style="display:none;">
-                <legend>邀约信息</legend>
+                <legend>
+                    邀约信息
+                    @if (ViewBag.Type == 1 || ViewBag.Type == 2)
+                    {
+                        <text>(可选)</text>
+                    }
+                </legend>
                 <div class="">
                     @Html.LabelFor(model => model.AppointmentType)
                     @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
