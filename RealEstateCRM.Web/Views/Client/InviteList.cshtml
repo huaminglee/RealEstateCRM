@@ -17,7 +17,7 @@
             var PostData = {};
             PostData.Type=$("#Type").val();
             PostData.Client = $("#Client").val();
-            
+            PostData.Phone = $("#Phone").val();
             PostData.DateFrom = $("#DateFrom").val();
             if (PostData.DateFrom == "") {
                 alert("请选择日期");
@@ -52,6 +52,7 @@
          @Html.SearchDateRange("", "邀约日期：")
        
         @Html.ShortInput("Client", "客户名称：")
+        @Html.ShortInput("Phone", "电话号码：")
         邀约类型：
         @Html.MyDropdown("Type",DictionaryBLL.GetList("邀约类型",true))
         @MyControls.SearchBtn()

@@ -28,6 +28,7 @@ namespace RealEstateCRM.Web.Controllers
             List<RoomType> RoomTypes = (from o in db.RoomTypes where o.DepartmentId == projectid select o).ToList();
             ViewBag.RoomTypes = RoomTypes;
             ViewBag.ProjectId = projectid;
+            ViewBag.ProjectCode = Project.Get(projectid).Code;
             return View();
         }
         [HttpPost]
@@ -92,6 +93,38 @@ namespace RealEstateCRM.Web.Controllers
             result.success = true;
             result.obj = "已删除";
             return Json(result);
+        }
+
+        public ActionResult ProjectCodeEdit(int projectid)
+        {
+            Project project = db.Projects.Find(projectid);
+            if(project==null)
+            {
+                project = new Project() { DepartmentId = projectid };
+            }
+            ViewBag.Project = db.Departments.Find(projectid);
+            return View(project);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult ProjectCodeEdit(int projectid,FormCollection collection)
+        {
+            Project p = db.Projects.Find(projectid);
+            if (p == null)
+            {
+                p = new Project { DepartmentId = (int)projectid };
+                db.Projects.Add(p);
+            }
+            TryUpdateModel(p, "", new string[] { }, new string[] { "" }, collection);
+            
+            if (ModelState.IsValid)
+            {
+                db.SaveChanges();
+                ViewBag.Success = true;
+            }
+            ViewBag.Project = db.Departments.Find(p.DepartmentId);
+            return View(p);
         }
     }
 

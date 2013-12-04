@@ -611,6 +611,7 @@
     <Content Include="Views\Client\InviteList.cshtml" />
     <Content Include="Views\Client\InviteReport.cshtml" />
     <Content Include="Views\Client\AlertList.cshtml" />
+    <Content Include="Views\RoomType\ProjectCodeEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

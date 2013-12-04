@@ -367,7 +367,10 @@ namespace RealEstateCRM.Web.Controllers
 
                     db.ClientActivities.Add(appoint);
                 }
-                c.AllPhone = string.Format("{0},{1}", c.Phone1, c.Phone2);
+                if (!string.IsNullOrEmpty(c.Phone2))
+                    c.AllPhone = string.Format("{0},{1}", c.Phone1, c.Phone2);
+                else
+                    c.AllPhone = c.Phone1;
                 Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记",string.Format("{0} 姓名:{1} 电话:{2}", ca.Type??cc.AppointmentType,c.Name,c.AllPhone));
 
                 db.SaveChanges();
@@ -425,7 +428,10 @@ namespace RealEstateCRM.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
-                c.AllPhone = string.Format("{0},{1}", c.Phone1, c.Phone2);
+                if (!string.IsNullOrEmpty(c.Phone2))
+                    c.AllPhone = string.Format("{0},{1}", c.Phone1, c.Phone2);
+                else
+                    c.AllPhone = c.Phone1;
                 StringBuilder sb = new StringBuilder();
                 if (c.Name != oldname) sb.Append(string.Format(" 姓名:{0} 改为{1}", oldname, c.Name));
                 if (c.Phone1 != oldphone1) sb.Append(string.Format(" 电话1:{0} 改为{1}", oldphone1, c.Phone1));
@@ -995,6 +1001,11 @@ namespace RealEstateCRM.Web.Controllers
             if(!string.IsNullOrEmpty(type))
             {
                 list = (from o in list where o.Type.Equals(type) select o).ToList();
+            }
+            
+            if(!string.IsNullOrEmpty(collection["Phone"]))
+            {
+                list = (from o in list where o.AllPhone.Contains(collection["Phone"]) select o).ToList();
             }
             result.obj = list;
             result.success = true;

@@ -41,6 +41,7 @@
             //debugger;
             $(".list-group-item").removeClass("active");
             $(obj).addClass("active");
+            $("#ProjectCode").hide();
             curRoomType = roomtypeid;
             SearchClick();
         }
@@ -65,8 +66,19 @@
                 }
             });
         }
+
+        function changeCode(obj){
+            $(".list-group-item").removeClass("active");
+            $(obj).addClass("active");
+            $("#ProjectCode").show();
+            $("#resulttable").html("");
+        }
     </script>
     <div class="col-lg-3">
+        <label>项目相关配置</label>
+        <div class="list-group">
+            <a class="list-group-item" onclick="changeCode(this);">项目编码</a>
+        </div>
         <label>产品类型列表</label>
         <div class="list-group">
             
@@ -80,6 +92,26 @@
             }
         </div>
         <button class="btn btn-primary" onclick="AddNew()">新增</button>
+    </div>
+    <div id="ProjectCode" class="col-lg-6" style="display:none;">
+        <table class="table table-bordered">
+            <tr>
+                <td class="tdRight">编码</td>
+                <td>
+                    @if(ViewBag.ProjectCode!=null)
+                    {
+                        @ViewBag.ProjectCode
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="tdRight">操作</td>
+                <td>
+                    <button class="btn-default btn-sm" onclick="OpenMiddleWindow('./ProjectCodeEdit');">编辑</button>
+                </td>
+            </tr>
+            
+        </table>
     </div>
     <div id="resulttable" class="col-lg-6">
 
