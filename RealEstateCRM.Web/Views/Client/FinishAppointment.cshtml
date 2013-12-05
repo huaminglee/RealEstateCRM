@@ -31,9 +31,9 @@
             </div>
             <div class='form-group'>
                 @Html.LabelFor(model => model.PlanTime)
-                @Html.TextBox("PlanTime",Model.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm"), new { @readonly = "readonly" })@Html.ValidationMessageFor(m => m.PlanTime)
+                @Html.TextBox("PlanTime",Model.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm"), new { @readonly = "readonly" })
             </div>
-            @Html.MyDateTimeFor(model => model.ActualTime)@Html.ValidationMessageFor(m => m.ActualTime)
+            @Html.MyDateTimeFor(model => model.ActualTime)
             @if (ViewBag.ChangeGroup == true)
             {
                 var list = Project.GetSalesGroup(ViewBag.ProjectId);

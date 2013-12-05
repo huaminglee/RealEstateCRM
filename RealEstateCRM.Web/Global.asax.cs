@@ -7,26 +7,27 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Security.Principal;
 using OUDAL;
+using RealEstateCRM.Web.BLL;
 
 namespace RealEstateCRM.Web
 {
-   
+
 
     public class MvcApplication : System.Web.HttpApplication
     {
         public MvcApplication()
         {
-            
+
         }
 
-        
+
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
             filters.Add(new MyFilter());
         }
 
-       
+
         protected void Application_Start()
         {
             string configFileName = Server.MapPath("~/log.log4net");
@@ -41,10 +42,18 @@ namespace RealEstateCRM.Web
             System.Data.Entity.Database.SetInitializer<OUDAL.Context>(null);
             Application["Login"] = System.Configuration.ConfigurationManager.AppSettings["Login"];
 
-            
+
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            try
+            {
+                ClientBLL.AutoTransfer();
+            }
+            catch (Exception e)
+            {
+                
+            }
 
             //RealEstateCRM.Web.BLL.SynchronismWorkflow.SynchronishJob.Schedule();
         }

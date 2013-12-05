@@ -824,11 +824,13 @@ namespace RealEstateCRM.Web.Controllers
                                                     TransferDate = DateTime.Today
                                                 };
                             db.ClientTransfers.Add(ct);
-                            Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
-                                string.Format("从{0}转移到{1}", DepartmentBLL.GetNameById(client.GroupId),
-                                    DepartmentBLL.GetNameById(newGroupId)));
                             client.GroupId = newGroupId;
-                            client.StateDate = DateTime.Today;
+                            db.SaveChanges();
+                            string check=Client.StateUpdate(client.Id,DateTime.Today);
+                            Utilities.AddLog(db,clientId, Client.LogClass, "客户转移",
+                                string.Format("从{0}转移到{1} {2}", DepartmentBLL.GetNameById(ct.OutGroup),
+                                    DepartmentBLL.GetNameById(newGroupId),check));
+                            //client.StateDate = DateTime.Today;
                             count++;
                         }
                     }
@@ -871,11 +873,12 @@ namespace RealEstateCRM.Web.Controllers
                     TransferDate = DateTime.Today
                 };
                 db.ClientTransfers.Add(ct);
-                Utilities.AddLogAndSave(clientId, Client.LogClass, "客户转移",
-                    string.Format("从{0}转移到{1}", DepartmentBLL.GetNameById(client.GroupId),
-                        DepartmentBLL.GetNameById(newGroupId)));
                 client.GroupId = newGroupId;
-                client.StateDate = DateTime.Today;
+                db.SaveChanges();
+                string check = Client.StateUpdate(client.Id, DateTime.Today);
+                Utilities.AddLog(db, clientId, Client.LogClass, "客户转移",
+                    string.Format("从{0}转移到{1} {2}", DepartmentBLL.GetNameById(ct.OutGroup),
+                        DepartmentBLL.GetNameById(newGroupId), check));
 
             }
             else

@@ -31,6 +31,14 @@
         function showClient(id) {
             OpenFullWindow("./View/" + id);
         }
+        function Refresh(){
+            SearchClick();
+        }
+        $(function () {
+            window.onunload = function () {
+                window.opener.Refresh();
+            };
+        });
     </script>
     <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
         转移类型：

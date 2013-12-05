@@ -87,11 +87,16 @@ namespace RealEstateCRM.Web.Controllers
         public ActionResult Cancel(int id, FormCollection collection)
         {
             Card c = db.Cards.Find(id);
+            int clientid = c.ClientId;
             if (collection["CancelTime"] == null || collection["CancelTime"].Equals(""))
                 ModelState.AddModelError("CancelTime", "取消时间是必须填写的");
             TryUpdateModel(c, "", new string[] {"CancelTime","Remark" }, new string[] { "" }, collection);
             if (ModelState.IsValid)
             {
+                db.SaveChanges();
+                string check = Client.StateUpdate(clientid, null);
+                if (!check.Equals(""))
+                    Utilities.AddLog(db, clientid, Client.LogClass, "退卡", check);
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -106,6 +111,9 @@ namespace RealEstateCRM.Web.Controllers
             Models.Result result = new Models.Result();
             Card c = db.Cards.Find(id);
             db.Cards.Remove(c);
+            string check = Client.StateUpdate(c.ClientId, null);
+            if (!check.Equals(""))
+                Utilities.AddLog(db, c.ClientId, Client.LogClass, "删卡", check);
             db.SaveChanges();
             result.success = true;
             result.obj = "已删除";
