@@ -27,10 +27,17 @@ namespace RealEstateCRM.Web
                         "~/Scripts/modernizr-{version}.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/Site.css"));
-
+            bundles.Add(new StyleBundle("~/Content/mobilecss").Include("~/Content/Site.Mobile.css"));
             bundles.Add(new StyleBundle("~/Content/redmond").Include(
                         "~/Content/redmond/jquery-ui-{version}.custom.css"));
 
+            bundles.Add(new StyleBundle("~/Content/jqmcss").Include(
+                        "~/Content/jquery.mobile-{version}.css",
+                        "~/Content/jquery.mobile.structure-{version}.css",
+             
+                        "~/Content/jquery.mobile.theme-{version}.css"));
+            bundles.Add(new ScriptBundle("~/Scripts/jqmJs").Include(
+                        "~/Scripts/jquery.mobile-{version}.js"));
             //bundles.Add(new ScriptBundle("~/bundles/BootstrapJs").Include(
             //            "~/bootstrap/js/bootstrap.js"));
 

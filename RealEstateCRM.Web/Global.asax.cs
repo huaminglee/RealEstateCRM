@@ -54,6 +54,7 @@ namespace RealEstateCRM.Web
             {
                 
             }
+            BundleMobileConfig.RegisterBundles(BundleTable.Bundles);
 
             //RealEstateCRM.Web.BLL.SynchronismWorkflow.SynchronishJob.Schedule();
         }

@@ -115,17 +115,36 @@
         });
     </script>
     <div class="btn-toolbar well">
-        <div class="btn-group"><button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');">修改</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="ToDelete(@Model.Id)">删除</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/0?clientid=@Model.Id');">添加联系记录</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
-        @if (ViewBag.Cards.Count == 0)
+        @if (UserInfo.CurUser.HasRight("客户管理-客户编辑"))
+        {
+            <div class="btn-group"><button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');">修改</button></div>
+        }
+        @if (UserInfo.CurUser.HasRight("客户管理-客户删除"))
+        {
+
+            <div class="btn-group"><button class="btn btn-primary" onclick="ToDelete(@Model.Id)">删除</button></div>
+        }
+        @if (UserInfo.CurUser.HasRight("客户管理-客户到访记录"))
+        {
+
+            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/0?clientid=@Model.Id');">添加联系记录</button></div>
+            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
+        }
+        @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-大卡小卡"))
         {
             <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Card/Create/@Model.Id');">办卡</button></div>
         }
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=1');">大定</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=2');">直签</button></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../TransferSingle/@Model.Id');">客户转移</button></div>
+        @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))
+        {
+
+            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=1');">大定</button></div>
+            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Order/Create/@Model.Id?type=2');">直签</button></div>
+        }
+        @if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
+        {
+
+            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../TransferSingle/@Model.Id');">客户转移</button></div>
+        }
     </div>
     <div>
         <strong>基本信息</strong>
@@ -142,9 +161,9 @@
                 @Html.MyDisplayFor(m => m.Way)@Html.MyDisplayFor(m => m.WayExtend)
             </tr>
             <tr>
-                
+
                 @Html.MyDisplayFor(m => m.GroupId, DepartmentBLL.GetNameById(Model.GroupId))
-                @Html.MyDisplayFor(m=>m.CreateTime)
+                @Html.MyDisplayFor(m => m.CreateTime)
             </tr>
             <tr>
                 @Html.MyDisplayFor(m => m.State)@Html.MyDisplayFor(m => m.StateDate)
@@ -189,15 +208,19 @@
                             <td></td>
                         }
                         <td>
-                            @if (!c.SignTime.HasValue && !c.CancelTime.HasValue)
+                            @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))
                             {
-                                <button class="btn-default" onclick="OpenLargeWindow('../../Order/LevelUp/@c.Id');">签约</button>
+
+                                if (!c.SignTime.HasValue && !c.CancelTime.HasValue)
+                                {
+                                    <button class="btn-default" onclick="OpenLargeWindow('../../Order/LevelUp/@c.Id');">签约</button>
+                                }
+                                if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退定退房"))
+                                {
+                                    <button class="btn-default" onclick="OpenLargeWindow('../../Order/Cancel/@c.Id');">退单</button>
+                                }
+                                <button class="btn-default" onclick="ToDeleteOrder(@c.Id)">删除</button>
                             }
-                            @if (!c.CancelTime.HasValue)
-                            {
-                                <button class="btn-default" onclick="OpenLargeWindow('../../Order/Cancel/@c.Id');">退单</button>
-                            }
-                            <button class="btn-default" onclick="ToDeleteOrder(@c.Id)">删除</button>
                         </td>
                     </tr>
                 }
@@ -236,17 +259,22 @@
                             <td></td>
                         }
                         <td>
-                            @if (!c.BigTime.HasValue && !c.CancelTime.HasValue)
+                            @if (UserInfo.CurUser.HasRight("客户管理-大卡小卡"))
                             {
-                                <button class="btn-default" onclick="OpenLargeWindow('../../Card/LevelUp/@c.Id');">升卡</button>
+
+                                if (!c.BigTime.HasValue && !c.CancelTime.HasValue)
+                                {
+                                    <button class="btn-default" onclick="OpenLargeWindow('../../Card/LevelUp/@c.Id');">升卡</button>
+                                }
+                                if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退卡"))
+                                {
+                                    <button class="btn-default" onclick="OpenLargeWindow('../../Card/Cancel/@c.Id');">退卡</button>
+                                }
+                                <button class="btn-default" onclick="ToDeleteCard(@c.Id)">删除</button>
+
                             }
-                            @if (!c.CancelTime.HasValue)
-                            {
-                                <button class="btn-default" onclick="OpenLargeWindow('../../Card/Cancel/@c.Id');">退卡</button>
-                            }
-                            <button class="btn-default" onclick="ToDeleteCard(@c.Id)">删除</button>
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
                 }
             </table>
         }
@@ -266,12 +294,16 @@
                         <td>@c.Type</td>
                         <td>@c.ActualTime.GetValueOrDefault().ToString("yyyy年MM月dd日HH时")</td>
                         <td>@c.Detail</td>
-                        
+
                         <td>
-                            <button class="btn-default" onclick="OpenLargeWindow('../AddContact/@c.Id');">修改</button> &nbsp;&nbsp;
-                            @if (!c.Type.Equals("来电") && !c.Type.Equals("来访"))
+                            @if (UserInfo.CurUser.HasRight("客户管理-客户到访记录"))
                             {
-                                <button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button>
+
+                                <button class="btn-default" onclick="OpenLargeWindow('../AddContact/@c.Id');">修改</button>
+                                if (!c.Type.Equals("来电") && !c.Type.Equals("来访"))
+                                {
+                                    <button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button>
+                                }
                             }
                         </td>
                     </tr>
@@ -294,35 +326,36 @@
                 {
                     <tr>
                         <td>@c.Type</td>
-                        <td>@if (c.PlanTime.HasValue){@c.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")}</td>
-                        
+                        <td>@if (c.PlanTime.HasValue)
+                        {@c.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")}</td>
+
                         <td>
-                        @if (c.ActualTime.HasValue)
-                        {
-                            @c.ActualTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")
-                        }
+                            @if (c.ActualTime.HasValue)
+                            {
+                                @c.ActualTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")
+                            }
                         </td>
                         <td>
-                            
-                       
-                        @if (c.IsDone!=null)
-                        {
-                            if (c.IsDone == true)
+
+
+                            @if (c.IsDone != null)
                             {
-                                <text>完成</text>
+                                if (c.IsDone == true)
+                                {
+                                    <text>完成</text>
+                                }
+                                else
+                                {
+                                    <text>未完成</text>
+                                }
                             }
-                            else
-                            {
-                                <text>未完成</text>
-                            }
-                        }
                         </td>
-                        
+
                         <td>@c.Detail</td>
                         <td>
                             @if (c.PlanTime == null)
                             {
-                                <button class="btn-default" onclick="OpenLargeWindow('../AddContact/@c.Id');">修改</button> 
+                                <button class="btn-default" onclick="OpenLargeWindow('../AddContact/@c.Id');">修改</button>
                                 if (!c.Type.Equals("来电") && !c.Type.Equals("来访"))
                                 {
                                     <button class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button>
@@ -330,24 +363,24 @@
                             }
                             else
                             {
-                                if (UserInfo.CurUser.HasRight("客户管理-客户到访记录")&&!c.ActualTime.HasValue)
+                                if (UserInfo.CurUser.HasRight("客户管理-客户到访记录") && !c.ActualTime.HasValue)
                                 {
                                     <button class="btn-default" onclick="OpenLargeWindow('../FinishAppointment/@c.Id');">完成</button>
-                                }  
+                                }
                                 <button class="btn-default" onclick="OpenLargeWindow('../EditAppointment/@c.Id');">修改</button>
                                 <button class="btn-default" onclick="ToDeleteAppointment(@c.Id)">删除</button>
                             }
-                            
+
                         </td>
                     </tr>
                 }
             </table>
         }
-        
+
     </div>
-<div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
-    <div>@MyControls.AccessLogTable(AccessLog.GetByClass(@Model.Id, Client.LogClass))</div>
-</div>
+    <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+        <div>@MyControls.AccessLogTable(AccessLog.GetByClass(@Model.Id, Client.LogClass))</div>
+    </div>
 }
 
 

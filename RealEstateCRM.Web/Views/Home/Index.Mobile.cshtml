@@ -1,0 +1,33 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@model HttpBrowserCapabilitiesBase
+
+@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+
+<div data-role="content">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div data-role="fieldcontain">
+        <h2>欢迎使用 客户关系管理系统</h2>
+    </div>
+    <!-- Example row of columns -->
+    <div>
+        <div data-role="fieldcontain">
+            <h3>系统通知</h3>
+            <ul></ul>
+            <blockquote>通知是全系统用户均可看到的公开消息<br />活动发布、标准文档发布会自动发通知</blockquote>
+        </div>
+        <div>
+            <h3>提醒消息</h3>
+
+            <blockquote>消息是与具体业务相关的提醒，每个用户根据权限不同而显示不同提醒<br /></blockquote>
+        </div>
+    </div>
+</div>
+@section Footer{
+    @@Copyright 上海虬溪软件 2013
+}
