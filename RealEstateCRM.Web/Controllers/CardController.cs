@@ -50,6 +50,13 @@ namespace RealEstateCRM.Web.Controllers
                     client.StateDate = DateTime.Today;
                     Utilities.AddLog(db, client.Id, Client.LogClass, "转办卡客户", "");
                 }
+                ClientActivity invite = (from o in db.ClientActivities where o.PlanTime.HasValue && o.Type.Equals("办卡邀约") && o.ClientId == c.ClientId select o).ToList().Where(o=>DateTime.Compare(o.PlanTime.Value.Date, DateTime.Today) == 0).FirstOrDefault();
+                if (invite != null)
+                {
+                    if (!invite.ActualTime.HasValue)
+                        invite.ActualTime = DateTime.Today;
+                    invite.IsDone = true;
+                }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -71,6 +78,13 @@ namespace RealEstateCRM.Web.Controllers
             TryUpdateModel(c, "", new string[] { }, new string[] { "" }, collection);
             if (ModelState.IsValid)
             {
+                ClientActivity invite = (from o in db.ClientActivities where o.PlanTime.HasValue && o.Type.Equals("升卡邀约") && o.ClientId == c.ClientId select o).ToList().Where(o => DateTime.Compare(o.PlanTime.Value.Date, DateTime.Today) == 0).FirstOrDefault();
+                if (invite != null)
+                {
+                    if (!invite.ActualTime.HasValue)
+                        invite.ActualTime = DateTime.Today;
+                    invite.IsDone = true;
+                }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -114,6 +128,19 @@ namespace RealEstateCRM.Web.Controllers
             string check = Client.StateUpdate(c.ClientId, null);
             if (!check.Equals(""))
                 Utilities.AddLog(db, c.ClientId, Client.LogClass, "删卡", check);
+            List<ClientActivity> invitelist = new List<ClientActivity>();
+            invitelist.Add((from o in db.ClientActivities where o.ClientId == c.ClientId && o.Type.Equals("办卡邀约") select o).ToList().Where(o => o.PlanTime.GetValueOrDefault().Date == c.SmallTime.Date).FirstOrDefault());
+            if (c.BigTime.HasValue)
+            {
+                invitelist.Add((from o in db.ClientActivities where o.ClientId == c.ClientId && o.Type.Equals("升卡邀约") select o).ToList().Where(o => o.PlanTime.GetValueOrDefault().Date == c.BigTime.GetValueOrDefault().Date).FirstOrDefault());
+            }
+            foreach (ClientActivity invite in invitelist)
+            {
+                if (invite != null)
+                {
+                    invite.IsDone = false;
+                }
+            }
             db.SaveChanges();
             result.success = true;
             result.obj = "已删除";

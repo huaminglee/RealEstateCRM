@@ -22,7 +22,7 @@ namespace RealEstateCRM.Web.Controllers
 
         }
 
-        public ActionResult Create(int id,int type)//此id为clientid
+        public ActionResult Create(int id, int type)//此id为clientid
         {
             Order c = new Order() { ClientId = id };
             c.GroupId = (from o in UserInfo.CurUser.Departments where o.DepartmentType == "小组" select o.Id).FirstOrDefault();
@@ -31,11 +31,11 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(int type,FormCollection collection)
+        public ActionResult Create(int type, FormCollection collection)
         {
             Order c = new Order();
-            db.Orders.Add(c);     
-            if(collection["OrderTime"]==null)
+            db.Orders.Add(c);
+            if (collection["OrderTime"] == null)
             {
                 if (collection["SignTime"] == null || collection["SignTime"].Equals(""))
                     ModelState.AddModelError("SignTime", "签约时间是必须填写的");
@@ -56,6 +56,16 @@ namespace RealEstateCRM.Web.Controllers
                         client.StateDate = DateTime.Today;
                         Utilities.AddLog(db, client.Id, Client.LogClass, "转签约客户", "");
                     }
+                    List<ClientActivity> invitelist = (from o in db.ClientActivities where o.PlanTime.HasValue && (o.Type.Equals("签约邀约") || o.Type.Equals("大定邀约")) && o.ClientId == c.ClientId select o).ToList().Where(o => DateTime.Compare(o.PlanTime.Value.Date, DateTime.Today) == 0).ToList();
+                    foreach (ClientActivity invite in invitelist)
+                    {
+                        if (invite != null)
+                        {
+                            if (!invite.ActualTime.HasValue)
+                                invite.ActualTime = DateTime.Today;
+                            invite.IsDone = true;
+                        }
+                    }
                 }
                 else
                 {
@@ -65,8 +75,16 @@ namespace RealEstateCRM.Web.Controllers
                         client.StateDate = DateTime.Today;
                         Utilities.AddLog(db, client.Id, Client.LogClass, "转大定客户", "");
                     }
+
+                    ClientActivity invite = (from o in db.ClientActivities where o.PlanTime.HasValue && o.Type.Equals("大定邀约") && o.ClientId == c.ClientId select o).ToList().Where(o => DateTime.Compare(o.PlanTime.Value.Date, DateTime.Today) == 0).FirstOrDefault();
+                    if (invite != null)
+                    {
+                        if (!invite.ActualTime.HasValue)
+                            invite.ActualTime = DateTime.Today;
+                        invite.IsDone = true;
+                    }
                 }
-                
+
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -81,7 +99,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult LevelUp(int id,FormCollection collection)
+        public ActionResult LevelUp(int id, FormCollection collection)
         {
             Order c = db.Orders.Find(id);
             if (collection["SignTime"] == null || collection["SignTime"].Equals(""))
@@ -95,6 +113,13 @@ namespace RealEstateCRM.Web.Controllers
                     client.State = ClientStateEnum.签约客户;
                     client.StateDate = DateTime.Today;
                     Utilities.AddLog(db, client.Id, Client.LogClass, "转签约客户", "");
+                }
+                ClientActivity invite = (from o in db.ClientActivities where o.PlanTime.HasValue && o.Type.Equals("签约邀约") && o.ClientId == c.ClientId select o).ToList().Where(o => DateTime.Compare(o.PlanTime.Value.Date, DateTime.Today) == 0).FirstOrDefault();
+                if (invite != null)
+                {
+                    if (!invite.ActualTime.HasValue)
+                        invite.ActualTime = DateTime.Today;
+                    invite.IsDone = true;
                 }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
@@ -140,6 +165,19 @@ namespace RealEstateCRM.Web.Controllers
             string check = Client.StateUpdate(clientid, null);
             if (!check.Equals(""))
                 Utilities.AddLog(db, clientid, Client.LogClass, "删单", check);
+            List<ClientActivity> invitelist = new List<ClientActivity>();
+            invitelist.Add((from o in db.ClientActivities where o.ClientId==c.ClientId&&o.Type.Equals("大定邀约") select o).ToList().Where(o=>o.PlanTime.GetValueOrDefault().Date==c.OrderTime.Date).FirstOrDefault());
+            if (c.SignTime.HasValue)
+            {
+                invitelist.Add((from o in db.ClientActivities where o.ClientId == c.ClientId && o.Type.Equals("签约邀约") select o).ToList().Where(o => o.PlanTime.GetValueOrDefault().Date == c.SignTime.GetValueOrDefault().Date).FirstOrDefault());
+            }
+            foreach (ClientActivity invite in invitelist)
+            {
+                if (invite != null)
+                {
+                    invite.IsDone = false;
+                }
+            }
             db.SaveChanges();
             result.success = true;
             result.obj = "已删除";
