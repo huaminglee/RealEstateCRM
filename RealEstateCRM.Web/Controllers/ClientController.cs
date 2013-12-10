@@ -37,6 +37,8 @@ namespace RealEstateCRM.Web.Controllers
             Utilities.AddSqlFilterLike(collection, "Name", ref sql, "c.Name", parameters);
             Utilities.AddSqlFilterLike(collection, "PhoneNumber", ref sql, "c.Allphone", parameters);
             Utilities.AddSqlFilterInInts(collection, "GroupId", ref sql, "c.GroupId");
+            Utilities.AddSqlFilterInInts(collection, "State[]", ref sql, "c.state");
+            Utilities.AddSqlFilterEqual(collection, "QuDao", ref sql, "c.Way", parameters);
             int projectid = 0;//按项目过滤客户
             if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); }
             if (projectid != 0)
@@ -139,7 +141,7 @@ namespace RealEstateCRM.Web.Controllers
                     ParameterName = "Phone",
                     Value = string.Format("%{0}%", phoneNumber)
                 };
-                //ToDo:这里有注入漏洞
+               
                 List<ClientView> clients1 = db.Database.SqlQuery<ClientView>(
                         string.Format(
                             "select * from Clients where projectid={0} and (Phone1 like @Phone or Phone2 like @Phone ) ", projectid
@@ -173,8 +175,12 @@ namespace RealEstateCRM.Web.Controllers
             cc.Name = name;
             cc.Phone1 = phone;
             cc.ProjectId = projectid;
-            
-            ViewBag.QuDao = DictionaryBLL.GetList("渠道类型", true);
+            Project p = Project.Get(projectid);
+            if (p.RoomTypes.Count > 0)
+            {
+                cc.RoomType = p.RoomTypes[0].Name;
+            }
+            ViewBag.QuDao = DictionaryBLL.GetL2ByName("渠道类型", true);
             ViewBag.HasAppointment = false;
             switch (type)
             {
@@ -191,20 +197,28 @@ namespace RealEstateCRM.Web.Controllers
                     break;
                 case 3:
                     ViewBag.HasAppointment = true;
-                    ViewBag.QuDao = new List<SelectListItem>
+                    ViewBag.QuDao = new List<Dictionary2>
                                     {
-                                        new SelectListItem {Text = "中介", Value = "中介"}
+                                        new Dictionary2 {L1 = "中介", L2=new List<string>()}
                                     };
                     ViewBag.Msg = "中介邀约客户报备";
                     break;
                 case 4:
                     ViewBag.HasAppointment = true;
-                    ViewBag.QuDao = new List<SelectListItem>
+                    ViewBag.QuDao = new List<Dictionary2>
                                     {
-                                        new SelectListItem {Text = "电话中心", Value = "电话中心"}
+                                        new Dictionary2 {L1 = "电话中心", L2=new List<string>()}
                                     };
                     ViewBag.Msg = "电话中心客户报备";
                     //ToDo:如果邀约客户未到访，然后再次报备如何处理？
+                    break;
+                case 5:
+                    ViewBag.HasAppointment = true;
+                    ViewBag.QuDao = new List<Dictionary2>
+                                    {
+                                        new Dictionary2 {L1 = "销售员拓客", L2=new List<string>()}
+                                    };
+                    ViewBag.Msg = "销售员拓客报备";
                     break;
             }
             cc.ContactActualTime = DateTime.Now;
@@ -214,14 +228,20 @@ namespace RealEstateCRM.Web.Controllers
         [HttpPost]
         public ActionResult Create(int projectid, int type, FormCollection collection)
         {
-            ViewBag.QuDao = DictionaryBLL.GetList("渠道类型", true);
+            ViewBag.QuDao = DictionaryBLL.GetL2ByName("渠道类型", true);
             ViewBag.HasAppointment = false;
 
             ViewBag.Type = type;
             bool HasAppointment = (collection["HasAppointment"] != null && collection["HasAppointment"].Equals("Add")) ? true : false;
             ViewBag.HasAppointment = HasAppointment;
+            
             ClientCreate cc = new ClientCreate();
             cc.ProjectId = projectid;
+            Project p= Project.Get(projectid);
+            if (p.RoomTypes.Count > 0)
+            {
+                cc.RoomType = p.RoomTypes[0].Name;
+            }
             switch (type)
             {
                 case 1:
@@ -237,21 +257,31 @@ namespace RealEstateCRM.Web.Controllers
                 case 3:
                     cc.GroupId = UserInfo.CurUser.GetGroup(projectid);
                     ViewBag.HasAppointment = true;
-                    ViewBag.QuDao = new List<SelectListItem>
+                    ViewBag.QuDao = new List<Dictionary2>
                                     {
-                                        new SelectListItem {Text = "中介", Value = "中介"}
+                                        new Dictionary2 {L1 = "中介", L2=new List<string>()}
                                     };
                     ViewBag.Msg = "中介邀约客户报备";
                     break;
                 case 4:
                     cc.GroupId = Project.GetGroupByName(projectid, "前台");
                     ViewBag.HasAppointment = true;
-                    ViewBag.QuDao = new List<SelectListItem>
+                    ViewBag.QuDao = new List<Dictionary2>
                                     {
-                                        new SelectListItem {Text = "电话中心", Value = "电话中心"}
+                                        new Dictionary2 {L1 = "电话中心", L2=new List<string>()}
                                     };
                     ViewBag.Msg = "电话中心客户报备";
                     //ToDo:如果邀约客户未到访，然后再次报备如何处理？
+                    break;
+                case 5:
+                    cc.GroupId = UserInfo.CurUser.GetGroup(projectid);
+                    ViewBag.HasAppointment = true;
+                    ViewBag.QuDao = new List<Dictionary2>
+                                    {
+                                        new Dictionary2 {L1 = "销售员拓客", L2=new List<string>()}
+                                    };
+                    ViewBag.Msg = "销售员拓客报备";
+
                     break;
             }
             ClientStateEnum state = ClientStateEnum.邀约客户;
@@ -287,7 +317,6 @@ namespace RealEstateCRM.Web.Controllers
                     }
                     break;
                 case 3:
-                case 4:
                     state = ClientStateEnum.邀约客户;
                     if (cc.AppointmentPlanTime == null)
                     {
@@ -298,6 +327,35 @@ namespace RealEstateCRM.Web.Controllers
                         ModelState.AddModelError("AppointmentType", "请输入邀约类型");
                     }
                     break;
+                    
+                case 4:
+                    state = ClientStateEnum.邀约客户;
+                    if (cc.AppointmentPlanTime == null)
+                    {
+                        ModelState.AddModelError("AppointmentPlanTime", "请输入邀约时间");
+                    }
+                    if (cc.AppointmentType == null)
+                    {
+                        ModelState.AddModelError("AppointmentType", "请输入邀约类型");
+                    }
+                    if (string.IsNullOrEmpty(cc.CallPerson))
+                    {
+                        ModelState.AddModelError("CallPerson", "请输入经办人");
+                    }
+                    break;
+                case 5:
+                    state = ClientStateEnum.邀约客户;
+                    if (cc.AppointmentPlanTime == null)
+                    {
+                        ModelState.AddModelError("AppointmentPlanTime", "请输入邀约时间");
+                    }
+                    if (cc.AppointmentType == null)
+                    {
+                        ModelState.AddModelError("AppointmentType", "请输入邀约类型");
+                    }
+                   
+                    break;
+
             }
             Client checkClient = new Client
                                  {
@@ -337,9 +395,10 @@ namespace RealEstateCRM.Web.Controllers
                 c.CreateTime = DateTime.Now;
                 c.StateDate = DateTime.Today;
                 c.State = state;
+                c.CallPerson = cc.CallPerson;
                 db.Clients.Add(c);
                 db.SaveChanges();
-                ClientActivity ca = new ClientActivity();
+                ClientActivity ca = new ClientActivity{Person=UserInfo.CurUser.Id};
                 ca.ClientId = c.Id;
                 switch (type)
                 {
@@ -347,11 +406,13 @@ namespace RealEstateCRM.Web.Controllers
                         db.ClientActivities.Add(ca);
                         ca.ActualTime = DateTime.Today;
                         ca.Type = "来电";
+                        ca.FirstType = 1;
                         break;
                     case 2:
                         db.ClientActivities.Add(ca);
                         ca.ActualTime = DateTime.Today;
                         ca.Type = "来访";
+                        ca.FirstType = 2;
                         break;
                     case 3:
                     case 4:
@@ -359,7 +420,7 @@ namespace RealEstateCRM.Web.Controllers
                 }
                 if (cc.AppointmentType != null)
                 {
-                    ClientActivity appoint = new ClientActivity();
+                    ClientActivity appoint = new ClientActivity { Person = UserInfo.CurUser.Id };
                     appoint.ClientId = c.Id;
                     appoint.PlanTime = cc.AppointmentPlanTime;
                     appoint.Type = cc.AppointmentType;
@@ -372,7 +433,7 @@ namespace RealEstateCRM.Web.Controllers
                 else
                     c.AllPhone = c.Phone1;
                 Utilities.AddLog(db, c.Id, Client.LogClass, "客户登记",string.Format("{0} 姓名:{1} 电话:{2}", ca.Type??cc.AppointmentType,c.Name,c.AllPhone));
-
+                c.Code = p.GetNewClientCode(db);
                 db.SaveChanges();
 
                 return Redirect("./View/" + c.Id);
@@ -393,7 +454,7 @@ namespace RealEstateCRM.Web.Controllers
             List<Order> OrderList = new List<Order>();
             //ContactList = (from o in db.ClientActivities where o.ClientId == id && !o.PlanTime.HasValue select o).ToList();
             AppointmentList = (from o in db.ClientActivities where o.ClientId == id select o).ToList();
-            CardList = (from o in db.Cards where o.ClientId == id select o).ToList();
+            CardList = (from o in db.Cards where o.ClientId == id &&o.CancelTime==null select o).ToList();
             OrderList = (from o in db.Orders where o.ClientId == id select o).ToList();
             ViewBag.Contacts = ContactList;
             ViewBag.Appointments = AppointmentList;
@@ -462,7 +523,7 @@ namespace RealEstateCRM.Web.Controllers
             }
             else
             {
-                c = new ClientActivity();
+                c = new ClientActivity { Person = UserInfo.CurUser.Id };
                  c.ActualTime = DateTime.Now;
                 c.ClientId =(int)clientid;
             }
@@ -494,6 +555,10 @@ namespace RealEstateCRM.Web.Controllers
                 db.ClientActivities.Add(c);
             }
             TryUpdateModel(c, collection);
+            if (c.Type == "on")
+            {
+                ModelState.AddModelError("Type", "请选择类型");
+            }
             if (c.Id == 0&&c.Type=="来访")
             {
                 if (!UserInfo.CurUser.HasRight("客户管理-客户来访记录"))
@@ -533,7 +598,14 @@ namespace RealEstateCRM.Web.Controllers
                     client.StateDate = DateTime.Today;
                     Utilities.AddLog(db, client.Id, Client.LogClass, "转来访客户", "");
                 }
-
+                if (c.Type == "来访")
+                {
+                    var logs=(from o in db.ClientActivities where o.ClientId==client.Id  &&o.Id!=c.Id && o.FirstType==2 select o).FirstOrDefault();
+                    if (logs == null)
+                    {
+                        c.FirstType = 2;
+                    }
+                }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -564,7 +636,7 @@ namespace RealEstateCRM.Web.Controllers
 
         public ActionResult AddAppointment(int id)//id为client的id
         {
-            ClientActivity c = new ClientActivity();
+            ClientActivity c = new ClientActivity { Person = UserInfo.CurUser.Id };
             c.ClientId = id;
             return View(c);
         }
@@ -572,7 +644,7 @@ namespace RealEstateCRM.Web.Controllers
         [HttpPost]
         public ActionResult AddAppointment(FormCollection collection)
         {
-            ClientActivity c = new ClientActivity();
+            ClientActivity c = new ClientActivity { Person = UserInfo.CurUser.Id };
             db.ClientActivities.Add(c);
 
             TryUpdateModel(c, collection);
@@ -687,7 +759,16 @@ namespace RealEstateCRM.Web.Controllers
                 if (c.Type == "来访邀约")
                 {
                     c.IsDone = true;
+                    
                 }
+                var logs =
+                        (from o in db.ClientActivities
+                            where o.ClientId == client.Id && o.Id != c.Id && o.FirstType == 2
+                            select o).FirstOrDefault();
+                    if (logs == null)
+                    {
+                        c.FirstType = 2;
+                    }
                 db.SaveChanges();
                 return Redirect("~/Content/close.htm");
             }
@@ -839,6 +920,77 @@ namespace RealEstateCRM.Web.Controllers
                 tran.Complete();
                 result.success = true;
                 result.obj = string.Format("已转移了{0}个客户", count);
+            }
+
+            return Json(result);
+        }
+        public ActionResult ClientConfirmBatch(int projectid)
+        {
+            List<SelectListItem> groups = new List<SelectListItem>();
+            //groups.Add(new SelectListItem());
+            DepartmentBLL.GetGroupsByPid(projectid).ForEach(o =>
+            {
+                groups.Add(new SelectListItem { Text = o.Name, Value = o.Id.ToString() });
+            });
+            ViewBag.Groups = groups;
+            ViewBag.Default = (from o in groups where o.Text.Equals("公共客户") select o.Value).FirstOrDefault();
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult ClientConfirmBatch(string selectedIds, string  action,string reason,int projectid)
+        {
+            Result result = new Result();
+            int count = 0;
+            string[] strs = selectedIds.Split(',');
+            using (
+                TransactionScope tran = new TransactionScope(TransactionScopeOption.RequiresNew, new TimeSpan(0, 5, 0)))
+            {
+                foreach (string s in strs)
+                {
+                    int clientId;
+                    if (int.TryParse(s, out clientId))
+                    {
+                        Client client = db.Clients.Find(clientId);
+                        if (action == "invalid")
+                        {
+                            if (client.State == ClientStateEnum.来访客户 && client.Way == "电话中心")
+                            {
+                                var q1 =
+                                    (from o in db.Cards where o.Id == client.Id && o.CancelTime == null select o).Count();
+                                if (q1 > 0)
+                                {
+                                    continue;
+                                }
+                                var q2=
+                                    (from o in db.Orders where o.Id == client.Id && o.CancelTime == null select o).Count();
+                                if (q2 > 0)
+                                {
+                                    continue;
+                                }
+                                client.State = ClientStateEnum.无效客户;
+                                client.InvalidReason = reason;
+                                Utilities.AddLog(db, client.Id, Client.LogClass, "设置为无效客户", "");
+                                count++;
+                            }
+                        }
+                        else
+                        {
+                            if (client.State == ClientStateEnum.无效客户 && client.Way == "电话中心")
+                            {
+                                client.State = ClientStateEnum.来访客户;
+                                client.InvalidReason = null;
+                                Utilities.AddLog(db, client.Id, Client.LogClass, "设置为有效客户", "");
+                                count++;
+                            }   
+                        }
+                       
+                    }
+                }
+                db.SaveChanges();
+                tran.Complete();
+                result.success = true;
+                result.obj = string.Format("已设置了{0}个客户", count);
             }
 
             return Json(result);

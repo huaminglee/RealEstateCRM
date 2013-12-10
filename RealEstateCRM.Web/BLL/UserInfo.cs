@@ -171,18 +171,31 @@ namespace RealEstateCRM.Web.BLL
             {
                 return ClientViewScopeEnum.查看所有;
             }
-            else if (HasRight("客户管理-查看项目客户") == true)
-            {
-                return ClientViewScopeEnum.查看项目;
-            }
-            else if (HasRight("客户管理-") == true)
-            {
-                return ClientViewScopeEnum.查看本组;
-            }
             else
             {
-                return ClientViewScopeEnum.无;
+                if (HasRight("客户管理-查看项目客户") == true)
+                {
+                    foreach (var d in UserInfo.CurUser.Departments)
+                    {
+                        if (d.Id == projectid || DepartmentBLL.IsParnet(projectid, d.Id))
+                        {
+                            return ClientViewScopeEnum.查看项目;
+                        }
+                    }
+                }
+                else if (HasRight("客户管理-") == true)
+                {
+                    foreach (var d in UserInfo.CurUser.Departments)
+                    {
+                        if (d.Id == projectid || DepartmentBLL.IsParnet(projectid, d.Id))
+                        {
+                            return ClientViewScopeEnum.查看本组;
+                        }
+                    }
+                }
+                
             }
+            return ClientViewScopeEnum.无;
 
         }
     }

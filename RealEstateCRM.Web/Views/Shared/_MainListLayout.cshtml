@@ -23,6 +23,7 @@
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
         var rootpath = '@Url.Content("~/")';
+        var projectid = '@projectid';
         $(document).ready(function () {
             $("input[type='text']").addClass("form-control");
         });
@@ -66,21 +67,51 @@
                                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li>@Html.ActionLink("客户列表", "List", "Client")</li>
-                                    <li>@Html.ActionLink("来电客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=1") + "');return false;" })</li>
-                                    <li>@Html.ActionLink("来访客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=2") + "');return false;" })</li>
-                                    <li>@Html.ActionLink("中介客户报备", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=3") + "');return false;" })</li>
-                                    <li>@Html.ActionLink("客户转移", "TransferBatch", "Client")</li>
-                                    <li>@Html.ActionLink("客户转入表", "ClientTransferIn", "Client")</li>
-                                    <li>@Html.ActionLink("客户转出表", "ClientTransferOut", "Client")</li>
+                                    @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
+                                    {
+                                        <li>@Html.ActionLink("来电客户登记", "ToCreate", "Client", null, new {onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=1") + "');return false;"})</li>
+                                    }
+                                    @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
+                                    {
+                                        <li>@Html.ActionLink("销售拓客登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=5") + "');return false;" })</li>
+                                    }
+                                    @if (UserInfo.CurUser.HasRight("客户管理-前台"))
+                                    {
+                                        <li>@Html.ActionLink("直访客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=2") + "');return false;" })</li>
+                                    }
+                                    @if (UserInfo.CurUser.HasRight("客户管理-前台"))
+                                    {
+                                        <li>@Html.ActionLink("中介客户报备", "ToCreate", "Client", null, new {onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=3") + "');return false;"})</li>
+                                    }@if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
+                                     {
+                                         <li>@Html.ActionLink("客户分配", "TransferBatch", "Client")</li>
+                                     }
+                                    @if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
+                                    {
+                                        <li>@Html.ActionLink("电话中心客户确认", "ClientConfirmBatch", "Client")</li>
+                                    }
                                 </ul>
                             </li>
                         }
-                        if (UserInfo.CurUser.HasRight(""))
+                        if (UserInfo.CurUser.HasRight("客户管理"))
+                        {
+                            <li class="dropdown">
+                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">统计报表<b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("客户统计表", "ClientStateReport", "Report")</li>
+                                   
+                                    <li>@Html.ActionLink("客户转入表", "ClientTransferIn", "Client")</li>
+                                    <li>@Html.ActionLink("客户转出表", "ClientTransferOut", "Client")</li>
+                                    <li>@Html.ActionLink("电话中心客户统计", "CallCenterList", "Report")</li>
+                                </ul>
+                            </li>
+                        }
+                        if (UserInfo.CurUser.HasRight("项目管理"))
                         {
                             <li class="dropdown">
                                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">项目管理<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    @if (UserInfo.CurUser.HasRight(""))
+                                    @if (UserInfo.CurUser.HasRight("项目管理-参数配置"))
                                     {
                                         <li>@Html.ActionLink("产品类型配置", "Config", "RoomType")</li>}
 
@@ -94,9 +125,10 @@
                         if (UserInfo.CurUser.HasRight("客户管理"))
                         {
                             <li class="dropdown">
-                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
+                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">电话中心<b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="@Url.Content("~/Client/ToCreate?projectid=0&type=4")">客户报备</a></li>
+                                    <li><a href="@Url.Content("~/Report/CallCenterList")">客户清单</a></li>
                                 </ul>
                             </li>
                         }

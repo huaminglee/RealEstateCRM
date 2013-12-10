@@ -26,9 +26,11 @@
             }
             else
             {
-                <text>OpenFullWindow("../Project/"+@Model.ProjectId +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()), "newclient");</text>
+                <text>OpenFullWindow("../Project/" +@Model.ProjectId +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()), "newclient");</text>
             }
-        }
+            $("#Name").val('');
+            $("#AllPhone").val('');
+             }
     </script>
     <div style="width: 900px; margin: auto;">
         <div style="width: 600px; margin: auto;" class="ui-widget ui-widget-content ui-corner-all ">

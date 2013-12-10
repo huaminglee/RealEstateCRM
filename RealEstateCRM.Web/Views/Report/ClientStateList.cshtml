@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "客户清单";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            
+            SearchClick();
+        });
+        var list;
+
+        function SearchClick() {
+            var PostData = {};
+
+
+            PostData.ProjectId = projectid;
+            PostData.DateFrom = $("#DateFrom").val();
+            PostData.DateTo = $("#DateTo").val();
+            PostData.Type = $("#Type").val();
+            PostData.GroupId = $("#GroupId").val();
+            
+            $.post("./ClientStateListQuery", PostData, function(respDate) {
+                if (respDate.success == true) {
+                    var obj = respDate.obj;
+                    showEnters(obj);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+
+        function showClient(id) {
+            OpenFullWindow("./View/" + id);
+        }
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        @Html.Hidden("DateFrom",ViewBag.D1 as string )
+        @Html.Hidden("DateTo", ViewBag.D2 as string)
+        @Html.Hidden("GroupId",(int) ViewBag.GroupId )
+       @Html.Hidden("Type", ViewBag.Type as string)
+        <Strong>客户清单</Strong> <span>@ViewBag.D1 - @ViewBag.D2 </span>
+    </div>
+    <div id="resulttable">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr><th style="width:80px">物业类型</th>
+                    <th style="width:80px">组名</th>
+                    <th style="width:100px">客户</th>
+                    <th style="width:150px">渠道</th>
+                    <th style="width:150px">渠道说明</th>
+                    <th style="width:80px">动作</th>
+                    <th style="width:80px">时间</th>
+                    <th style="width:80px">备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i=0;i<obj.list.length;i++){var item=obj.list[i]; %>
+                    <tr><td><%=item.RoomType%></td>
+                        <td><%=item.GroupName%></td>
+                       
+                        <td ><%=item.Name%></td>
+                        <td ><%=item.Way%></td>
+                        <td ><%=item.WayExtend%></td>
+                        <td ><%=item.Action%></td>
+                        <td ><%=Date2String(item.StateDate)%></td>
+                        <td ><%=item.Remark%></td>
+                    </tr>   
+                    <%}%>
+                    
+
+</tbody>
+        </table>
+    </script>
+   
+    }

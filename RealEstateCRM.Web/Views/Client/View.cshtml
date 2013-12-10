@@ -124,14 +124,14 @@
 
             <div class="btn-group"><button class="btn btn-primary" onclick="ToDelete(@Model.Id)">删除</button></div>
         }
-        @if (UserInfo.CurUser.HasRight("客户管理-客户到访记录"))
-        {
+       
 
             <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/0?clientid=@Model.Id');">添加联系记录</button></div>
             <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
-        }
-        @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-大卡小卡"))
+        
+        @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-小卡大卡"))
         {
+           @* *@
             <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../../Card/Create/@Model.Id');">办卡</button></div>
         }
         @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))

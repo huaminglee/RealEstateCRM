@@ -13,6 +13,12 @@ namespace OUDAL
     public class IdDecimal
     {
         public decimal Num { get; set; }
-        public int id { get; set; }
+        public int Id { get; set; }
+    }
+
+    public class IdInt
+    {
+        public int Id { get; set; }
+        public int Num { get; set; }
     }
 }

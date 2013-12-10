@@ -190,6 +190,7 @@
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\CardController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RoomTypeController.cs" />
     <Compile Include="Controllers\CustomerJsonResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -212,6 +213,8 @@
     <Compile Include="Models\AccountModels.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\CallCenterReportVO.cs" />
+    <Compile Include="Models\ClientReportVO.cs" />
     <Compile Include="Models\JqGridData.cs" />
     <Compile Include="Models\JqGridRequest.cs" />
     <Compile Include="Models\MaterialReportModel.cs" />
@@ -637,6 +640,10 @@
     <Content Include="Views\Account\LogOn.Mobile.cshtml" />
     <Content Include="Scripts\jquery.mobile-1.3.2.min.map" />
     <Content Include="Views\Shared\_MainListLayout.mobile.cshtml" />
+    <Content Include="Views\Report\CallCenterList.cshtml" />
+    <Content Include="Views\Report\ClientStateList.cshtml" />
+    <Content Include="Views\Report\ClientStateReport.cshtml" />
+    <Content Include="Views\Client\ClientConfirmBatch.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

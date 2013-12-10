@@ -188,27 +188,54 @@ namespace RealEstateCRM.Web.BLL
             if (collection[name] != null && collection[name] != "")
             {
                 string[] list = collection[name].Split(',');
-                if(list.Count()==0){}
-                else if(list.Count()==1)
+                if (list.Count() == 0) { }
+                else if (list.Count() == 1)
                 {
                     int i = 0;
-                    if(int.TryParse(collection[name],out i))
+                    if (int.TryParse(collection[name], out i))
                     {
                         sql += string.Format(" and {0}={1}", column, collection[name]);
                     }
                 }
                 else
                 {
-                    StringBuilder sb=new StringBuilder(" "+column+" in(");
+                    StringBuilder sb = new StringBuilder(" and " + column + " in(");
                     int j = 0;
                     foreach (var s in list)
                     {
                         int i = 0;
-                        if(int.TryParse(s,out i))
+                        if (int.TryParse(s, out i))
                         {
                             if (j > 0) sb.Append(",");
                             sb.Append(s);
                         }
+                        j++;
+                    }
+                    sb.Append(")");
+                    sql += sb.ToString();
+                }
+            }
+        }
+        static public void AddSqlFilterInStrings(FormCollection collection, string name, ref string sql, string column, List<object> parameters)
+        {
+            if (collection[name] != null && collection[name] != "")
+            {
+                string[] list = collection[name].Split(',');
+                if (list.Count() == 0) { }
+                else if (list.Count() == 1)
+                {
+                    sql += string.Format(" and {0}=@{1}", column, name.Substring(0, name.Length - 2));
+                    parameters.Add(new SqlParameter(name.Substring(0, name.Length - 2), collection[name]));
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder(" and " + column + " in (");
+                    int j = 0;
+                    foreach (var s in list)
+                    {
+                        if (j > 0) sb.Append(",");
+                        sb.Append(string.Format("@{0}{1}", name.Substring(0, name.Length - 2), j));
+                        parameters.Add(new SqlParameter(name.Substring(0, name.Length - 2) + j, s));
                         j++;
                     }
                     sb.Append(")");
@@ -270,6 +297,15 @@ namespace RealEstateCRM.Web.BLL
             }
             return v;
         }
-       
+
+        public static DateTime ParseDate(string dateStr)
+        {
+            DateTime d;
+            if (!DateTime.TryParse(dateStr, out d))
+            {
+                d = new DateTime(1900, 1, 1);
+            }
+            return d;
+        }
     }
 }

@@ -61,13 +61,13 @@ namespace RealEstateCRM.Web.Controllers
             List<ClientTransferAlertReport> transferAlerts = project.GetOutTimeAlertNum(projectid, groupid);
             List<ClientTransferAlertReport> transferOuts = new List<ClientTransferAlertReport>
                                                              {
-                                                                 new ClientTransferAlertReport {TransferType = "电转访超期", Num = 1},
-                                                                 new ClientTransferAlertReport {TransferType = "办卡超期", Num = 1}
+                                                                // new ClientTransferAlertReport {TransferType = "电转访超期", Num = 1},
+                                                                // new ClientTransferAlertReport {TransferType = "办卡超期", Num = 1}
                                                              };
             List<ClientTransferAlertReport> transferIns = new List<ClientTransferAlertReport>
                                                              {
-                                                                 new ClientTransferAlertReport {TransferType = "来电客户", Num = 1},
-                                                                 new ClientTransferAlertReport {TransferType = "来访客户", Num = 1}
+                                                                // new ClientTransferAlertReport {TransferType = "来电客户", Num = 1},
+                                                                // new ClientTransferAlertReport {TransferType = "来访客户", Num = 1}
                                                              };
             ViewBag.transferAlerts = transferAlerts;
             ViewBag.transferOuts = transferOuts;

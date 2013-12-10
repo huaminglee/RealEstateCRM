@@ -41,31 +41,37 @@ namespace RealEstateCRM.Web.BLL
                     type = "卡转定超期转移";
                     break;
             }
-            string sql = @"select c.* from clients c join departments d on c.groupid=d.id join roomtypes t on t.departmentid=c.projectid and t.name=c.roomtype where c.projectid={0} and  c.state={1} and t.{2} >0 and  DATEADD(dd,t.{2},c.statedate)<=getdate() order by DATEADD(dd,t.{2},c.statedate)-getdate()";
+            string sql = @"select c.* from clients c join departments d on c.groupid=d.id join roomtypes t on t.departmentid=c.projectid and t.name=c.roomtype where c.projectid={0} and  c.state={1} and t.{2} >0 and  DATEADD(dd,t.{2},c.statedate)<getdate()";
             sql = string.Format(sql, project, (int)state, field, type);
             using (Context db = new Context())
             {
                 List<Client> list = db.Database.SqlQuery<Client>(sql).ToList();
                 foreach (Client client in list)
                 {
+                    Client c = db.Clients.Find(client.Id);
                     db.ClientTransfers.Add(new ClientTransfer()
                     {
-                        ClientId = client.Id,
-                        InGroup = client.SleepTimes == 0 ? gonggong : chenshui,
-                        OutGroup = client.GroupId,
+                        ClientId = c.Id,
+                        InGroup = c.SleepTimes == 0 ? gonggong : chenshui,
+                        OutGroup = c.GroupId,
                         Reason = type,
-                        Person = UserInfo.CurUser.Id,
+                        Person = 1,
                         TransferDate = DateTime.Today
                     });
-                    if (client.SleepTimes == 0)
-                        client.GroupId = gonggong;
+                    if (c.SleepTimes == 0)
+                    {
+                        c.GroupId = gonggong;
+                        c.State = ClientStateEnum.公共客户;
+                    }
                     else
                     {
-                        client.GroupId = chenshui;
+                        c.GroupId = chenshui;
+                        c.State = ClientStateEnum.沉睡客户;
                     }
-                    client.SleepTimes++;
+                    c.SleepTimes++;
+                    c.StateDate = DateTime.Today;
                     db.SaveChanges();
-                    Client.StateUpdate(client.Id, DateTime.Today);
+                    //Client.StateUpdate(client.Id, DateTime.Today);
                 }
             }
         }

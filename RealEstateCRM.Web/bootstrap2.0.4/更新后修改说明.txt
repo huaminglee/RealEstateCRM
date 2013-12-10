@@ -41,10 +41,10 @@ v2.3.1
 .form-control {
   display: block;   ---- 删除
   width: 100%;     ---删除
-  height: 38px;
+  height: 38px;  -- 28
   padding: 8px 12px;---改为 2px 6px
   font-size: 14px;
-  line-height: 1.428571429;
+  line-height: 1.428571429;  --删除
   color: #555555;
   vertical-align: middle;
   background-color: #ffffff;

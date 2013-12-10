@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    var isProject = Request.Url.AbsolutePath.ToLower().Contains("/project/");
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<!DOCTYPE html>
 <html>
 <head>
     <title>@ViewBag.Title</title>
@@ -13,6 +21,7 @@
     @RenderSection("scripts", required: false)
 <script type="text/javascript">
     var rootpath = '@Url.Content("~")';
+    var projectid = '@projectid';
     var formsubmited=false;
     $(document).ready(function () {
         $("form").addClass("form-horizontal");
@@ -54,7 +63,7 @@
 
                                                                       <div class="navbar-collapse collapse">
                                                                           <ul class="nav  navbar-nav navbar-brand">
-                                                                              <li>@ViewBag.Title</li>
+                                                                              <li>@ViewBag.Title @if (isProject){@DepartmentBLL.GetNameById(int.Parse(projectid))} </li>
                                                                           </ul>
                                                                           <ul class="nav navbar-nav navbar-right  navbar-brand">
                                                                               <li class="brand"><img src="@Url.Content("~/content/images/glcp.png")" style="float: left; height: 30px; margin-top: -7px;" /> @System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>

@@ -10,6 +10,14 @@ using System.Web.Mvc;
 
 namespace OUDAL
 {
+    public class ProjectClientCode
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int DepartmentId { get; set; }
+        public int Month { get; set; }
+        public int NextCode { get; set; }
+    }
     public class Project
     {
         [Key]
@@ -45,6 +53,24 @@ namespace OUDAL
 
         [NotMapped]
         public List<RoomType> RoomTypes { get; set; }
+
+        public string GetNewClientCode(Context db)
+        {
+            var c =
+                (from o in db.ProjectClientCode where o.DepartmentId == this.DepartmentId select o ).FirstOrDefault();
+            if (c == null)
+            {
+                c = new ProjectClientCode {DepartmentId = DepartmentId};
+                db.ProjectClientCode.Add(c);
+            }
+            if (c.Month != DateTime.Today.Year*100 + DateTime.Today.Month)//新月份
+            {
+                c.Month = DateTime.Today.Year*100 + DateTime.Today.Month;
+                c.NextCode = 0;
+            }
+            c.NextCode++;
+            return string.Format("{0}{1}{2:000}", Code, c.Month, c.NextCode);
+        }
 
         public static Project Get(int id)
         {

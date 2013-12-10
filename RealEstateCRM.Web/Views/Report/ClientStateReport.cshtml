@@ -1,0 +1,141 @@
+﻿@{
+    ViewBag.Title = "客户统计表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            $("#DateFrom").val('@ViewBag.Date1');
+            $("#DateTo").val('@ViewBag.Date2');
+            //SearchClick();
+        });
+        var list;
+
+        function SearchClick() {
+            var PostData = {};
+
+
+            PostData.DateFrom = $("#DateFrom").val();
+            if (PostData.DateFrom == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.DateTo = $("#DateTo").val();
+            if (PostData.DateTo == "") {
+                alert("请选择日期");
+                return;
+            }
+
+            $.post("./ClientStateReportQuery", PostData, function(respDate) {
+                if (respDate.success == true) {
+                    var obj = respDate.obj;
+                    var totalItem = {};
+                    totalItem.GroupName = "合计";
+                    totalItem.GroupId = 0;
+                    totalItem.CallInNum = 0;
+                    totalItem.CallVisitNum = 0;
+                    totalItem.VisitNum = 0;
+                    totalItem.Card1Num = 0;
+                    totalItem.Card2Num = 0;
+                    totalItem.OrderNum = 0;
+                    totalItem.ContractNum = 0;
+                    for (var i = 0; i < obj.list.length; i++) {
+                        var item = obj.list[i];
+                        if (item.CallInNum == 0) {
+                            item.Rate1 = 0;
+                        } else {
+                            item.Rate1 = Math.round(item.CallVisitNum * 100 / item.CallInNum);
+                        }
+                        if (item.VisitNum == 0) {
+                            item.Rate2 = 0;
+                        } else {
+                            item.Rate2 = Math.round(item.Card1Num * 100 / item.VisitNum);
+                        }
+                        totalItem.CallInNum += item.CallInNum;
+                        totalItem.CallVisitNum+=item.CallVisitNum;
+                        totalItem.VisitNum += item.VisitNum;
+                        totalItem.Card1Num += item.Card1Num;
+                        totalItem.Card2Num += item.Card2Num;
+                        totalItem.OrderNum += item.OrderNum;
+                        totalItem.ContractNum += item.ContractNum;
+                        if (totalItem.CallInNum == 0) {
+                            totalItem.Rate1 = 0;
+                        } else {
+                            totalItem.Rate1 = Math.round(totalItem.CallVisitNum * 100 / totalItem.CallInNum);
+                        }
+                        if (totalItem.VisitNum == 0) {
+                            totalItem.Rate2 = 0;
+                        } else {
+                            totalItem.Rate2 = Math.round(totalItem.Card1Num * 100 / totalItem.VisitNum);
+                        }
+                    }
+                    if(obj.list.length>1)obj.list.unshift(totalItem);
+                    showEnters(obj);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+
+        function showClient(id) {
+            OpenFullWindow("./View/" + id);
+        }
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        @Html.SearchDateRange("", "日期：")
+       
+        @MyControls.SearchBtn()
+    </div>
+    <div id="resulttable">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:80px">组名</th>
+                    <th style="width:80px">来电</th>
+                    <th style="width:80px">电转访</th>
+                    <th style="width:80px">来访</th>
+                    <th style="width:80px">小卡</th>
+                    <th style="width:80px">大卡</th>
+                    <th style="width:80px">大定</th>
+                    <th style="width:80px">签约</th>
+                    <th style="width:80px">电转访率</th>
+                    <th style="width:80px">办卡率</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i=0;i<obj.list.length;i++){var item=obj.list[i]; %>
+
+                    <tr>
+                        <td><%=item.GroupName%></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=0&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.CallInNum%></a></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=6&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.CallVisitNum%></a></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=1&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.VisitNum%></a></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=2&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.Card1Num%></a></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=3&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.Card2Num%></a></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=4&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.OrderNum%></a></td>
+                        <td style="text-align:right"><a href="./ClientStateList?projectid=<%=projectid%>&groupid=<%=item.GroupId%>&type=5&datefrom=<%=obj.d1%>&dateto=<%=obj.d2%>" target="_blank"><%=item.ContractNum%></a></td>
+                        <td style="text-align:right"><%=item.Rate1%>%</td>
+                        <td style="text-align:right"><%=item.Rate2%>%</td>
+                    </tr>
+
+                    <%}%>
+                    
+
+</tbody>
+        </table>
+    </script>
+   
+    }

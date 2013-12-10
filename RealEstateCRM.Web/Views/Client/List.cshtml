@@ -52,10 +52,17 @@
         @MyControls.SearchBtn()
         @if (Request.RequestContext.RouteData.Values["projectid"] != null)
         {
-            @MyControls.Btn("新增来电", "AddNew(1)")
-            @MyControls.Btn("新增来访", "AddNew(2)")
-            @MyControls.Btn("渠道报备", "AddNew(3)")
-             @MyControls.Btn("导入", "Import()")
+            if (UserInfo.CurUser.HasRight("客户管理-前台"))
+             {
+                 @MyControls.Btn("新增直访", "AddNew(2)")
+                 @MyControls.Btn("渠道报备", "AddNew(3)")
+             }
+            if (UserInfo.CurUser.HasRight("客户管理-销售员"))
+            {
+                @MyControls.Btn("新增来电", "AddNew(1)")
+            @MyControls.Btn("销售拓客", "AddNew(5)")
+            }
+            @* @MyControls.Btn("导入", "Import()")*@
         }
     </div>
     @Html.Raw(JqGridSimple.OutTable())

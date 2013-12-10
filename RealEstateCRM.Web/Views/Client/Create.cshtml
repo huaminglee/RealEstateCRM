@@ -8,12 +8,59 @@
 <script type="text/javascript">
     jQuery(document).ready(function () {
         $(".datepicker").datetimepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
-        
+        $("form").submit(function() {
+            var l1 = $("#WayL1").val();
+            var l2 = $("#WayL2").val();
+            if (l2 != undefined && l2 != "") {
+                $("#Way").val(l1 + '-' + l2);
+            } else {
+                $("#Way").val(l1);
+            }
+        });
             $("#AppointmentField").show();
         
             $("#Phone1").attr("readonly", "readonly");
             $(".form-group").addClass("col-md-6");
+
+
+            var l1str = "";
+            if (way.length > 1) {
+                l1str+="<option value=''></option>";
+            }
+            for (var i = 0; i < way.length; i++) {
+                l1str += "<option value='" + way[i].L1 + "'>" + way[i].L1 + "</option>";
+            }
+            $("#WayL1").html(l1str);
+        $("#WayL1").change(L1Change);
+        
+        var wayValues = $("#Way").val().split('-');
+
+        if (wayValues.length > 0) {
+            $("#WayL1").val(wayValues[0]);
+            L1Change();
+            if (wayValues.length > 1) {
+                $("#WayL2").val(wayValues[1]);
+            }
+        }
+        //$("#WayL2").change(function() {
+            //$("#Way").val($("#WayL1").val()+'-'+$("#WayL2").val());
+        //});
     });
+    function L1Change()
+    {
+        
+            var l1 = $("#WayL1").val();
+            for (var i = 0; i < way.length; i++) {
+                if (l1 == way[i].L1) {
+                    var l2str = "";
+                    for (var j = 0; j < way[i].L2.length; j++) {
+                        l2str += "<option value='" + way[i].L2[j] + "'>" + way[i].L2[j] + "</option>";
+                    }
+                    $("#WayL2").html(l2str);
+                }
+                }
+           
+    }
     //function RoomTypeChanged() {
     //    var roomtype = "";
     //    $('input[name="RoomType"]:checked').each(function () {
@@ -49,15 +96,22 @@
             $("#AppointmentField").hide();
         }
     }
+
+    var way = @Html.Raw( Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.QuDao));
 </script>
 <div class="well container" style="margin:0px auto">
     @using (Html.BeginForm())
     {
         @Html.ValidationSummary(false)
         @Html.HiddenFor(model => model.Id)
-        <input id="RoomType" type="text" style="display:none" />
+       
         <fieldset>
             <legend>@ViewBag.Msg</legend>
+            @if (ViewBag.Type == 4)
+            {
+                 @Html.MyTextFor(m => m.CallPerson)
+                <div class="clearfix"></div>
+            }
             @Html.MyTextFor(m => m.Name)
             <div class='form-group'>
                 @Html.LabelFor(m => m.Sex)
@@ -67,7 +121,12 @@
             </div>
             @Html.MyTextFor(m=>m.Phone1)
             @Html.MyTextFor(m=>m.Phone2)
-            @Html.MyDropdownFor(model => model.Way,ViewBag.QuDao as List<SelectListItem> , Model.Way,appendBlank:false)
+            @* @Html.MyDropdownFor(model => model.Way,ViewBag.QuDao as List<SelectListItem> , Model.Way,appendBlank:false)*@
+            <div class='form-group'>
+                <label control-label' for='WayL1'>渠道</label><select id="WayL1"></select><select id="WayL2"></select>
+                @Html.HiddenFor(m=>m.Way)
+            </div>
+
             @Html.MyTextFor(model => model.WayExtend)
             @*<div class='form-group'>
                     @Html.LabelFor(m => m.RoomType)

@@ -90,6 +90,7 @@
     <Compile Include="Context.cs" />
     <Compile Include="BLL\DepartmentBLL.cs" />
     <Compile Include="ModelBase\Attachment.cs" />
+    <Compile Include="Model\ClientInvalid.cs" />
     <Compile Include="Model\ClientTransfer.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\Card.cs" />

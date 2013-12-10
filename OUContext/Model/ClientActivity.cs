@@ -24,6 +24,8 @@ namespace OUDAL
         public string Detail { get; set; }
         [DisplayName("完成情况")]
         public bool? IsDone { get; set; }
+        public int FirstType { get; set; }
+        public int Person { get; set; }
     }
     public class ClientActivityListView
     {

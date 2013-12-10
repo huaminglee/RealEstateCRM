@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "客户确认";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = { ProjectId: projectid, QuDao: '电话中心', State: [@((int) ClientStateEnum.来访客户)] };
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            $("input[value='设置为无效']").popover({ html: true, placement: 'bottom', title: '设置', content: $("#invaliddiv").html(), trigger: "click" });
+            $("input[value='恢复为有效']").popover({ html: true, placement: 'bottom', title: '设置', content: $("#validdiv").html(), trigger: "click" });
+
+            @Html.Raw(JqGridSimple.OutGrid("ListQuery", true));
+
+            function AfterInsertRow(rowid, aData) {
+                //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");
+                //grid.setCell(rowid,"FoodType",  TypeName(aData.FoodType));
+                //grid.setCell(rowid,"State", StateName(aData.State));
+                grid.setCell(rowid, "State", StateName(aData.State));
+            }
+        });
+        var colModelGrid = [{ name: 'Id', key: true, index: 'id', width: 1, align: 'left', hidden: true }
+        @Html.JqFieldString("Name", "名称", 150, "c.Name")
+        @Html.JqFieldString("Sex", "性别", 50, "c.Sex")
+        @Html.JqFieldString("AllPhone", "电话", 250, "c.AllPhone")
+        @Html.JqFieldString("GroupName", "所属小组", 150, "d2.GroupName")
+        @Html.JqFieldString("Way", "渠道", 150, "c.Way")
+        @Html.JqFieldString("State", "当前状态", 150, "c.State")
+        @Html.JqFieldDate("StateDate", "状态日期")
+        @Html.JqFieldString("InvalidReason", "无效原因", 150)
+        @Html.JqFieldString("Remark", "备注", 150, "c.Remark")]
+        ;
+        @Html.EnumNameFunction("State", typeof (ClientStateEnum))
+
+        function rowclick(id) {
+            OpenFullWindow("./View/" + id, "_blank");
+        }
+
+        function SearchClick() {
+            var statearray = new Array();
+            $("input[name='state']:checked").each(function() { statearray.push($(this).val()); });
+            $('#listGrid').appendPostData({ State: statearray });
+            $('#listGrid').appendPostData({ Name: $("#Name").val() });
+            $('#listGrid').appendPostData({ PhoneNumber: $("#PhoneNumber").val() });
+
+            $('#listGrid').trigger('reloadGrid');
+        }
+
+        function Refresh() {
+            SearchClick();
+        }
+
+       
+
+        function ClientConfirm(action,title) {
+            var data = { action: action, reason: $('#reason').val(), selectedIds: $('#listGrid').getGridParam('selarrrow').toString() };
+            $.post('./ClientConfirmBatch', data, function(data) {
+                alert(data.obj);
+                if (data.success == true) {
+                    SearchClick();
+                }
+                $("input[value='设置为无效']").popover('hide');
+                $("input[value='恢复为有效']").popover('hide');
+                $('#reason').val('');
+            });
+        }
+
+        function Cancel() {
+            $("input[value='设置为无效']").popover('hide');
+            $("input[value='恢复为有效']").popover('hide');
+            $('#reason').val('');
+        }
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        @Html.ShortInput("Name", "名 称:")
+        @Html.ShortInput("PhoneNumber", "电 话:")
+        @Html.SearchLabel("state", "客户状态:")
+        <input type="checkbox" name="state" value="@((int) ClientStateEnum.来访客户)" checked="checked" />电话中心到访客户
+        <input type="checkbox" name="state" value="@((int) ClientStateEnum.无效客户)" />电话中心无效客户
+        @MyControls.SearchBtn()
+        @MyControls.Btn("设置为无效", "")
+        @MyControls.Btn("恢复为有效", "")</div>
+    <div style="display: none" id="invaliddiv">
+        请输入原因: @Html.TextBox("reason")
+        @MyControls.Btn("确定", "ClientConfirm('invalid','无效客户')")
+        @MyControls.Btn("取消", "Cancel()")
+    </div>
+    <div style="display: none;width:320px" id="validdiv">
+        <div style="width:320px">
+        @MyControls.Btn("确定恢复为有效客户", "ClientConfirm('valid','有效客户')")
+        @MyControls.Btn("取消", "Cancel()")</div>
+    </div>
+    @Html.Raw(JqGridSimple.OutTable())
+
+    }
+

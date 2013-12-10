@@ -6,7 +6,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace OUDAL
 {
-    public enum ClientStateEnum { 公共客户, 沉睡客户, 邀约客户, 来电客户, 来访客户, 办卡客户, 大定客户, 签约客户 }
+    //来电客户转来访后，如果确认无效，则转为无效客户
+    public enum ClientStateEnum { 公共客户, 沉睡客户, 邀约客户, 来电客户, 来访客户, 办卡客户, 大定客户, 签约客户,无效客户 }
     public enum ClientViewScopeEnum { 无, 查看本组, 查看项目, 查看所有 }
     public class Client
     {
@@ -65,7 +66,11 @@ namespace OUDAL
         [DisplayName("电话")]
         public string AllPhone { get; set; }
         //ToDo: AllPhone要处理
-
+       
+        [DisplayName("电话中心经办人")]
+        public string CallPerson { get; set; }
+        [DisplayName("无效原因")]
+        public string InvalidReason { get; set; }
         public static string StateUpdate(int id, DateTime? date)
         {
             Context db = new Context();
@@ -83,29 +88,31 @@ namespace OUDAL
                     c.State = ClientStateEnum.沉睡客户;
                     break;
                 }
-                List<Order> sign = (from o in db.Orders where o.SignTime.HasValue && o.ClientId == id && !o.CancelTime.HasValue orderby o.SignTime ascending select o).ToList();
-                if (sign.Count != 0)
+                var sign = (from o in db.Orders where o.SignTime.HasValue && o.ClientId == id && !o.CancelTime.HasValue orderby o.SignTime ascending select o).FirstOrDefault();
+                if (sign!=null)
                 {
                     c.State = ClientStateEnum.签约客户;
-                    c.StateDate = sign.First().SignTime.GetValueOrDefault();
+                    c.StateDate = sign.SignTime.GetValueOrDefault();
                     break;
                 }
-                List<Order> order = (from o in db.Orders where !o.SignTime.HasValue && o.ClientId == id && !o.CancelTime.HasValue orderby o.OrderTime ascending select o).ToList();
-                if (order.Count != 0)
+                var order = (from o in db.Orders where !o.SignTime.HasValue && o.ClientId == id && !o.CancelTime.HasValue orderby o.OrderTime ascending select o).FirstOrDefault();
+                if (order!=null)
                 {
                     c.State = ClientStateEnum.大定客户;
-                    c.StateDate = order.First().OrderTime;
+                    c.StateDate = order.OrderTime;
                     break;
                 }
-                List<Card> card = (from o in db.Cards where !o.CancelTime.HasValue && o.ClientId == id select o).ToList();
-                if (card.Count != 0)
+                var card =
+                    (from o in db.Cards where !o.CancelTime.HasValue && o.ClientId == id select o).FirstOrDefault();
+                if (card!=null)
                 {
                     c.State = ClientStateEnum.办卡客户;
-                    c.StateDate = card.First().SmallTime;
+                    c.StateDate = card.SmallTime;
                     break;
                 }
-                List<ClientActivity> all = (from o in db.ClientActivities where o.ActualTime.HasValue && o.ClientId == id && !o.PlanTime.HasValue select o).ToList();
-                List<ClientActivity> invite = (from o in all where o.Type.Equals("来访") orderby o.ActualTime ascending select o).ToList();
+                List<ClientActivity> all = (from o in db.ClientActivities where o.ActualTime.HasValue && o.ClientId == id  select o).ToList();
+                //邀约中，非来电去电，且有完成日期的，为来访时间
+                List<ClientActivity> invite = (from o in all where o.Type.Equals("来电") == false && o.Type.Equals("去电") == false orderby o.ActualTime ascending select o).ToList();//
                 if (invite.Count != 0)
                 {
                     c.State = ClientStateEnum.来访客户;
@@ -120,9 +127,13 @@ namespace OUDAL
                     break;
                 }
 
-                ClientActivity firstinvite = (from o in db.ClientActivities where !o.ActualTime.HasValue && o.ClientId == id && o.PlanTime.HasValue orderby o.PlanTime ascending select o).FirstOrDefault();
+                ClientActivity firstinvite = (from o in db.ClientActivities where !o.ActualTime.HasValue && o.ClientId == id &&o.PlanTime.HasValue orderby o.PlanTime ascending select o).FirstOrDefault();
                 c.State = ClientStateEnum.邀约客户;
-                c.StateDate = firstinvite.PlanTime.Value;
+                if (firstinvite != null)
+                {
+                    c.StateDate = firstinvite.PlanTime.Value;
+                }
+                
                 break;
 
             }
@@ -177,6 +188,8 @@ namespace OUDAL
         public string AllPhone { get; set; }
         public ClientStateEnum State { get; set; }
         public DateTime StateDate { get; set; }
+        public string InvalidReason { get; set; }
+        public string CallPerson { get; set; }
 
         public string MarkedPhone1
         {
@@ -267,6 +280,8 @@ namespace OUDAL
 
         [DisplayName("邀约情况说明")]
         public string AppointmentDetail { get; set; }
+        [DisplayName("电话中心经办人")]
+        public string CallPerson { get; set; }
     }
 
 

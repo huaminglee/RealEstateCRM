@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "电话中心客户清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+    var projects = DepartmentBLL.GetDepartmentByType("项目");
+    projects.Insert(0, new SelectListItem {});
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+            //SearchClick();
+        });
+        var list;
+
+        function SearchClick() {
+            var PostData = {};
+             @if (Request.RequestContext.RouteData.Values["projectid"] == null)
+             {
+                <text> PostData.ProjectId =$("#projectid").val();</text>
+             }
+             else
+             {
+                 <text>PostData.ProjectId=projectid;</text>
+             }
+            
+            PostData.DateFrom = $("#DateFrom").val();
+            PostData.DateTo = $("#DateTo").val();
+            PostData.DateFromVisit = $("#DateFromVisit").val();
+            PostData.DateToVisit = $("#DateToVisit").val();
+            PostData.DateFromCard = $("#DateFromCard").val();
+            PostData.DateToCard = $("#DateToCard").val();
+            PostData.DateFromOrder = $("#DateFromOrder").val();
+            PostData.DateToOrder = $("#DateToOrder").val();
+
+            $.post("./CallCenterListQuery", PostData, function (respDate) {
+                if (respDate.success == true) {
+                    showEnters(respDate.obj);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+
+        function showClient(id) {
+            OpenFullWindow("./View/" + id);
+        }
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+         
+        @Html.SearchDateRange("","登记时间" )
+        @Html.SearchDateRange("Visit","到访时间" )
+        @if (Request.RequestContext.RouteData.Values["projectid"] == null)
+        {
+            @Html.SearchLabel("projectid", "项目") @Html.DropDownList("projectid", projects)
+        }
+<br />
+        @Html.SearchDateRange("Card","办卡时间" )
+        @Html.SearchDateRange("Order","大定时间" )
+        @MyControls.SearchBtn()
+    </div>
+    <div id="resulttable">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:80px">项目</th>
+                    <th style="width:100px">客户</th>
+                    <th style="width:150px">登记时间</th>
+                    <th style="width:150px">登记人</th>
+                    <th style="width:150px">经办人</th>
+                    <th style="width:100px">到访时间</th>
+                    <th style="width:80px">无效原因</th>
+                    <th style="width:80px">办卡时间</th>
+                    <th style="width:80px">退卡时间</th>
+                    <th style="width:80px">大定时间</th>
+                    <th style="width:80px">退定时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i=0;i<obj.list.length;i++){var item=obj.list[i]; %>
+                    <tr>
+                        <td><%=item.ProjectName%></td>                       
+                        <td ><%=item.Name%></td>
+                        <td ><%=Date2String(item.CreateTime)%></td>
+                        <td ><%=item.Person%></td>
+                        <td ><%=item.CallPerson%></td>
+                        <td ><%=Date2String(item.VisitTime)%></td>
+                        <td ><%=item.InvalidReason%></td>
+                        <td><%=Date2String(item.CardDate)%></td>
+                        <td><%=Date2String(item.CardCancelDate)%></td>
+                        <td><%=Date2String(item.OrderDate)%></td>
+                        <td><%=Date2String(item.OrderCancelDate)%></td>
+
+                    </tr>   
+                    <%}%>
+                    
+
+</tbody>
+        </table>
+    </script>
+   
+    }

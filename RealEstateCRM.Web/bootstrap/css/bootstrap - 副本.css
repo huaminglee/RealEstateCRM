@@ -1790,9 +1790,10 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .form-control {
-  height: 28px;  
+  height: 28px;
   padding: 2px 6px;
-  font-size: 14px;  
+  font-size: 14px;
+  line-height: 28px;
   vertical-align: middle;
  color: #555555;
   border: 1px solid #cccccc;
@@ -7230,7 +7231,7 @@ td.visible-print {
   background-image: linear-gradient(#54b4eb, #2fa4e7 60%, #1d9ce5);
   background-repeat: no-repeat;
   border-bottom: 1px solid #178acc;
- 
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff54b4eb', endColorstr='#ff1d9ce5', GradientType=0);
   filter: none;
   -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
           box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
@@ -7248,7 +7249,7 @@ td.visible-print {
   background-image: linear-gradient(#04519b, #044687 60%, #033769);
   background-repeat: no-repeat;
   border-bottom: 1px solid #022241;
-  
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff04519b', endColorstr='#ff033769', GradientType=0);
   filter: none;
 }
 
