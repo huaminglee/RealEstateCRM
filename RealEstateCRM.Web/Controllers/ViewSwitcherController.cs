@@ -10,7 +10,6 @@ namespace RealEstateCRM.Web.Controllers
                 HttpContext.ClearOverriddenBrowser();
             else
                 HttpContext.SetOverriddenBrowser(mobile ? BrowserOverride.Mobile : BrowserOverride.Desktop);
-
             return Redirect(returnUrl);
         }
     }

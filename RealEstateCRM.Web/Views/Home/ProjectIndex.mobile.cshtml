@@ -1,0 +1,191 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+}
+<div data-role="fieldcontain">
+    <div data-role="collapsible" data-collapsed="false">
+        <h4>快速通道</h4>
+        <ul data-role="listview">
+            @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
+            {
+                <li><a href="@Url.Content("../Client/ToCreate?type=1")">来电客户登记</a></li>
+                <li><a href="@Url.Content("../Client/ToCreate?type=5")">销售拓客登记</a></li>
+            }
+            @if (UserInfo.CurUser.HasRight("客户管理-前台"))
+            {
+                <li><a href="@Url.Content("../Client/ToCreate?type=2")">直访客户登记</a></li>
+                <li><a href="@Url.Content("../Client/ToCreate?type=3")">中介客户报备</a></li>
+            }
+
+            @if (UserInfo.CurUser.HasRight("客户管理-客户查询"))
+            {
+                <li><a href="@Url.Content("../Client/List")">客户资料查询</a></li>}
+            @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
+            {
+                <li><a href="@Url.Content("../Client/ClientTransferIn")">转入客户查询</a></li>
+                <li><a href="@Url.Content("../Client/ClientTransferOut")">转出客户查询</a></li>
+            }
+        </ul>
+    </div>
+</div>
+@*<script type="text/javascript">
+        //jQuery(document).ready(function () {
+        //    $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        //});
+
+        //function gotoUrl(url) {
+        //    window.location.href = url;
+        //}
+
+        function Refresh() {
+            window.location.reload();}
+    </script>*@
+@*<div class="container">
+
+        <!-- Main hero unit for a primary marketing message or call to action -->
+        <div class="">
+
+        </div>
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-xs-2">
+                <h3>快速通道</h3>
+                <div style="width: 40px; margin: auto">
+    @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
+    {
+        <button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick=" OpenFullWindow('@Url.Content("../Client/ToCreate?type=1")', '_blank'); ">来电客户登记</button>
+        <button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick=" OpenFullWindow('@Url.Content("../Client/ToCreate?type=5")', '_blank'); ">销售拓客登记</button>
+    }
+    @if (UserInfo.CurUser.HasRight("客户管理-前台")){<button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick=" OpenFullWindow('@Url.Content("../Client/ToCreate?type=2")', '_blank'); ">直访客户登记</button>}
+    @if (UserInfo.CurUser.HasRight("客户管理-前台")){<button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick=" OpenFullWindow('@Url.Content("../Client/ToCreate?type=3")', '_blank'); ">中介客户报备</button>}
+    @if (UserInfo.CurUser.HasRight("客户管理-客户查询")){<button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick="window.location.href = ('@Url.Content("../Client/List")'); ">客户资料查询</button>}
+    @if (UserInfo.CurUser.HasRight("客户管理-销售员")){<button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick="window.location.href = ('@Url.Content("../Client/ClientTransferIn")'); ">转入客户查询</button>}
+    @if (UserInfo.CurUser.HasRight("客户管理-销售员")){<button style="margin:10px 10px 10px 10px" class="btn btn-primary" onclick="window.location.href = ('@Url.Content("../Client/ClientTransferOut")'); ">转出客户查询</button>}
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <h3>当日邀约</h3><div class="pull-right">
+                    [<a href="../Client/InviteReport">报表</a>] [<a href="../Client/InviteList">明细</a>]
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>邀约类型</th>
+                            <td>组数</td>
+                            <td>到访</td>
+                            <td>完成</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ClientActivityReportView item in ViewBag.InviteList)
+                    {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td style="text-align:right">
+                            @if (@item.Num != 0)
+                                {
+                                <a href="../Client/InviteList?type=@item.Type" target="_blank">@item.Num</a>
+                                }
+                                else
+                                {
+                                @item.Num
+                                }
+                        </td>
+                        <td style="text-align:right">@item.VisitNum</td>
+                        <td style="text-align:right">@item.DoneNum</td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-3">
+                <h3>转移预警</h3><div class="pull-right">
+                    [<a href="../Client/AlertList">明细</a>]
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>转移类型</th>
+                            <td>预警数量</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ClientTransferAlertReport item in ViewBag.transferAlerts)
+                    {
+                    <tr>
+                        <td>@item.TransferType</td>
+                        <td style="text-align:right">
+                            @if (@item.Num != 0)
+                                {
+                                <a href="../Client/AlertList?type=@item.TransferType" target="_blank">@item.Num</a>
+                                }
+                                else
+                                {
+                                @item.Num
+                                }
+                        </td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+
+                <h3>昨日转入</h3><div class="pull-right">
+                    [<a href="../Client/ClientTransferIn">明细</a>]
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>转移类型</th>
+                            <td>数量</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ClientTransferAlertReport item in ViewBag.transferIns)
+                    {
+                    <tr>
+                        <td>@item.TransferType</td>
+                        <td style="text-align:right">@item.Num</td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+
+                <h3>昨日转出</h3><div class="pull-right">
+                    [<a href="../Client/ClientTransferOut">明细</a>]
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>转移类型</th>
+                            <td>数量</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ClientTransferAlertReport item in ViewBag.transferOuts)
+                    {
+                    <tr>
+                        <td>@item.TransferType</td>
+                        <td style="text-align:right">@item.Num</td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h2>系统通知</h2>
+                <ul>
+                    <li>2013-12-9 新增报表：客户统计表（类8*15)</li>
+                    <li>2013-12-9 新增报表：电话中心客户统计</li>
+                    <li>2013-12-8 新增功能: 电话中心客户确认(标记为无效)</li>
+                </ul>
+            </div>
+            <hr />
+        </div>
+    </div>*@
+@section Footer{
+    @@Copyright 上海虬溪软件 2013
+}

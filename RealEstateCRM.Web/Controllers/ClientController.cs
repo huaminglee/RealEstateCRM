@@ -77,7 +77,11 @@ namespace RealEstateCRM.Web.Controllers
             };
             return Json(jsonData);
         }
-
+        public JsonResult ListQueryForMobile()
+        {
+            List<ClientView> list = db.Database.SqlQuery<ClientView>("select c.*,d1.name as projectname,d2.name as groupname from Clients c join departments d1 on c.projectid=d1.id join departments d2 on c.groupid=d2.id where 1=1").ToList();
+            return Json(list);
+        }
         public ActionResult ToCreate(int projectid, string type)
         {
             ViewBag.Type = type;

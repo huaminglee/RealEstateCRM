@@ -15,6 +15,12 @@
     @Styles.Render("~/Content/jqmcss")
     @Styles.Render("~/Content/mobilecss")
     @Scripts.Render("~/bundles/MyJs")
+    <script type="text/javascript">
+        $(document).bind("mobileinit", function () {
+            // disable ajax nav
+            $.mobile.ajaxEnabled = false
+        });
+    </script>
     @Scripts.Render("~/Scripts/jqmJs")
     <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>

@@ -1,0 +1,198 @@
+﻿@model OUDAL.ClientCreate
+
+@{
+    ViewBag.Title = "客户信息编辑";
+    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").attr("data-role", "datebox");
+        var opt = {
+            preset: 'date', //日期
+            theme: 'jqm', //皮肤样式
+            display: 'modal', //显示方式
+            mode: 'scroller', //日期选择模式
+            lang: 'zh',
+            dateFormat: 'yyyy-mm-dd', // 日期格式
+            endYear: 2020 //结束年份
+        };
+        $('input:jqmData(role="datebox")').mobiscroll(opt);
+        $("form").submit(function () {
+            var l1 = $("#WayL1").val();
+            var l2 = $("#WayL2").val();
+            if (l2 != undefined && l2 != "") {
+                $("#Way").val(l1 + '-' + l2);
+            } else {
+                $("#Way").val(l1);
+            }
+        });
+        $("#AppointmentField").show();
+
+        $("#Phone1").attr("readonly", "readonly");
+        $(".form-group").addClass("col-md-6");
+
+
+        var l1str = "";
+        if (way.length > 1) {
+            l1str += "<option value=''></option>";
+        }
+        for (var i = 0; i < way.length; i++) {
+            l1str += "<option value='" + way[i].L1 + "'>" + way[i].L1 + "</option>";
+        }
+        $("#WayL1").html(l1str);
+        $("#WayL1").change(L1Change);
+
+        var wayValues = $("#Way").val().split('-');
+
+        if (wayValues.length > 0) {
+            $("#WayL1").val(wayValues[0]);
+            L1Change();
+            if (wayValues.length > 1) {
+                $("#WayL2").val(wayValues[1]);
+            }
+        }
+        //$("#WayL2").change(function() {
+        //$("#Way").val($("#WayL1").val()+'-'+$("#WayL2").val());
+        //});
+    });
+    function L1Change() {
+
+        var l1 = $("#WayL1").val();
+        for (var i = 0; i < way.length; i++) {
+            if (l1 == way[i].L1) {
+                var l2str = "";
+                for (var j = 0; j < way[i].L2.length; j++) {
+                    l2str += "<option value='" + way[i].L2[j] + "'>" + way[i].L2[j] + "</option>";
+                }
+                $("#WayL2").html(l2str);
+                $("#WayL2").val('');
+            }
+        }
+
+    }
+    //function RoomTypeChanged() {
+    //    var roomtype = "";
+    //    $('input[name="RoomType"]:checked').each(function () {
+    //        if (roomtype == "")
+    //            roomtype += $(this).val();
+    //        else
+    //            roomtype += ("," + $(this).val());
+    //    });
+    //    //alert(roomtype);
+    //    $("#RoomType").val(roomtype);
+    //}
+
+    function PhoneCheck(phone) {
+        if (phone != null && phone != "") {
+            $.post("./PhoneCheck/0", { phone: phone }, function (res) {
+                if (!res.success) {
+                    alert(res.obj);
+                }
+            });
+        }
+    }
+    $(function () {
+        window.onunload = function () {
+            window.opener.Refresh();
+        };
+    });
+    function ShowAppointment(checked) {
+        //$("#AppointmentField").toggle();
+        if (checked) {
+            $("#AppointmentField").show();
+        }
+        else {
+            $("#AppointmentField").hide();
+        }
+    }
+
+    var way = @Html.Raw( Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.QuDao));
+</script>
+<div data-role="content">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(false)
+        @Html.HiddenFor(model => model.Id)
+
+        <h4>@ViewBag.Msg</h4>
+        if (ViewBag.Type == 4)
+        {
+            @Html.MyTextFor(m => m.CallPerson)
+            <div class="clearfix"></div>
+        }
+
+        @Html.MyTextFor(m => m.Name)
+        <div class='form-group'>
+            @Html.LabelFor(m => m.Sex)
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <label class="radio" style="min-width:initial"><input name="Sex" type="radio" value="男" checked />男</label>
+                <label class="radio" style="min-width:initial"><input name="Sex" type="radio" value="女" />女</label>
+            </fieldset>
+            @Html.ValidationMessageFor(m => m.Sex)
+
+        </div>
+        @Html.MyTextFor(m => m.Phone1)
+        @Html.MyTextFor(m => m.Phone2)
+        @* @Html.MyDropdownFor(model => model.Way,ViewBag.QuDao as List<SelectListItem> , Model.Way,appendBlank:false)*@
+        <div class='form-group'>
+            <label class="control-label" for='WayL1'>渠道</label>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <select id="WayL1"></select><select id="WayL2"></select>
+            </fieldset>
+            @Html.HiddenFor(m => m.Way)
+        </div>
+
+        @Html.MyTextFor(model => model.WayExtend)
+        @*<div class='form-group'>
+                @Html.LabelFor(m => m.RoomType)
+                @foreach (SelectListItem s in ViewBag.RoomTypes)
+                {
+                    <label class="checkbox-inline" style="min-width:initial;"><input name="RoomType" type="checkbox" checked="@s.Selected" value="@s.Value" onclick="RoomTypeChanged()" /> @s.Text</label>
+                }
+            </div>*@
+        <div class='form-group'>
+            @Html.LabelFor(m => m.RoomType)
+            <fieldset data-role="controlgroup" data-type="horizontal">
+
+                @foreach (string s in DepartmentBLL.GetRoomType(Model.ProjectId))
+                {
+                    <label class="radio-inline" style="min-width:30px;"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
+                }
+            </fieldset>
+            @Html.ValidationMessageFor(m => m.RoomType)
+        </div>
+        if (ViewBag.Type == 2)
+        {
+            @Html.MyDropdownFor(m => m.GroupId, Project.GetSalesGroup(Model.ProjectId).ToSelectLists(true));
+        }
+        <div class="clearfix"></div>
+        @Html.MyTextAreaFor(model => model.Remark, 3)
+        <div class="clearfix"></div>
+
+        <fieldset id="AppointmentField" style="display:none;">
+            <h4>
+                邀约信息
+                @if (ViewBag.Type == 1 || ViewBag.Type == 2)
+                {
+                    <text>(可选)</text>
+                }
+            </h4>
+            <div class="form-group">
+                @Html.LabelFor(model => model.AppointmentType)
+                <fieldset data-role="controlgroup">
+                    @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
+                    {
+                        <label class="radio" style="min-width:15px;"><input type="radio" name="AppointmentType" value="@s.Value" checked="@s.Value.Equals(Model.AppointmentType)" />@s.Text</label>
+
+                    }
+                    <label class="radio" style="min-width:15px;"><input type="radio" name="AppointmentType" />无</label>
+                </fieldset>
+                @Html.ValidationMessageFor(m => m.AppointmentType)
+            </div>
+            @Html.MyDateTimeFor(model => model.AppointmentPlanTime)
+            @Html.MyTextFor(model => model.AppointmentDetail)
+            <input type="hidden" value="@ViewBag.Type" name="type" id="type" />
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "history.go(-1)")</p>
+    }
+</div>

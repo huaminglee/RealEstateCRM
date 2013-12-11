@@ -15,16 +15,19 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/MyJs")
-    @Styles.Render("~/Content/jqGrid/css")
-    @Scripts.Render("~/bundles/jqGrid")
-    @Styles.Render("~/Content/jqmcss")
-    @Styles.Render("~/Content/mobilecss")
-    @Scripts.Render("~/Scripts/jqmJs")
+    @*@Styles.Render("~/Content/jqGrid/css")
+        @Scripts.Render("~/bundles/jqGrid")*@
+
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
+        $(document).bind("mobileinit", function () {
+            // disable ajax nav
+            $.mobile.ajaxEnabled = false;
+        });
         var rootpath = '@Url.Content("~/")';
         $(document).ready(function () {
             $("input[type='text']").addClass("form-control");
+            $("#aaa").html(window.location.href);
         });
         function logout() {
             if (confirm("是否要退出系统？")) {
@@ -43,130 +46,161 @@
 <body>
     <div data-role="header" data-position="fixed">
         @*<img src="@Url.Content("~/content/images/glcp.png")" style="float:left" />*@
-        <h3>绿地集团.事业二部</h3>
-        <div data-role="navbar"></div>
+        @*<h3><select name="select-choice-1" id="select-choice-1">
+                            <option onclick="window"><a href="@Url.Content("~")">公司</a></option>
+                            @foreach (var p in UserInfo.CurUser.GetProjects())
+                            {
+                                <option><a href="@Url.Content("~/Project/"+p.Id.ToString()+"/Home/ProjectIndex")">@p.Name</a></option>
+                            }
+            </select></h3>*@
+        <h3>
+            @if (isProject)
+            {@DepartmentBLL.GetNameById(int.Parse(projectid))}
+            else
+            { <text>公司</text>}
+            <b class="caret"></b>
+        </h3>
+
+        <div data-role="navbar">
+            
+            <ul class="dropdown-menu">
+                <li><a href="@Url.Content("~")">公司</a></li>
+                @foreach (var p in UserInfo.CurUser.GetProjects())
+                {
+                    <li><a href="@Url.Content("~/Project/"+p.Id.ToString()+"/Home/ProjectIndex")">@p.Name</a></li>
+                }
+            </ul>
+        </div>
     </div>
+    @*<div data-role="content">
+        <ul data-role="listview">
+            <li><a href="@Url.Content(" ~/>Project/" + projectid + "/Client/ToCreate?type=1")">来电客户登记</a></li>
+        </ul>
+    </div>*@
     @*<div data-role="navbar">
 
-        <div class="container">
-            <div class="navbar-header">
-                <img src="@Url.Content("~/content/images/glcp.png")" style="float:left" />
-                <a href="#" class="navbar-brand">@System.Configuration.ConfigurationManager.AppSettings["Title"]</a>
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
+            <div class="container">
+                <div class="navbar-header">
+                    <img src="@Url.Content("~/content/images/glcp.png")" style="float:left" />
+                    <a href="#" class="navbar-brand">@System.Configuration.ConfigurationManager.AppSettings["Title"]</a>
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
 
-            <div class="navbar-collapse collapse">
-                <ul class="nav  navbar-nav">
-                    
-                    @if (isProject)
-                    {
-                        <li><a href="@Url.Content("~/Project/"+projectid.ToString()+"/Home/ProjectIndex")">首页</a></li>
-                        if (UserInfo.CurUser.HasRight("客户管理"))
-                        {
-                            <li class="dropdown">
-                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("客户列表", "List", "Client")</li>
-                                    <li>@Html.ActionLink("来电客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=1") + "');return false;" })</li>
-                                    <li>@Html.ActionLink("来访客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=2") + "');return false;" })</li>
-                                    <li>@Html.ActionLink("中介客户报备", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=3") + "');return false;" })</li>
-                                    <li>@Html.ActionLink("客户转移", "TransferBatch", "Client")</li>
-                                    <li>@Html.ActionLink("客户转入表", "ClientTransferIn", "Client")</li>
-                                    <li>@Html.ActionLink("客户转出表", "ClientTransferOut", "Client")</li>
-                                </ul>
-                            </li>
-                        }
-                        if (UserInfo.CurUser.HasRight(""))
-                        {
-                            <li class="dropdown">
-                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">项目管理<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    @if (UserInfo.CurUser.HasRight(""))
-                                    {
-                                        <li>@Html.ActionLink("产品类型配置", "Config", "RoomType")</li>}
+                <div class="navbar-collapse collapse">
+                    <ul class="nav  navbar-nav">
 
-                                </ul>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li><a href="@Url.Content("~")">首页</a></li>
-                        if (UserInfo.CurUser.HasRight("客户管理"))
+                        @if (isProject)
                         {
-                            <li class="dropdown">
-                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="@Url.Content("~/Client/ToCreate?projectid=0&type=4")">客户报备</a></li>
-                                </ul>
-                            </li>
+                            <li><a href="@Url.Content("~/Project/"+projectid.ToString()+"/Home/ProjectIndex")">首页</a></li>
+                            if (UserInfo.CurUser.HasRight("客户管理"))
+                            {
+                                <li class="dropdown">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("客户列表", "List", "Client")</li>
+                                        <li>@Html.ActionLink("来电客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=1") + "');return false;" })</li>
+                                        <li>@Html.ActionLink("来访客户登记", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=2") + "');return false;" })</li>
+                                        <li>@Html.ActionLink("中介客户报备", "ToCreate", "Client", null, new { onclick = "OpenFullWindow('" + Url.Content("~/Project/" + projectid + "/Client/ToCreate?type=3") + "');return false;" })</li>
+                                        <li>@Html.ActionLink("客户转移", "TransferBatch", "Client")</li>
+                                        <li>@Html.ActionLink("客户转入表", "ClientTransferIn", "Client")</li>
+                                        <li>@Html.ActionLink("客户转出表", "ClientTransferOut", "Client")</li>
+                                    </ul>
+                                </li>
+                            }
+                            if (UserInfo.CurUser.HasRight(""))
+                            {
+                                <li class="dropdown">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">项目管理<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        @if (UserInfo.CurUser.HasRight(""))
+                                        {
+                                            <li>@Html.ActionLink("产品类型配置", "Config", "RoomType")</li>}
+
+                                    </ul>
+                                </li>
+                            }
                         }
-                        if (UserInfo.CurUser.HasRight("系统管理"))
+                        else
                         {
-                            <li class="dropdown">
-                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">系统管理<b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    @if (UserInfo.CurUser.HasRight("系统管理-部门管理"))
-                                    {
-                                        <li>@Html.ActionLink("部门维护", "DepartmentView", "System")</li>}
-                                    @if (UserInfo.CurUser.HasRight("系统管理-用户管理"))
-                                    {
-                                        <li>@Html.ActionLink("用户资料维护", "UserIndex", "System")</li>}
-                                    @if (UserInfo.CurUser.HasRight("系统管理-角色管理"))
-                                    {
-                                        <li>@Html.ActionLink("角色权限维护", "RoleIndex", "System")</li>}
-                                    @if (UserInfo.CurUser.HasRight("系统管理-数据字典"))
-                                    {
-                                        <li>@Html.ActionLink("数据字典", "Dictionary", "System")</li>}
-                                </ul>
-                            </li>
-                        }
-                    }
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="active dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="glyphicon glyphicon-user"> @UserInfo.CurUser.Name</span><b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" onclick="changepassword();">修改密码</a></li>
-                            <li><a href="#" onclick="logout();">退出</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle">
-                            @if (isProject)
-                            {@DepartmentBLL.GetNameById(int.Parse(projectid))}
-                            else
-                            { <text>公司</text>}
-                            <b class="caret"></b>
-                        </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="@Url.Content("~")">公司</a></li>
-                        @foreach (var p in UserInfo.CurUser.GetProjects())
-                        {
-                            <li><a href="@Url.Content("~/Project/"+p.Id.ToString()+"/Home/ProjectIndex")">@p.Name</a></li>
+                            <li><a href="@Url.Content("~")">首页</a></li>
+                            if (UserInfo.CurUser.HasRight("客户管理"))
+                            {
+                                <li class="dropdown">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">客户管理<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="@Url.Content("~/Client/ToCreate?projectid=0&type=4")">客户报备</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            if (UserInfo.CurUser.HasRight("系统管理"))
+                            {
+                                <li class="dropdown">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">系统管理<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        @if (UserInfo.CurUser.HasRight("系统管理-部门管理"))
+                                        {
+                                            <li>@Html.ActionLink("部门维护", "DepartmentView", "System")</li>}
+                                        @if (UserInfo.CurUser.HasRight("系统管理-用户管理"))
+                                        {
+                                            <li>@Html.ActionLink("用户资料维护", "UserIndex", "System")</li>}
+                                        @if (UserInfo.CurUser.HasRight("系统管理-角色管理"))
+                                        {
+                                            <li>@Html.ActionLink("角色权限维护", "RoleIndex", "System")</li>}
+                                        @if (UserInfo.CurUser.HasRight("系统管理-数据字典"))
+                                        {
+                                            <li>@Html.ActionLink("数据字典", "Dictionary", "System")</li>}
+                                    </ul>
+                                </li>
+                            }
                         }
                     </ul>
-                </li>
-                   
-                </ul>
-               
-                   
-                
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active dropdown">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#"><span class="glyphicon glyphicon-user"> @UserInfo.CurUser.Name</span><b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" onclick="changepassword();">修改密码</a></li>
+                                <li><a href="#" onclick="logout();">退出</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle">
+                                @if (isProject)
+                                {@DepartmentBLL.GetNameById(int.Parse(projectid))}
+                                else
+                                { <text>公司</text>}
+                                <b class="caret"></b>
+                            </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="@Url.Content("~")">公司</a></li>
+                            @foreach (var p in UserInfo.CurUser.GetProjects())
+                            {
+                                <li><a href="@Url.Content("~/Project/"+p.Id.ToString()+"/Home/ProjectIndex")">@p.Name</a></li>
+                            }
+                        </ul>
+                    </li>
+
+                    </ul>
 
 
-            
-                  
-            </div><!-- /.nav-collapse -->
-        </div>
-    </div><!-- /navbar-inner -->*@
+
+
+
+
+
+                </div><!-- /.nav-collapse -->
+            </div>
+        </div><!-- /navbar-inner -->*@
     @RenderBody()
     @RenderSection("Main", false)
     <div data-role="footer" align="center" data-position="fixed">
         @RenderSection("Footer", false)
     </div>
+    @Styles.Render("~/Content/jqmcss")
+    @Styles.Render("~/Content/mobilecss")
+    @Scripts.Render("~/Scripts/jqmJs")
 </body>
 </html>
