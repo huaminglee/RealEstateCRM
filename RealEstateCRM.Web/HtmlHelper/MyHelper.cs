@@ -101,6 +101,7 @@ namespace RealEstateCRM.Web
                 );
             return MvcHtmlString.Create(fullStr);
         }
+
         public static MvcHtmlString MyTextAreaFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression,int row)
         {
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
@@ -681,6 +682,166 @@ namespace RealEstateCRM.Web
             sb.Append("</select>");
             return MvcHtmlString.Create(sb.ToString());
         }
-    }
+
+        /*For MobileUse*/
+        public static MvcHtmlString MyMobileDisplayFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression, string text)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+
+            return MvcHtmlString.Create(string.Format("<li data-icon='false'>{0}<font style='float:right'>{1}</font></li>", metadata.DisplayName ?? metadata.PropertyName, helper.Encode(text)));
+
+        }
+
+        public static MvcHtmlString MyMobileDisplayFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            string text = "";
+            if (metadata.Model == null)
+            {
+
+            }
+            else if (metadata.Model.GetType() == typeof(DateTime))
+            {
+                if (metadata.PropertyName.Contains("Time"))
+                {
+                    text = ((DateTime)metadata.Model).ToString("yyyy-MM-dd HH:mm");
+                }
+                else
+                {
+                    text = BLL.Formatter.Date((DateTime)metadata.Model);
+                }
+            }
+            else
+            {
+                text = metadata.SimpleDisplayText;
+                //if (text.Contains("\n")) text = text.Replace("\n", "<br/>");
+            }
+            return MvcHtmlString.Create(string.Format("<li data-icon='false'>{0}<font style='float:right'>{1}</font></li>", metadata.DisplayName, helper.Encode(text).Replace("\n", "<br/>")));
+
+        }
+
+        public static MvcHtmlString MyMobileTextFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            string fullName = ExpressionHelper.GetExpressionText(expression);
+            string str = @"
+    <label for='{0}'>{1}{4}</label>
     
+    <input id='{0}' type='text' value='{2}' name='{0}'{3} />    
+    {5}
+   
+";
+            MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
+            string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, metadata.Model
+                , metadata.IsRequired == true ? string.Format(" data-val='true' data-val-required='{0} 字段是必需的'", metadata.DisplayName ?? metadata.PropertyName, metadata) : ""
+                  , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : "", m3.ToHtmlString()
+                  );
+            return MvcHtmlString.Create(fullStr);
+        }
+
+        public static MvcHtmlString MyMobileTextAreaFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression, int row)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
+            string fullName = ExpressionHelper.GetExpressionText(expression);
+            string str = @"<label for='{0}'>{1}{6}</label><textarea id='{0}' row='{5}' name='{0}'{3} >{2}</textarea>{4}";
+            string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, metadata.Model
+                , metadata.IsRequired == true ? string.Format(" data-val='true' data-val-required='{0} 字段是必需的'", metadata.DisplayName ?? metadata.PropertyName, metadata) : ""
+                  , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : ""
+                  , row, m3.ToHtmlString());
+            return MvcHtmlString.Create(fullStr);
+        }
+
+        public static MvcHtmlString MyMobileDateFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
+            string fullName = ExpressionHelper.GetExpressionText(expression);
+            string str = @"<label for='{0}'>{1}{4}</label>
+   
+    <input id='{0}' class='datepicker' type='text' value='{2}' name='{0}' {3} />    
+    {5}";
+            string valueStr = "";
+            if (metadata.Model != null)
+            {
+                DateTime d = (DateTime)metadata.Model;
+                if (d != DateTime.MinValue)
+                {
+                    valueStr = d.ToString("yyyy-MM-dd");
+                }
+            }
+            string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, valueStr
+              , metadata.IsRequired == true ? string.Format(" data-val='true' data-val-required='{0} 字段是必需的'", metadata.DisplayName ?? metadata.PropertyName, metadata) : ""
+                , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : "", m3.ToHtmlString()
+                );
+            return MvcHtmlString.Create(fullStr);
+
+        }
+
+        public static MvcHtmlString MyMobileDateTimeFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression)
+        {
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
+            string fullName = ExpressionHelper.GetExpressionText(expression);
+            string str = @"<label for='{0}'>{1}{4} </label>
+   
+    <input id='{0}' class='datetimepicker' type='text' value='{2}' name='{0}' {3} />   
+    {5}";
+            string valueStr = "";
+            if (metadata.Model != null)
+            {
+                DateTime d = (DateTime)metadata.Model;
+                if (d != DateTime.MinValue)
+                {
+                    valueStr = d.ToString("yyyy-MM-dd HH:mm");
+                }
+            }
+            string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, valueStr
+              , metadata.IsRequired == true ? string.Format(" data-val='true' data-val-required='{0} 字段是必需的'", metadata.DisplayName ?? metadata.PropertyName, metadata) : ""
+                , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : "", m3.ToHtmlString()
+                );
+            return MvcHtmlString.Create(fullStr);
+
+        }
+
+        public static MvcHtmlString MyMobileDropdownFor<TModel, TValue>(this HtmlHelper<TModel> helper, Expression<Func<TModel, TValue>> expression, List<SelectListItem> list, string defaultValue="",bool appendBlank=true)
+        {
+            if (appendBlank)
+            {
+                if (list.Count == 0 || list.Count > 0 && list[0].Value != "") list.Insert(0, new SelectListItem() { Value = "", Text = "----" });
+            }
+            
+            if (!string.IsNullOrEmpty(defaultValue))
+            {
+                foreach (var selectListItem in list)
+                {
+                    if (selectListItem.Value == defaultValue) selectListItem.Selected = true;
+                }
+            }
+            ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
+            MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
+            string fullName = ExpressionHelper.GetExpressionText(expression);
+            string str = @"<fieldset data-role='controlgroup' data-type='horizontal'>
+    <legend>{1}{3}</legend>{2}  
+    {4}</fieldset>";
+            MvcHtmlString m2 = SelectExtensions.DropDownList(helper, fullName, list);
+            string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, m2.ToHtmlString()
+                 , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : ""
+            ,m3.ToHtmlString()
+             
+              );
+            return MvcHtmlString.Create(fullStr);
+
+        }
+
+        public static MvcHtmlString MobileSearchDateRange(this HtmlHelper helper, string name, string label)
+        {
+            string temp =
+                "<div class='ui-grid-c'><div class=\"ui-block-a\" style='width:30%'><h3>{1}</h3></div><div class='ui-block-b' style='width:32%'><input class=\"datepicker\" id=\"DateFrom{0}\" name=\"DateFrom{0}\" type=\"text\" {2} /></div><div class='ui-block-c' style='width:6%' align='center'><h3>-</h3></div><div class='ui-block-d' style='width:32%'><input class=\"datepicker\" id=\"DateTo{0}\" name=\"DateTo{0}\" type=\"text\" {3} /></div></div>";
+            return MvcHtmlString.Create(string.Format(temp, name, label
+                , helper.ViewData["DateFrom" + name] == null ? "" : string.Format("value='{0}'", helper.ViewData["DateFrom" + name])
+                , helper.ViewData["DateTo" + name] == null ? "" : string.Format("value='{0}'", helper.ViewData["DateTo" + name])));
+
+        }
+    }
 }

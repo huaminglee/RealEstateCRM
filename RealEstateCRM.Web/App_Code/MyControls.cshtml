@@ -76,6 +76,28 @@
         </table>
     }
 }
+@helper AccessLogTableForMobile(List<OUDAL.AccessLog> list)
+{
+    if (list.Count > 0)
+    {
+        <div data-role="collapsible">
+            <h3>操作日志</h3>
+            <div class="ui-grid-c">
+                <div class="ui-block-a" style="width:25%"><strong>时间</strong></div>
+                <div class="ui-block-b" style="width:20%"><strong>操作人</strong></div>
+                <div class="ui-block-c" style="width:25%"><strong>动作</strong></div>
+                <div class="ui-block-d" style="width:30%"><strong>说明</strong></div>
+                @foreach (OUDAL.AccessLog log in list)
+                {
+                    <div class="ui-block-a" style="width:25%">@log.AccessTime.ToString("yyyy-MM-dd HH:mm")</div>
+                    <div class="ui-block-b" style="width:20%">@log.AccessPerson</div>
+                    <div class="ui-block-c" style="width:25%">@log.AccessAction</div>
+                    <div class="ui-block-d" style="width:30%">@log.AccessInfo</div>
+                }
+            </div>
+        </div>
+    }
+}
 // 不能用
 @helper ShowErrorAndClose(string error)
 {

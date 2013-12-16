@@ -1,0 +1,81 @@
+﻿@model OUDAL.ClientActivity
+
+@{
+    ViewBag.Title = "联系记录编辑";
+    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datetimepicker").attr("data-role", "datebox");
+        var opt = {
+            preset: 'datetime', //日期
+            theme: 'ios', //皮肤样式
+            display: 'modal', //显示方式
+            mode: 'scroller', //日期选择模式
+            lang: 'zh',
+            dateFormat: 'yyyy-mm-dd', // 日期格式
+            dateOrder: 'yymmdd', //面板中日期排列格式
+            endYear: 2020 //结束年份
+        };
+        $('input:jqmData(role="datebox")').mobiscroll(opt);
+    });
+    function Submit() {
+        post('@Request.Url.AbsoluteUri', $('form').serialize());
+    }
+    function Back() {
+        load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("AddContact"))+"View/"+Model.ClientId)');
+    }
+</script>
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.ClientId)
+    <div data-role="fieldcontain">
+        <h3>联系信息</h3>
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <legend>联系类型<font color="red">*</font></legend>
+            @if (Model.Id == 0)
+            {
+                foreach (SelectListItem s in DictionaryBLL.GetList("联系类型", false))
+                {
+                    <label class="radio"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
+
+                }
+            }
+            else
+            {
+                <input type="text" readonly="readonly" value="@Model.Type" />
+            }
+        </fieldset>
+        @Html.ValidationMessageFor(m => m.Type)
+        @Html.MyMobileDateTimeFor(model => model.ActualTime)
+        @if (ViewBag.ChangeGroup == true)
+        {
+            var list = Project.GetSalesGroup(ViewBag.ProjectId);
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <legend>接待小组<font style="color:red">*</font></legend>
+                <select id="GroupId" name="GroupId">
+                    <option></option>
+                    @foreach (var item in list)
+                    {
+                        <option value='@item.Id'>@item.Name</option>
+                    }
+                </select>
+
+
+                <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+            </fieldset>
+        }
+        @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+        <input name="ismobile" value="true" type="hidden"/>
+        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+    </div>
+
+    <div data-role="fieldcontain">
+        备注：只有前台才能新增“来访”类型的联系记录，销售员只可修改“来访联系记录”<br />
+        这里是未邀约记录。如邀约来访，请在客户信息页面上，找到对应邀约记录，点击右侧的“完成”按钮填写信息。
+    </div>
+    <br /><span></span>
+}
+

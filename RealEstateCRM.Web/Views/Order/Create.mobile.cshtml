@@ -1,0 +1,73 @@
+﻿@model OUDAL.Order
+
+@{
+    if (ViewBag.Type == 1)
+    {
+        ViewBag.Title = "大定信息编辑";
+    }
+    if (ViewBag.Type == 2)
+    {
+        ViewBag.Title = "签约信息编辑";
+    }
+    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").attr("data-role", "datebox");
+        var opt = {
+            preset: 'date', //日期
+            theme: 'ios', //皮肤样式
+            display: 'modal', //显示方式
+            mode: 'scroller', //日期选择模式
+            lang: 'zh',
+            dateFormat: 'yyyy-mm-dd', // 日期格式
+            dateOrder: 'yymmdd', //面板中日期排列格式
+            endYear: 2020 //结束年份
+        };
+        $('input:jqmData(role="datebox")').mobiscroll(opt);
+    });
+    function Submit() {
+        post('@Request.Url.AbsoluteUri', $('form').serialize());
+    }
+    function Back() {
+        load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("Order"))+"Client/View/"+Model.ClientId)');
+    }
+</script>
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.GroupId)
+        @Html.HiddenFor(model => model.ClientId)
+        <div data-role="fieldcontain">
+            @if (ViewBag.Type == 1)
+            {
+                <h3>大定信息</h3>
+            }
+            else if (ViewBag.Type == 2)
+            {
+                <h3>签约信息</h3>
+            }
+            <h3>客户卡信息</h3>
+            <label for="ClientName">客户姓名</label>
+            <input id="ClientName" name="ClientName" type="text" value="@Client.GetName(Model.ClientId)" disabled />
+            @if (ViewBag.Type == 1)
+            {
+                @Html.MyMobileDateFor(model => model.OrderTime)
+            }
+            else if (ViewBag.Type == 2)
+            {
+                @Html.MyMobileDateFor(model => model.SignTime)
+            }
+            @Html.MyMobileTextFor(model => model.Room)
+            @Html.MyMobileTextAreaFor(model => model.Remark, 3)
+            <input name="ismobile" value="true" type="hidden" />
+            <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+        </div>
+        if(ViewBag.Type == 2)
+         {
+             <div data-role="fieldcontain">
+                这里是直签。 如是大定转合同，请在客户信息页面上，大定合同列表中找到大定记录，点击记录右侧的“签约”按钮。
+             </div>
+        }
+    }

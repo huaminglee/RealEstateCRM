@@ -30,13 +30,13 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(string ismobile,FormCollection collection)
         {
             Card c = new Card();
             db.Cards.Add(c);
             
             TryUpdateModel(c, "", new string[] { }, new string[] { "" }, collection);
-            var query = (from o in db.Cards where o.ClientId == c.ClientId select o).FirstOrDefault();
+            var query = (from o in db.Cards where o.ClientId == c.ClientId && !o.CancelTime.HasValue select o).FirstOrDefault();
             if (query != null)
             {
                 ModelState.AddModelError("", "该客户已有卡");
@@ -58,6 +58,10 @@ namespace RealEstateCRM.Web.Controllers
                     invite.IsDone = true;
                 }
                 db.SaveChanges();
+                if(!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../../Client/View/"+c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             return View(c);
@@ -70,7 +74,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult LevelUp(int id,FormCollection collection)
+        public ActionResult LevelUp(int id,string ismobile,FormCollection collection)
         {
             Card c = db.Cards.Find(id);
             if (collection["BigTime"] == null || collection["BigTime"].Equals(""))
@@ -86,6 +90,10 @@ namespace RealEstateCRM.Web.Controllers
                     invite.IsDone = true;
                 }
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../../Client/View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             return View(c);
@@ -98,7 +106,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Cancel(int id, FormCollection collection)
+        public ActionResult Cancel(int id,string ismobile, FormCollection collection)
         {
             Card c = db.Cards.Find(id);
             int clientid = c.ClientId;
@@ -112,6 +120,10 @@ namespace RealEstateCRM.Web.Controllers
                 if (!check.Equals(""))
                     Utilities.AddLog(db, clientid, Client.LogClass, "退卡", check);
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../../Client/View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             return View(c);

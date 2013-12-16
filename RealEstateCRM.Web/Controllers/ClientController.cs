@@ -79,7 +79,22 @@ namespace RealEstateCRM.Web.Controllers
         }
         public JsonResult ListQueryForMobile()
         {
-            List<ClientView> list = db.Database.SqlQuery<ClientView>("select c.*,d1.name as projectname,d2.name as groupname from Clients c join departments d1 on c.projectid=d1.id join departments d2 on c.groupid=d2.id where 1=1").ToList();
+            List<ClientView> list = new List<ClientView>();
+            string sql = "select c.*,d1.name as projectname,d2.name as groupname from Clients c join departments d1 on c.projectid=d1.id join departments d2 on c.groupid=d2.id where 1=1";
+            int projectid = 0;
+            if (Request.RequestContext.RouteData.Values["projectid"] != null) 
+            { 
+                projectid = int.Parse(Request.RequestContext.RouteData.Values["projectid"].ToString()); 
+            }
+            if (projectid != 0)
+            {
+                sql += string.Format(" and c.ProjectId={0}", projectid);
+            }
+            if (UserInfo.CurUser.GetClientRight(projectid) < ClientViewScopeEnum.查看项目)
+            {
+                sql += string.Format(" and c.groupid={0}", UserInfo.CurUser.GetGroup(projectid));
+            }
+            list = db.Database.SqlQuery<ClientView>(sql).ToList();
             return Json(list);
         }
         public ActionResult ToCreate(int projectid, string type)
@@ -542,7 +557,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddContact(int id,int? clientid,FormCollection collection)
+        public ActionResult AddContact(int id,int? clientid,string ismobile,FormCollection collection)
         {
             ClientActivity c = db.ClientActivities.Find(id);
             if (c != null)
@@ -611,6 +626,10 @@ namespace RealEstateCRM.Web.Controllers
                     }
                 }
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../View/"+client.Id.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             else
@@ -646,7 +665,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddAppointment(FormCollection collection)
+        public ActionResult AddAppointment(string ismobile,FormCollection collection)
         {
             ClientActivity c = new ClientActivity { Person = UserInfo.CurUser.Id };
             db.ClientActivities.Add(c);
@@ -659,6 +678,10 @@ namespace RealEstateCRM.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             else
@@ -673,7 +696,7 @@ namespace RealEstateCRM.Web.Controllers
         {
             Result result = new Result();
             ClientActivity c = db.ClientActivities.Find(id);
-            if (c != null&&c.ActualTime!=null)
+            if (c != null && c.ActualTime != null)
             {
                 db.ClientActivities.Remove(c);
                 db.SaveChanges();
@@ -692,13 +715,17 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditAppointment(int id, FormCollection collection)//id为Appointment的id
+        public ActionResult EditAppointment(int id, string ismobile, FormCollection collection)//id为Appointment的id
         {
             ClientActivity c = db.ClientActivities.Find(id);
             TryUpdateModel(c, collection);
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             else
@@ -723,7 +750,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult FinishAppointment(int id, FormCollection collection)//id为Appointment的id
+        public ActionResult FinishAppointment(int id,string ismobile, FormCollection collection)//id为Appointment的id
         {
             ClientActivity c = db.ClientActivities.Find(id);
             Client client = db.Clients.Find(c.ClientId);
@@ -774,6 +801,10 @@ namespace RealEstateCRM.Web.Controllers
                         c.FirstType = 2;
                     }
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             else
@@ -1014,7 +1045,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult TransferSingleProcess(int newGroupId, int clientId)
+        public JsonResult TransferSingleProcess(int newGroupId, int clientId,string ismobile)
         {
             Result result = new Result();
             Client client = db.Clients.Find(clientId);

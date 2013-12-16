@@ -6,32 +6,33 @@
     ViewBag.Title = "首页";
     Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
 }
-<div data-role="fieldcontain">
+<div data-role="content">
     <div data-role="collapsible" data-collapsed="false">
         <h4>快速通道</h4>
-        <ul data-role="listview">
+        <ul data-role="listview" data-theme="b" data-inset="true">
             @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
             {
-                <li><a href="@Url.Content("../Client/ToCreate?type=1")">来电客户登记</a></li>
-                <li><a href="@Url.Content("../Client/ToCreate?type=5")">销售拓客登记</a></li>
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/ToCreate?type=1"))')">来电客户登记</a></li>
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/ToCreate?type=5"))')">销售拓客登记</a></li>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-前台"))
             {
-                <li><a href="@Url.Content("../Client/ToCreate?type=2")">直访客户登记</a></li>
-                <li><a href="@Url.Content("../Client/ToCreate?type=3")">中介客户报备</a></li>
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/ToCreate?type=2"))')">直访客户登记</a></li>
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/ToCreate?type=3"))')">中介客户报备</a></li>
             }
 
             @if (UserInfo.CurUser.HasRight("客户管理-客户查询"))
             {
-                <li><a href="@Url.Content("../Client/List")">客户资料查询</a></li>}
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/List"))')">客户资料查询</a></li>}
             @if (UserInfo.CurUser.HasRight("客户管理-销售员"))
             {
-                <li><a href="@Url.Content("../Client/ClientTransferIn")">转入客户查询</a></li>
-                <li><a href="@Url.Content("../Client/ClientTransferOut")">转出客户查询</a></li>
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/ClientTransferIn"))')">转入客户查询</a></li>
+                <li><a onclick="load('@(Request.Url.AbsoluteUri + "/../" + Url.Content("../Client/ClientTransferOut"))')">转出客户查询</a></li>
             }
         </ul>
     </div>
 </div>
+
 @*<script type="text/javascript">
         //jQuery(document).ready(function () {
         //    $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
@@ -187,5 +188,7 @@
         </div>
     </div>*@
 @section Footer{
-    @@Copyright 上海虬溪软件 2013
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        @@Copyright 上海虬溪软件 2013
+    </div>
 }

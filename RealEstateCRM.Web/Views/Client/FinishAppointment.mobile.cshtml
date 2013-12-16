@@ -1,0 +1,62 @@
+﻿@model OUDAL.ClientActivity
+
+@{
+    ViewBag.Title = "邀约记录编辑";
+    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datetimepicker").attr("data-role", "datebox");
+        var opt = {
+            preset: 'datetime', //日期
+            theme: 'ios', //皮肤样式
+            display: 'modal', //显示方式
+            mode: 'scroller', //日期选择模式
+            lang: 'zh',
+            dateFormat: 'yyyy-mm-dd', // 日期格式
+            dateOrder: 'yymmdd', //面板中日期排列格式
+            endYear: 2020 //结束年份
+        };
+        $('input:jqmData(role="datebox")').mobiscroll(opt);
+        $("#PlanTime").attr("readonly", "readonly");
+        $("#Type").attr("readonly", "readonly");
+    });
+    function Submit() {
+        post('@Request.Url.AbsoluteUri', $('form').serialize());
+    }
+    function Back() {
+        load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("FinishAppointment"))+"View/"+Model.ClientId)');
+    }
+</script>
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.ClientId)
+    <div data-role="fieldcontain">
+        <h3>邀约信息</h3>
+        @Html.MyMobileTextFor(m => m.Type)
+        @Html.MyMobileTextFor(m => m.PlanTime)
+        @Html.MyMobileDateTimeFor(model => model.ActualTime)
+        @if (ViewBag.ChangeGroup == true)
+        {
+            var list = Project.GetSalesGroup(ViewBag.ProjectId);
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <label for="GroupId">接待小组<font style="color:red">*</font></label>
+                <select id="GroupId" name="GroupId">
+                    <option></option>
+                    @foreach (var item in list)
+                    {
+                        <option value='@item.Id'>@item.Name</option>
+                    }
+                </select>
+
+
+                <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+            </fieldset>
+        }
+        @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+        <input name="ismobile" value="true" type="hidden" />
+        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+    </div>
+}

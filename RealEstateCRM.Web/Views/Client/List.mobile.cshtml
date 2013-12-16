@@ -6,16 +6,18 @@
 
     <script type="text/javascript">
         jQuery(document).ready(function () {
+            showLoader();
             var PostData = {};
             var data = new Array();
             var string = "";
-            $.post("./ListQueryForMobile", PostData, function (res) {
+            $.post('@Request.Url.AbsoluteUri'+"/../ListQueryForMobile", PostData, function (res) {
                 res.forEach(function (e) {
-                    string += "<li><a class='ui-grid-b' href='./View/" + e.Id + "'><div class='ui-block-a' style='width:25%;text-align:left;'>" + e.Name + "</div><div class='ui-block-b' style='width:45%;padding-left:5%;'><div style='text-align:left;'>" + e.Phone1 + (e.Phone2 == null ? "" : "<br/>" + e.Phone2) + "</div></div><div class='ui-block-c'style='width:30%;text-align:center;'>" + e.GroupName + "</div></a></li>";
+                    string += "<li><a class='ui-grid-b' onclick=\"load('@(Request.Url.AbsoluteUri + "/../View/")" + e.Id + "')\"><div class='ui-block-a' style='width:25%;text-align:left;'>" + e.Name + "</div><div class='ui-block-b' style='width:45%;padding-left:5%;'><div style='text-align:left;'>" + e.Phone1 + (e.Phone2 == null ? "" : "<br/>" + e.Phone2) + "</div></div><div class='ui-block-c'style='width:30%;text-align:center;'>" + e.GroupName + "</div></a></li>";
                 });
-                $('ul:jqmData(role="listview")').html(string);
-                $('ul:jqmData(role="listview")').trigger('create');
-                $('ul:jqmData(role="listview")').listview('refresh');
+                $('#clientList').html(string);
+                $('#clientList').trigger('create');
+                $('#clientList').listview('refresh');
+                hideLoader();
             });
             @*@Html.Raw(JqGridSimple.OutGrid("ListQuery"))
 
@@ -76,9 +78,7 @@
     </div>
     @Html.Raw(JqGridSimple.OutTable())*@
     <div data-role="content">
-        <ul data-role="listview">
-            
-        </ul>
+        <ul data-role="listview" id="clientList" data-inset="true" data-filter="true" data-filter-placeholder="搜索..."></ul>
     </div>
 }
 

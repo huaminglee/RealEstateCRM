@@ -31,7 +31,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(int type, FormCollection collection)
+        public ActionResult Create(int type, string ismobile,FormCollection collection)
         {
             Order c = new Order();
             db.Orders.Add(c);
@@ -86,6 +86,10 @@ namespace RealEstateCRM.Web.Controllers
                 }
 
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../../Client/View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             ViewBag.Type = type;
@@ -99,7 +103,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult LevelUp(int id, FormCollection collection)
+        public ActionResult LevelUp(int id, string ismobile, FormCollection collection)
         {
             Order c = db.Orders.Find(id);
             if (collection["SignTime"] == null || collection["SignTime"].Equals(""))
@@ -122,6 +126,10 @@ namespace RealEstateCRM.Web.Controllers
                     invite.IsDone = true;
                 }
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../../Client/View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             return View(c);
@@ -134,7 +142,7 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Cancel(int id, FormCollection collection)
+        public ActionResult Cancel(int id, string ismobile, FormCollection collection)
         {
             Order c = db.Orders.Find(id);
             int clientid = c.ClientId;
@@ -148,6 +156,10 @@ namespace RealEstateCRM.Web.Controllers
                 if (!check.Equals(""))
                     Utilities.AddLog(db, clientid, Client.LogClass, "退单", check);
                 db.SaveChanges();
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../../Client/View/" + c.ClientId.ToString());
+                }
                 return Redirect("~/Content/close.htm");
             }
             return View(c);

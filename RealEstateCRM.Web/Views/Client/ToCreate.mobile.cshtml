@@ -22,11 +22,11 @@
             var _type = '@ViewBag.Type';
             @if (ViewBag.Projects == null)
             {
-                <text>window.location.href = "./Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val());</text>
+                <text>load("http://" + '@Request.Url.Authority' + '@Request.Url.AbsolutePath' + "/../" + "./Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));</text>
             }
             else
             {
-                <text>window.location.href="../Project/" +@Model.ProjectId +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val());</text>
+                <text>load("http://" + '@Request.Url.Authority' + '@Request.Url.AbsolutePath' + "/../" + "../Project/" +@Model.ProjectId +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));</text>
             }
             $("#Name").val('');
             $("#AllPhone").val('');
@@ -36,19 +36,21 @@
         <div data-role="fieldcontain">
             @using (Html.BeginForm())
             {
-                if (ViewBag.Projects != null)
-                {
-                    @Html.MyDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>, appendBlank: false)
-                }
-                @Html.MyTextFor(m => m.Name)
-                @Html.MyTextFor(m => m.AllPhone)
-                <p style="text-align: center">
-                    @MyControls.SubmitBtn("查找")
-                    @if (ViewBag.Button)
+                <div data-role="fieldcontain">
+                    @if (ViewBag.Projects != null)
                     {
-                        @MyControls.Btn("新增客户", " add(); ")
+                    @Html.MyMobileDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>, appendBlank: false)
                     }
-                </p>
+                    @Html.MyMobileTextFor(m => m.Name)
+                    @Html.MyMobileTextFor(m => m.AllPhone)
+                    <p style="text-align: center">
+                        <input type="button" value="查找" onclick="post('@Request.Url.AbsoluteUri',$('form').serialize());" />
+                        @if (ViewBag.Button)
+                        {
+                            @MyControls.Btn("新增客户", " add(); ")
+                        }
+                    </p>
+                </div>
             }
             <p>备注：手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式</p>
         </div>
@@ -72,13 +74,13 @@
                     @if (ViewBag.Clients1.Count != 0)
                     {
                         <table>
-                            <tr><th width="150px">姓名</th><th>电话</th><th width="250px">销售组</th></tr>
+                            <tr><th width="150px">姓名</th><th width="250px">电话</th><th>销售组</th></tr>
                             @foreach (ClientView c in ViewBag.Clients1)
                             {
                                 <tr>
-                                    <td><a href="./View/@c.Id">@c.Name</a></td>
-                                    <td>@c.Phone1 @c.Phone2 </td>
-                                    <td>@c.GroupName</td>
+                                    <td align="center"><a href="./View/@c.Id">@c.Name</a></td>
+                                    <td align="center">@c.Phone1<br />@c.Phone2</td>
+                                    <td align="center">@c.GroupName</td>
                                 </tr>
                             }
                         </table>
@@ -86,13 +88,13 @@
                     @if (ViewBag.Clients2 != null && ViewBag.Clients2.Count != 0)
                     {
                         <table>
-                            <tr><th width="150px">姓名</th><th>电话</th><th width="250px">销售组</th></tr>
+                            <tr><th width="150px">姓名</th><th width="250px">电话</th><th>销售组</th></tr>
                             @foreach (ClientView c in ViewBag.Clients2)
                             {
                                 <tr>
-                                    <td><a href="./View/@c.Id">@c.Name</a></td>
-                                    <td>@c.MarkedPhone1 @c.MarkedPhone2 </td>
-                                    <td>@c.GroupName</td>
+                                    <td align="center"><a href="./View/@c.Id">@c.Name</a></td>
+                                    <td align="center">@c.MarkedPhone1<br /> @c.MarkedPhone2 </td>
+                                    <td align="center">@c.GroupName</td>
                                 </tr>
                             }
                         </table>
@@ -100,5 +102,11 @@
                 </div>
             </div>
         }
+    </div>
+}
+
+@section Footer{
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        <button onclick="load('@("http://"+Request.Url.Authority)');">返回主页</button>
     </div>
 }
