@@ -1,132 +1,129 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="target-densitydpi=device-dpi,width=device-width,initial-scale=1,minimum-scale=0.1,maximum-scale=1" />
-<title>Currency Exchange android</title>
-<link rel="stylesheet"  href="css/jquery.mobile-1.0.1.min.css" />
-<link rel="stylesheet" href="css/style.css" />
-<script src="js/jquery.js"></script>
-<script src="js/jquery.mobile-1.0.1.min.js"></script>
-<script src="js/main.js"></script>
-<script>
-	$(document).ready(function(event){
-		init();
-	});
-</script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>单页面测试</title>
+
+    <link href="http://192.168.0.148:19717/Content/jquery.mobile-1.3.2.css" rel="stylesheet" type="text/css" />
+    <script src="http://192.168.0.148:19717/Scripts/jquery-1.9.1.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/jquery.mobile-1.3.2.js"></script>
+    <script src="http://192.168.0.148:19717/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="http://192.168.0.148:19717/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="http://192.168.0.148:19717/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/MyJs.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/underscore-min.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/backbone-min.js"></script>
+    <style>
+        .dropup,
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            *margin-bottom: -3px;
+        }
+
+            .dropdown-toggle:active,
+            .open .dropdown-toggle {
+                outline: 0;
+            }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            display: none;
+            float: right;
+            min-width: 160px;
+            margin: 2px 0 0;
+            list-style: none;
+            background-color: #ffffff;
+        }
+
+        .open {
+            *z-index: 1000;
+        }
+
+            .open > .dropdown-menu {
+                display: block;
+            }
+    </style>
+    <!--<link href="css/jquery.mobile.css" rel="stylesheet" type="text/css" />-->
+    <!--script src="js/jquery.js"></script>
+    <script src="js/jqueryMobile.js"></script>-->
+    <!--<script src="js/phonegap.js"></script>
+    <script src="js/main.js"></script>-->
 </head>
+
 <body>
-<div data-role="page" id="index">
-	<div class="exchangeRates">
-		<div class="header">
-			<div class="right"><a href="#setting" data-transition="slide"><img src="images/tm.gif" width="80" height="89" border="0"></a></div>
-		</div>
-		<div class="bg">
-			<!--汇率国家列表-->
-			<div class="list">
-				<div class="currency">人民币</div>
-				<div class="money"><a href="http://192.168.1.110:19717" data-ajax="true">0000000</a></div>
-			</div>
-			<div class="list">
-				<div class="currency">美元</div>
-				<div class="money strong" ><input type="number" id="c2" maxlength="12" value="0"/></div>
-			</div>
-			<div class="list">
-				<div class="currency">日元</div>
-				<div class="money strong" ><input type="number" id="c3" maxlength="12" value="0"/></div>
-			</div>
-			<div class="list">
-				<div class="currency">里尔</div>
-				<div class="money strong" ><input type="number" id="c4" maxlength="12" value="0"/></div>
-			</div>
-			<div class="list">
-				<div class="currency">新加坡元</div>
-				<div class="money strong" ><input type="number" id="c5" maxlength="12" value="0"/></div>
-			</div>
-			<div class="list">
-				<div class="currency">欧元</div>
-				<div class="money strong" ><input type="number" id="c6" maxlength="12" value="0"/></div>
-			</div>
-			<div class="list">
-				<div class="currency">克朗</div>
-				<div class="money strong" ><input type="number" id="c7" maxlength="12" value="0"/></div>
-			</div>
-			<div class="list">
-				<div class="currency">英镑</div>
-				<div class="money strong" ><input type="number" id="c8" maxlength="12" value="0"/></div>
-			</div>
-		</div>
-		<div class="footer"></div>
-	</div>
-</div>
-<div data-role="page" id="setting">
-	<div class="setRates">
-		<div class="header">
-			<div class="back"><a href="#" data-rel="back" id="backAndSave"><img src="images/tm.gif" width="93" height="54" border="0"></a></div>
-		</div>
-		<div class="bg">
-			<!--列表-->
-			<div class="list">
-			  <div class="currency w100"><span class="strong">100</span><span class="f25">美元</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r2" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-			
-			<div class="list">
-			  <div class="currency"><span class="strong">100</span><span class="f25">日元</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r3" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-			
-			<div class="list">
-			  <div class="currency"><span class="strong">100</span><span class="f25">里尔</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r4" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-			<div class="list">
-			  <div class="currency"><span class="strong">100</span><span class="f25">新加坡元</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r5" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-			<div class="list">
-			  <div class="currency"><span class="strong">100</span><span class="f25">欧元</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r6" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-			<div class="list">
-			  <div class="currency"><span class="strong">100</span><span class="f25">克朗</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r7" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-			<div class="list">
-			  <div class="currency"><span class="strong">100</span><span class="f25">英镑</span></div>
-			  <div class="equal">=</div>
-			  <div class="setRates">
-				<input type="number" id="r8" maxlength="8" value="1">
-			  </div>
-			  <div class="flagRight">人民币</div>
-			</div>
-		</div>
-		<div class="footer"></div>
-	</div>
-</div>
+
+    <div data-role="page" id="page" style="min-height: inherit" data-url="page">
+        gn,.dng,.sdng.n
+    </div>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            //$("#view").load("http://180.166.191.160/crmtest");
+            showLoader();
+            $.post("http://192.168.0.148:19717/Test/Index", {}, function (res) {
+                $.mobile.pageContainer.append(res);
+                $.mobile.changePage($('#list'));
+                hideLoader();
+            })
+            //$.mobile.changePage($('#list'));
+        });
+        function load(url) {
+            showLoader();
+            $("#page").load(url, function () {
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+            });
+        }
+        function post(url, data) {
+            showLoader();
+            $.post(url, data, function (res) {
+                $("#page").html(res);
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+            })
+        }
+        function getMenu(data) {
+            $.post("http://192.168.0.148:19717/Menu/GetMenu", data, function (res) {
+                $("#menucontent").html(res);
+                $("#menu").page("destroy").page();
+                //$("#menu").page();
+                $("#menu").trigger("updatelayout");
+            })
+        }
+
+        function loadandchange(url) {
+            showLoader();
+            $("#page").load(url, function () {
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+                $.mobile.changePage($('#page'), { transition: 'fade' })
+            });
+        }
+
+        function showLoader() {
+            //显示加载器.for jQuery Mobile 1.2.0
+            $.mobile.loading('show', {
+                text: '加载中...', //加载器中显示的文字
+                textVisible: true, //是否显示文字
+                theme: 'a',        //加载器主题样式a-e
+                textonly: false,   //是否只显示文字
+                html: ""           //要显示的html内容，如图片等
+            });
+        }
+
+        //隐藏加载器.for jQuery Mobile 1.2.0
+        function hideLoader() {
+            //隐藏加载器
+            $.mobile.loading('hide');
+        }
+    </script>
 </body>
 </html>

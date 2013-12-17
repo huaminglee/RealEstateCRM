@@ -2,17 +2,19 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Shake Shake Game</title>
-    
-    <link href="http://192.168.1.108:19717/Content/jquery.mobile-1.3.2.css" rel="stylesheet" type="text/css" />
-    <script src="http://192.168.1.108:19717/Scripts/jquery-1.9.1.js"></script>
-    <script src="http://192.168.1.108:19717/Scripts/jquery.mobile-1.3.2.js"></script>
-    <script src="http://192.168.1.108:19717/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
-    <link href="http://192.168.1.108:19717/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
-    <script src="http://192.168.1.108:19717/bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="http://192.168.1.108:19717/Scripts/MyJs.js"></script>
-    <script src="http://192.168.1.108:19717/Scripts/underscore-min.js"></script>
-    <script src="http://192.168.1.108:19717/Scripts/backbone-min.js"></script>
+    <title>客户关系管理</title>
+
+    <link href="http://192.168.0.148:19717/Content/jquery.mobile-1.3.2.css" rel="stylesheet" type="text/css" />
+    <script src="http://192.168.0.148:19717/Scripts/jquery-1.9.1.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/jquery.mobile-1.3.2.js"></script>
+    <script src="http://192.168.0.148:19717/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="http://192.168.0.148:19717/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="http://192.168.0.148:19717/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/MyJs.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/underscore-min.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/backbone-min.js"></script>
+    <link href="http://192.168.0.148:19717/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
+    <link href="http://192.168.0.148:19717/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" />
     <style>
         .dropup,
         .dropdown {
@@ -27,18 +29,20 @@
             .open .dropdown-toggle {
                 outline: 0;
             }
+
         .dropdown-menu {
             position: absolute;
             top: 100%;
-            left: 0;
+            right: 0;
             z-index: 1000;
             display: none;
-            float: left;
+            float: right;
             min-width: 160px;
             margin: 2px 0 0;
             list-style: none;
             background-color: #ffffff;
         }
+
         .open {
             *z-index: 1000;
         }
@@ -46,7 +50,6 @@
             .open > .dropdown-menu {
                 display: block;
             }
-        
     </style>
     <!--<link href="css/jquery.mobile.css" rel="stylesheet" type="text/css" />-->
     <!--script src="js/jquery.js"></script>
@@ -58,13 +61,29 @@
 <body>
 
     <div data-role="page" id="page" style="min-height: inherit"></div>
+    <div data-role="page" id="menu">
+        <div data-role="header" data-theme="b" data-position="fixed" data-tap-toggle="false"><a href="#page" data-transition="slide">返回</a><h3>菜单</h3></div>
+        <div data-role="content" id="menucontent"></div>
+        <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+            @@Copyright 上海虬溪软件 2013
+        </div>
+    </div>
     <script type="text/javascript">
         jQuery(document).ready(function ($) {
             //$("#view").load("http://180.166.191.160/crmtest");
             showLoader();
-            $("#page").load("http://192.168.1.108:19717/", function () {
+            $("#page").load("http://192.168.0.148:19717/", function () {
                 $("#page").page("destroy").page();
                 $("#page").trigger("updatelayout");
+                $("#menu").page();
+                //debugger;
+                //var isproject = $("#pagetitle").html().indexOf("公司") < 0;
+                //$.post("http://192.168.0.148:19717/Menu/GetMenu", { isproject: isproject }, function (res) {
+                //    $("#menucontent").html(res);
+                //    $("#menu").page();
+                //    //$("#menu").page();
+                //    $("#menu").trigger("updatelayout");
+                //});
                 hideLoader();
             });
         });
@@ -85,6 +104,25 @@
                 hideLoader();
             })
         }
+        function getMenu(data) {
+            $.post("http://192.168.0.148:19717/Menu/GetMenu", data, function (res) {
+                $("#menucontent").html(res);
+                $("#menu").page("destroy").page();
+                //$("#menu").page();
+                $("#menu").trigger("updatelayout");
+            })
+        }
+
+        function loadandchange(url) {
+            showLoader();
+            $("#page").load(url, function () {
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+                $.mobile.changePage($('#page'), { transition: 'fade' })
+            });
+        }
+
         function showLoader() {
             //显示加载器.for jQuery Mobile 1.2.0
             $.mobile.loading('show', {

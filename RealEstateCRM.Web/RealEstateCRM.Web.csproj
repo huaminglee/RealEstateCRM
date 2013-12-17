@@ -188,6 +188,7 @@
     <Compile Include="BLL\DictionaryBLL.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AttachmentController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\CardController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Controllers\DesktopController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\ViewSwitcherController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -245,22 +247,21 @@
     <Content Include="assets\www1\js\jqueryMobile.js" />
     <Content Include="assets\www1\js\main.js" />
     <Content Include="assets\www1\js\phonegap.js" />
-    <Content Include="assets\www2\cordova-2.0.0.js" />
-    <Content Include="assets\www2\css\jquery.mobile-1.0.1.min.css" />
-    <Content Include="assets\www2\css\style.css" />
-    <Content Include="assets\www2\images\bg.png" />
-    <Content Include="assets\www2\images\bottom.png" />
-    <Content Include="assets\www2\images\icon.png" />
-    <Content Include="assets\www2\images\line.png" />
-    <Content Include="assets\www2\images\setting.png" />
-    <Content Include="assets\www2\images\setting_back.png" />
-    <Content Include="assets\www2\images\setting_title.png" />
-    <Content Include="assets\www2\images\title.png" />
-    <Content Include="assets\www2\images\tm.gif" />
+    <Content Include="assets\www2\css\jquery.mobile.css" />
+    <Content Include="assets\www2\css\main.css" />
+    <Content Include="assets\www2\images\input.jpg" />
+    <Content Include="assets\www2\images\intro.jpg" />
+    <Content Include="assets\www2\images\result.jpg" />
+    <Content Include="assets\www2\images\result_0.png" />
+    <Content Include="assets\www2\images\result_1.png" />
+    <Content Include="assets\www2\images\shake.jpg" />
+    <Content Include="assets\www2\images\shake_anim_all.gif" />
+    <Content Include="assets\www2\images\space.gif" />
     <Content Include="assets\www2\index.html" />
     <Content Include="assets\www2\js\jquery.js" />
-    <Content Include="assets\www2\js\jquery.mobile-1.0.1.min.js" />
+    <Content Include="assets\www2\js\jqueryMobile.js" />
     <Content Include="assets\www2\js\main.js" />
+    <Content Include="assets\www2\js\phonegap.js" />
     <Content Include="assets\www\config.xml" />
     <Content Include="assets\www\cordova.js" />
     <Content Include="assets\www\cordova_plugins.js" />
@@ -797,6 +798,9 @@
     <Content Include="Views\Order\LevelUp.mobile.cshtml" />
     <Content Include="Views\Order\Cancel.mobile.cshtml" />
     <Content Include="Views\Client\TransferSingle.mobile.cshtml" />
+    <Content Include="Views\Menu\GetMenu.cshtml" />
+    <Content Include="Views\Client\TransferBatch.mobile.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

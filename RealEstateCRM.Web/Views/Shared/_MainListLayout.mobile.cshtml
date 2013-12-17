@@ -45,7 +45,8 @@
 <div data-role="header" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b">
     @*<div style="width:100px">
         <a href="#popup" data-rel="popup" data-role="button" data-icon="arrow-d">*@
-    <h3>
+    <a data-icon="info" href="#menu" data-transition="slide" data-direction="reverse">菜单</a>
+    <h3 id="pagetitle">
         @if (isProject)
         {@DepartmentBLL.GetNameById(int.Parse(projectid))}
         else
@@ -54,7 +55,7 @@
 
     @*</a>
         </div>*@
-    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" data-icon="gear" data-iconpos="notext"></a>
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown" data-icon="gear" data-iconpos="right">项目切换</a>
     <ul class="dropdown-menu" data-role="listview" aria-labelledby="drop1" data-inset="true" data-overlay-theme="a" data-theme="c">
         <li data-icon="false"><a onclick="load('@("http://"+Request.Url.Authority)');">公司</a></li>
         @foreach (var p in UserInfo.CurUser.GetProjects())
