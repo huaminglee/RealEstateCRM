@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.WebPages;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
@@ -26,6 +27,7 @@ namespace RealEstateCRM.Web.Controllers
 
         public ActionResult LogOn()
         {
+            //HttpContext.SetOverriddenBrowser(BrowserOverride.Desktop);
             return View();
         }
         [HttpPost]

@@ -14,6 +14,7 @@
     });
 </script>
 <div data-role="content">
+    <div data-role="fieldcontain">
         <h3>当日邀约</h3><div class="pull-right">
             [<a href="../Client/InviteReport">报表</a>] [<a href="../Client/InviteList">明细</a>]
         </div>
@@ -48,7 +49,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-xs-3">
+    <div data-role="fieldcontain">
         <h3>转移预警</h3><div class="pull-right">
             [<a href="../Client/AlertList">明细</a>]
         </div>
@@ -79,6 +80,8 @@
             </tbody>
         </table>
     </div>
+</div>
+
 @section Footer{
     <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
         @@Copyright 上海虬溪软件 2013
