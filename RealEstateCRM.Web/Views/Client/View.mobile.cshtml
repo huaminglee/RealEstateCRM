@@ -104,7 +104,7 @@
         }
     </script>
 
-    <div data-role="collapsible-set" data-theme="b">
+    <div data-role="collapsible-set" >
         <div data-role="collapsible">
             <h3>可执行操作</h3>
             <div data-role="controlgroup">
@@ -141,7 +141,7 @@
         </div>
         <div data-role="collapsible" data-collapsed="false">
             <h3>基本信息</h3>
-            <ul data-role="listview" data-inset="true">
+            <table class="table table-bordered">
                 @Html.MyMobileDisplayFor(m => m.Name)
                 @Html.MyMobileDisplayFor(m => m.Sex)
                 @Html.MyMobileDisplayFor(m => m.AllPhone)
@@ -153,8 +153,8 @@
                 @Html.MyMobileDisplayFor(m => m.State)
                 @Html.MyMobileDisplayFor(m => m.StateDate)
                 @Html.MyMobileDisplayFor(m => m.Code)
-                @*@Html.MyMobileDisplayFor(m => m.Remark)*@
-            </ul>
+                @Html.MyMobileDisplayFor(m => m.Remark)
+            </table>
         </div>
         @if (ViewBag.Orders.Count != 0)
         {

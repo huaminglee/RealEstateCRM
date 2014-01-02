@@ -6,75 +6,15 @@
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
-@*<!DOCTYPE html>
-    <html>
-    <head>
-        <title>@ViewBag.Title </title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        @Styles.Render("~/Content/css")
-        @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/jqueryval")
-        @Scripts.Render("~/bundles/MyJs")
-
-        @RenderSection("scripts", required: false)
-        <script type="text/javascript">
-            $(document).bind("mobileinit", function () {
-                // disable ajax nav
-                $.mobile.ajaxEnabled = false;
-            });
-            var rootpath = '@Url.Content("~/")';
-            $(document).ready(function () {
-                $("input[type='text']").addClass("form-control");
-                $("#aaa").html(window.location.href);
-            });
-            function logout() {
-                if (confirm("是否要退出系统？")) {
-                    window.location.href = rootpath + "account/logoff?returnUrl=" + rootpath + "sale/sale";
-                }
-            }
-            function changepassword() {
-                OpenMiddleWindow(rootpath + "account/changepassword", "changepassword");
-            }
-            function selectstore() {
-                window.location.href = rootpath + "/Account/SelectStore";
-            }
-        </script>
-    </head>
-
-    <body>*@
 <script>
-    //$("body").on("swipeleft", function () {
-    //    $("#defaultpanel").panel("open");
-    //});
-    //$("body").on("swiperight", function () {
-    //    $("#defaultpanel").panel("close");
-    //});
+    jQuery(document).ready(function () {
+        getMenu({ isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+    });
 </script>
-<div data-role="panel" id="menu" data-theme="b" data-position="left">
 
-    <div class="panel-content" id="menucontent">
-    </div>
+<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
 
-</div>
-<div data-role="panel" id="defaultpanel" data-theme="b" data-position="right">
-
-    <div class="panel-content">
-        <h3>切换项目</h3>
-        <ul data-role="listview" data-inset="true" data-overlay-theme="a" data-theme="c">
-            <li data-icon="false"><a onclick="load('@("http://"+Request.Url.Authority)');">公司</a></li>
-            @foreach (var p in UserInfo.CurUser.GetProjects())
-            {
-                <li data-icon="false"><a href="#" onclick="load('@Url.Content("http://"+Request.Url.Authority+"/Project/" + p.Id.ToString() + "/Home/ProjectIndex")');">@p.Name</a></li>
-            }
-            <li data-icon="false"><a onclick="load('@Url.Content("http://" + Request.Url.Authority + "/Account/LogOff")');">登出系统</a></li>
-        </ul>
-    </div> <!-- /content wrapper for padding -->
-
-</div>
-
-<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b">
-
-    <a data-icon="info" onclick="$('#menu').panel('toggle')">菜单</a>
+    <a data-icon="info" href="#menu" data-transition="slide" data-direction="reverse">菜单</a>
     <h3 id="pagetitle">
         @if (isProject)
         {@DepartmentBLL.GetNameById(int.Parse(projectid))}
@@ -82,7 +22,7 @@
         { <text>公司</text>}
     </h3>
 
-    <a onclick="$('#defaultpanel').panel('toggle')" data-icon="gear" data-iconpos="right">项目切换</a>
+    <a href="#projectswitch" data-icon="gear" data-iconpos="right" data-transition="slide">项目切换</a>
 </div>
 @RenderBody()
 @RenderSection("Main", false)

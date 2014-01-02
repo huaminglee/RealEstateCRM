@@ -6,87 +6,18 @@
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
-@*<!DOCTYPE html>
-    <html>
-    <head>
-        <title>@ViewBag.Title</title>
-        @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/jqueryval")
-        @Scripts.Render("~/bundles/MyJs")
-        @RenderSection("scripts", required: false)
-        <script type="text/javascript">
-            $(document).bind("mobileinit", function () {
-                // disable ajax nav
-                $.mobile.ajaxEnabled = false
-            });
-            var rootpath = '@Url.Content("~")';
-            var projectid = '@projectid';
-            var formsubmited = false;
-            $(document).ready(function () {
-                //$("form").addClass("form-horizontal");
-                //$("input[type='text']").addClass("form-control");
-                //$("select").addClass("form-control");
-                //var getArgs = GetUrlArgs();
-                //if (getArgs.reload == "1") {
-                //    if (window.opener.opener == 'undefined' || window.opener.opener == null) {
-                //    } else {
-                //        window.opener.location.reload();
-                //    }
-                //}
-                $("form").submit(function () {
-                    if (formsubmited) {
-                        alert("请勿重复提交数据");
-                        return false;
-                    } else {
-                        formsubmited = true;
-                        setTimeout(function () { $("input:submit").disabled = true; }, 100);
-                        //$("body").html("<div>提交中...</div>");
-                        return true;
-                    }
-                });
-            });
-        </script>
-    </head>
-
-    <body>*@
-
-<div data-role="header" data-tap-toggle="false" data-position="fixed" data-theme="b"><a data-icon="info" href="#menu" data-transition="slide" data-direction="reverse">菜单</a><h3>@ViewBag.Title</h3></div>
+<script>
+    jQuery(document).ready(function () {
+        getMenu({ isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+    });
+</script>
+<div data-role="header" data-tap-toggle="false" data-position="fixed" data-theme="b" data-hide-during-focus="">
+    <a data-icon="info" href="#menu" data-transition="slide" data-direction="reverse">菜单</a>
+    <h3>@ViewBag.Title</h3>
+</div>
 <div data-role="content">
-    @*<div class="navbar navbar-inverse">
-            <div style="padding:0px 10px 0px 10px">
-                <div class="navbar-header">
-
-                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-
-                <div class="navbar-collapse collapse">
-                    <ul class="nav  navbar-nav navbar-brand">
-                        <li>@ViewBag.Title @if (isProject)
-                        {@DepartmentBLL.GetNameById(int.Parse(projectid))} </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right  navbar-brand">
-                        <li class="brand"><img src="@Url.Content("~/content/images/glcp.png")" style="float: left; height: 30px; margin-top: -7px;" /> @System.Configuration.ConfigurationSettings.AppSettings["SubTitle"]</li>
-                    </ul>
-
-                </div>
-            </div>
-        </div>*@
 
     @RenderBody()
     @RenderSection("Main", false)
 </div>
-
-@*<div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">*@
 @RenderSection("Footer", false)
-@*</div>*@
-@*@Styles.Render("~/Content/jqmcss")
-        @Styles.Render("~/Content/mobilecss")
-        @Scripts.Render("~/Scripts/jqmJs")
-        @Scripts.Render("~/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js")
-        @Styles.Render("~/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css")
-    </body>
-    </html>*@

@@ -10,17 +10,6 @@
         $("#Phone1").change(PhoneCheck(this.val));
         $("#Way").attr("readonly", "readonly");
     });
-    //function RoomTypeChanged() {
-    //    var roomtype = "";
-    //    $('input[name="RoomType"]:checked').each(function () {
-    //        if (roomtype == "")
-    //            roomtype += $(this).val();
-    //        else
-    //            roomtype += ("," + $(this).val());
-    //    });
-    //    //alert(roomtype);
-    //    $("#RoomType").val(roomtype);
-    //}
 
     function PhoneCheck(phone) {
         if (phone != null && phone != "") {
@@ -46,18 +35,20 @@
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.ProjectId)
     @Html.HiddenFor(model => model.GroupId)
-
-    <div data-role='fieldcontain'>
-        <h3>客户信息</h3>
-        @Html.MyMobileTextFor(model => model.Name)
+    <h3>客户信息</h3>
+    @Html.MyMobileTextFor(model => model.Name)
+    <div class="ui-field-contain">
         <fieldset data-role="controlgroup" data-type="horizontal">
             <legend>性别<font color="red">*</font></legend>
             <label class="radio"><input name="Sex" type="radio" value="男" checked="@Model.Sex.Equals("男")" />男</label>
             <label class="radio"><input name="Sex" type="radio" value="女" checked="@Model.Sex.Equals("女")" />女</label>
         </fieldset>
+
         @Html.ValidationMessageFor(m => m.Sex)
-        @Html.MyMobileTextFor(m => m.Phone1)
-        @Html.MyMobileTextFor(m => m.Phone2)
+    </div>
+    @Html.MyMobileTextFor(m => m.Phone1)
+    @Html.MyMobileTextFor(m => m.Phone2)
+    <div class="ui-field-contain">
         <fieldset data-role="controlgroup" data-type="horizontal">
             <legend>产品类型<font color="red">*</font></legend>
             @foreach (string s in DepartmentBLL.GetRoomType(Model.ProjectId))
@@ -65,12 +56,11 @@
                 <label class="radio-inline"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
             }
         </fieldset>
+
         @Html.ValidationMessageFor(m => m.RoomType)
-        @Html.MyMobileTextFor(m => m.Way)
-        @Html.MyMobileTextFor(m => m.WayExtend)
-        @Html.MyMobileTextAreaFor(model => model.Remark, 3)
-
-
     </div>
+    @Html.MyMobileTextFor(m => m.Way)
+    @Html.MyMobileTextFor(m => m.WayExtend)
+    @Html.MyMobileTextAreaFor(model => model.Remark, 3)
     <p style="text-align:center"><input type="button" value="保存" onclick="Submit();" /> @MyControls.Btn("取消", "Back();")</p>
 }

@@ -26,28 +26,28 @@
         load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("AddAppointment"))+"View/"+Model.ClientId)');
     }
 </script>
-    @using (Html.BeginForm())
-    {
-        @Html.ValidationSummary(true)
-        @Html.HiddenFor(model => model.Id)
-        @Html.HiddenFor(model => model.ClientId)
-        <div data-role="fieldcontain">
-            <h3>邀约信息</h3>
-            <fieldset data-role="controlgroup">
-                <legend>联系类型<font color="red">*</font></legend>
-                @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
-                {
-                    <label class="radio"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.ClientId)
 
-                }
-                
-            </fieldset>
-            @Html.ValidationMessageFor(m => m.Type)
-            @Html.MyMobileDateTimeFor(model => model.PlanTime)
-            @* @Html.MyDateTimeFor(model => model.ActualTime)*@
-            @Html.MyMobileTextAreaFor(model => model.Detail, 3)
-            <input name="ismobile" value="true" type="hidden" />
-            <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
-        </div>
-        
-    }
+    <h3>邀约信息</h3>
+    <div class="ui-field-contain">
+        <fieldset data-role="controlgroup">
+            <legend>联系类型<font color="red">*</font></legend>
+            @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
+            {
+                <label class="radio"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
+
+            }
+
+        </fieldset>
+    </div>
+    @Html.ValidationMessageFor(m => m.Type)
+    @Html.MyMobileDateTimeFor(model => model.PlanTime)
+    @* @Html.MyDateTimeFor(model => model.ActualTime)*@
+    @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+    <input name="ismobile" value="true" type="hidden" />
+    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+}

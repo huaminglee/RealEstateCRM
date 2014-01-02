@@ -688,7 +688,7 @@ namespace RealEstateCRM.Web
         {
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
 
-            return MvcHtmlString.Create(string.Format("<li data-icon='false'>{0}<font style='float:right'>{1}</font></li>", metadata.DisplayName ?? metadata.PropertyName, helper.Encode(text)));
+            return MvcHtmlString.Create(string.Format("<tr><td>{0}</td><td style='text-align:right'>{1}</td></tr>", metadata.DisplayName ?? metadata.PropertyName, helper.Encode(text)));
 
         }
 
@@ -716,7 +716,7 @@ namespace RealEstateCRM.Web
                 text = metadata.SimpleDisplayText;
                 //if (text.Contains("\n")) text = text.Replace("\n", "<br/>");
             }
-            return MvcHtmlString.Create(string.Format("<li data-icon='false'>{0}<font style='float:right'>{1}</font></li>", metadata.DisplayName, helper.Encode(text).Replace("\n", "<br/>")));
+            return MvcHtmlString.Create(string.Format("<tr><td>{0}</td><td style='text-align:right'>{1}</td></tr>", metadata.DisplayName, helper.Encode(text).Replace("\n", "<br/>")));
 
         }
 
@@ -725,11 +725,12 @@ namespace RealEstateCRM.Web
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
             string fullName = ExpressionHelper.GetExpressionText(expression);
             string str = @"
+<div class='ui-field-contain'>
     <label for='{0}'>{1}{4}</label>
     
     <input id='{0}' type='text' value='{2}' name='{0}'{3} />    
     {5}
-   
+   </div>
 ";
             MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
             string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, metadata.Model
@@ -744,7 +745,7 @@ namespace RealEstateCRM.Web
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
             MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
             string fullName = ExpressionHelper.GetExpressionText(expression);
-            string str = @"<label for='{0}'>{1}{6}</label><textarea id='{0}' row='{5}' name='{0}'{3} >{2}</textarea>{4}";
+            string str = @"<div class='ui-field-contain'><label for='{0}'>{1}{6}</label><textarea id='{0}' rows='{5}' name='{0}'{3} >{2}</textarea>{4}</div>";
             string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, metadata.Model
                 , metadata.IsRequired == true ? string.Format(" data-val='true' data-val-required='{0} 字段是必需的'", metadata.DisplayName ?? metadata.PropertyName, metadata) : ""
                   , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : ""
@@ -757,10 +758,10 @@ namespace RealEstateCRM.Web
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
             MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
             string fullName = ExpressionHelper.GetExpressionText(expression);
-            string str = @"<label for='{0}'>{1}{4}</label>
+            string str = @"<div class='ui-field-contain'><label for='{0}'>{1}{4}</label>
    
     <input id='{0}' class='datepicker' type='text' value='{2}' name='{0}' {3} />    
-    {5}";
+    {5}</div>";
             string valueStr = "";
             if (metadata.Model != null)
             {
@@ -783,10 +784,10 @@ namespace RealEstateCRM.Web
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
             MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
             string fullName = ExpressionHelper.GetExpressionText(expression);
-            string str = @"<label for='{0}'>{1}{4} </label>
+            string str = @"<div class='ui-field-contain'><label for='{0}'>{1}{4} </label>
    
     <input id='{0}' class='datetimepicker' type='text' value='{2}' name='{0}' {3} />   
-    {5}";
+    {5}</div>";
             string valueStr = "";
             if (metadata.Model != null)
             {

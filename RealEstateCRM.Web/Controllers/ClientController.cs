@@ -77,10 +77,11 @@ namespace RealEstateCRM.Web.Controllers
             };
             return Json(jsonData);
         }
+        //目前不使用ListQueryForMobile方法
         public JsonResult ListQueryForMobile()
         {
             List<ClientView> list = new List<ClientView>();
-            string sql = "select c.*,d1.name as projectname,d2.name as groupname from Clients c join departments d1 on c.projectid=d1.id join departments d2 on c.groupid=d2.id where 1=1";
+            string sql = "select top 100 c.*,d1.name as projectname,d2.name as groupname from Clients c join departments d1 on c.projectid=d1.id join departments d2 on c.groupid=d2.id where 1=1";
             int projectid = 0;
             if (Request.RequestContext.RouteData.Values["projectid"] != null) 
             { 

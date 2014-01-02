@@ -33,14 +33,15 @@
     @Html.ValidationSummary(true)
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.ClientId)
-    <div data-role="fieldcontain">
-        <h3>邀约信息</h3>
-        @Html.MyMobileTextFor(m => m.Type)
-        @Html.MyMobileTextFor(m => m.PlanTime)
-        @Html.MyMobileDateTimeFor(model => model.ActualTime)
-        @if (ViewBag.ChangeGroup == true)
-        {
-            var list = Project.GetSalesGroup(ViewBag.ProjectId);
+    <h3>邀约信息</h3>
+
+    @Html.MyMobileTextFor(m => m.Type)
+    @Html.MyMobileTextFor(m => m.PlanTime)
+    @Html.MyMobileDateTimeFor(model => model.ActualTime)
+    if (ViewBag.ChangeGroup == true)
+    {
+        var list = Project.GetSalesGroup(ViewBag.ProjectId);
+        <div class="ui-field-contain">
             <fieldset data-role="controlgroup" data-type="horizontal">
                 <label for="GroupId">接待小组<font style="color:red">*</font></label>
                 <select id="GroupId" name="GroupId">
@@ -54,9 +55,10 @@
 
                 <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
             </fieldset>
-        }
-        @Html.MyMobileTextAreaFor(model => model.Detail, 3)
-        <input name="ismobile" value="true" type="hidden" />
-        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
-    </div>
+        </div>
+    }
+    @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+    <input name="ismobile" value="true" type="hidden" />
+    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+
 }

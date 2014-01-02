@@ -9,9 +9,7 @@
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
 <script>
-    jQuery(document).ready(function () {
-        getMenu({ isproject: true,projectid:@int.Parse(projectid) });
-    });
+    
 </script>
 <div data-role="content">
     <div data-role="fieldcontain">

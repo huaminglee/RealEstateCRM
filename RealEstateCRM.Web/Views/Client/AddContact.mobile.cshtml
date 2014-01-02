@@ -31,8 +31,8 @@
     @Html.ValidationSummary(true)
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.ClientId)
-    <div data-role="fieldcontain">
-        <h3>联系信息</h3>
+    <h3>联系信息</h3>
+    <div class="ui-field-contain">
         <fieldset data-role="controlgroup" data-type="horizontal">
             <legend>联系类型<font color="red">*</font></legend>
             @if (Model.Id == 0)
@@ -48,31 +48,32 @@
                 <input type="text" readonly="readonly" value="@Model.Type" />
             }
         </fieldset>
-        @Html.ValidationMessageFor(m => m.Type)
-        @Html.MyMobileDateTimeFor(model => model.ActualTime)
-        @if (ViewBag.ChangeGroup == true)
-        {
-            var list = Project.GetSalesGroup(ViewBag.ProjectId);
-            <fieldset data-role="controlgroup" data-type="horizontal">
-                <legend>接待小组<font style="color:red">*</font></legend>
-                <select id="GroupId" name="GroupId">
-                    <option></option>
-                    @foreach (var item in list)
-                    {
-                        <option value='@item.Id'>@item.Name</option>
-                    }
-                </select>
-
-
-                <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
-            </fieldset>
-        }
-        @Html.MyMobileTextAreaFor(model => model.Detail, 3)
-        <input name="ismobile" value="true" type="hidden"/>
-        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
     </div>
+    @Html.ValidationMessageFor(m => m.Type)
+    @Html.MyMobileDateTimeFor(model => model.ActualTime)
+    if (ViewBag.ChangeGroup == true)
+    {
+        var list = Project.GetSalesGroup(ViewBag.ProjectId);
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <legend>接待小组<font style="color:red">*</font></legend>
+            <select id="GroupId" name="GroupId">
+                <option></option>
+                @foreach (var item in list)
+                {
+                    <option value='@item.Id'>@item.Name</option>
+                }
+            </select>
 
-    <div data-role="fieldcontain">
+
+            <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+        </fieldset>
+    }
+    @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+    <input name="ismobile" value="true" type="hidden" />
+    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+
+
+    <div class="ui-field-contain">
         备注：只有前台才能新增“来访”类型的联系记录，销售员只可修改“来访联系记录”<br />
         这里是未邀约记录。如邀约来访，请在客户信息页面上，找到对应邀约记录，点击右侧的“完成”按钮填写信息。
     </div>

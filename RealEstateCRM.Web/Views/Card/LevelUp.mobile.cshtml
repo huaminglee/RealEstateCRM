@@ -33,14 +33,15 @@
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.GroupId)
     @Html.HiddenFor(model => model.ClientId)
-    <div data-role="fieldcontain">
-        <h3>客户卡信息</h3>
+
+    <h3>客户卡信息</h3>
+    <div class="ui-field-contain">
         <label for="ClientName">客户姓名</label>
         <input id="ClientName" name="ClientName" type="text" value="@Client.GetName(Model.ClientId)" disabled />
-        @Html.MyMobileTextFor(model => model.SmallTime)
-        @Html.MyMobileDateFor(model => model.BigTime)
-        @Html.MyMobileTextAreaFor(model => model.Remark, 3)
-        <input name="ismobile" value="true" type="hidden" />
-        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
     </div>
+    @Html.MyMobileTextFor(model => model.SmallTime)
+    @Html.MyMobileDateFor(model => model.BigTime)
+    @Html.MyMobileTextAreaFor(model => model.Remark, 3)
+    <input name="ismobile" value="true" type="hidden" />
+    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
 }

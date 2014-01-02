@@ -24,10 +24,21 @@ namespace RealEstateCRM.Web.Controllers
         // **************************************
         // URL: /Account/LogOn
         // **************************************
-
+        public ActionResult AppLogOn()
+        {
+            Response.Cookies["isMobile"].Value = "true";
+            return RedirectToAction("Index", "Home");
+        }
         public ActionResult LogOn()
         {
-            //HttpContext.SetOverriddenBrowser(BrowserOverride.Desktop);
+            if(Request.Cookies["isMobile"]==null)
+            {
+                HttpContext.SetOverriddenBrowser(BrowserOverride.Desktop);
+            }
+            else
+            {
+                HttpContext.SetOverriddenBrowser(BrowserOverride.Mobile);
+            }
             return View();
         }
         [HttpPost]

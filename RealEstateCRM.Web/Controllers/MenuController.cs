@@ -23,5 +23,9 @@ namespace RealEstateCRM.Web.Controllers
             }
             return View();
         }
+        public ActionResult GetProjects()
+        {
+            return View();
+        }
 	}
 }

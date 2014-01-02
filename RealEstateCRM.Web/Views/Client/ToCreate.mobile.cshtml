@@ -33,27 +33,25 @@
         }
     </script>
     <div data-role="content">
-        <div data-role="fieldcontain">
-            @using (Html.BeginForm())
+        @using (Html.BeginForm())
+        {
+
+            if (ViewBag.Projects != null)
             {
-                <div data-role="fieldcontain">
-                    @if (ViewBag.Projects != null)
-                    {
-                    @Html.MyMobileDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>, appendBlank: false)
-                    }
-                    @Html.MyMobileTextFor(m => m.Name)
-                    @Html.MyMobileTextFor(m => m.AllPhone)
-                    <p style="text-align: center">
-                        <input type="button" value="查找" onclick="post('@Request.Url.AbsoluteUri',$('form').serialize());" />
-                        @if (ViewBag.Button)
-                        {
-                            @MyControls.Btn("新增客户", " add(); ")
-                        }
-                    </p>
-                </div>
+                @Html.MyMobileDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>, appendBlank: false)
             }
-            <p>备注：手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式</p>
-        </div>
+            @Html.MyMobileTextFor(m => m.Name)
+            @Html.MyMobileTextFor(m => m.AllPhone)
+            <p style="text-align: center">
+                <input type="button" value="查找" onclick="post('@Request.Url.AbsoluteUri',$('form').serialize());" />
+                @if (ViewBag.Button)
+                {
+                    @MyControls.Btn("新增客户", " add(); ")
+                }
+            </p>
+
+        }
+        <p>备注：手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式</p>
 
         @if (ViewBag.Button == true)
         {
@@ -69,44 +67,42 @@
 
         @if (ViewBag.Show)
         {
-            <div data-role="fieldcontain">
-                <div id="Clients">
-                    @if (ViewBag.Clients1.Count != 0)
-                    {
-                        <table>
-                            <tr><th width="150px">姓名</th><th width="250px">电话</th><th>销售组</th></tr>
-                            @foreach (ClientView c in ViewBag.Clients1)
-                            {
-                                <tr>
-                                    <td align="center"><a href="./View/@c.Id">@c.Name</a></td>
-                                    <td align="center">@c.Phone1<br />@c.Phone2</td>
-                                    <td align="center">@c.GroupName</td>
-                                </tr>
-                            }
-                        </table>
-                    }
-                    @if (ViewBag.Clients2 != null && ViewBag.Clients2.Count != 0)
-                    {
-                        <table>
-                            <tr><th width="150px">姓名</th><th width="250px">电话</th><th>销售组</th></tr>
-                            @foreach (ClientView c in ViewBag.Clients2)
-                            {
-                                <tr>
-                                    <td align="center"><a href="./View/@c.Id">@c.Name</a></td>
-                                    <td align="center">@c.MarkedPhone1<br /> @c.MarkedPhone2 </td>
-                                    <td align="center">@c.GroupName</td>
-                                </tr>
-                            }
-                        </table>
-                    }
-                </div>
+            <div id="Clients">
+                @if (ViewBag.Clients1.Count != 0)
+                {
+                    <table class="table">
+                        <tr><th width="50px">姓名</th><th width="100px">电话</th><th>销售组</th></tr>
+                        @foreach (ClientView c in ViewBag.Clients1)
+                        {
+                            <tr>
+                                <td align="center"><a onclick="loadandchange(base_url+'@(Request.Url.AbsolutePath+"/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center">@c.Phone1<br />@c.Phone2</td>
+                                <td align="center">@c.GroupName</td>
+                            </tr>
+                        }
+                    </table>
+                }
+                @if (ViewBag.Clients2 != null && ViewBag.Clients2.Count != 0)
+                {
+                    <table class="table">
+                        <tr><th width="50px">姓名</th><th width="100px">电话</th><th>销售组</th></tr>
+                        @foreach (ClientView c in ViewBag.Clients2)
+                        {
+                            <tr>
+                                <td align="center"><a onclick="loadandchange(base_url+'@(Request.Url.AbsolutePath+"/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center">@c.MarkedPhone1<br /> @c.MarkedPhone2 </td>
+                                <td align="center">@c.GroupName</td>
+                            </tr>
+                        }
+                    </table>
+                }
             </div>
         }
     </div>
 }
 
 @*@section Footer{
-    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
-        <button onclick="load('@("http://"+Request.Url.Authority)');">返回主页</button>
-    </div>
-}*@
+        <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+            <button onclick="load('@("http://"+Request.Url.Authority)');">返回主页</button>
+        </div>
+    }*@

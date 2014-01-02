@@ -57,9 +57,9 @@
         } else {
             $("#Way").val(l1);
         }
-        post('@Request.Url.AbsoluteUri',$('form').serialize());
+        post('@Request.Url.AbsoluteUri', $('form').serialize());
     }
-    function Back(){
+    function Back() {
         load('@Request.Url.AbsoluteUri.Replace("Create","ToCreate")');
     }
     function L1Change() {
@@ -68,7 +68,7 @@
         for (var i = 0; i < way.length; i++) {
             if (l1 == way[i].L1) {
                 var l2str = "";
-                if(way[i].L2.length==0){
+                if (way[i].L2.length == 0) {
                     l2str += "<option value=''></option>"
                 }
                 for (var j = 0; j < way[i].L2.length; j++) {
@@ -118,29 +118,33 @@
 {
     @Html.ValidationSummary(true)
     @Html.HiddenFor(model => model.Id)
-    <div data-role='fieldcontain'>
-        <h4>@ViewBag.Msg</h4>
-        @if (ViewBag.Type == 4)
-        {
-            @Html.MyMobileTextFor(m => m.CallPerson)
-        }
+    <h4>@ViewBag.Msg</h4>
+    if (ViewBag.Type == 4)
+    {
+        @Html.MyMobileTextFor(m => m.CallPerson)
+    }
 
-        @Html.MyMobileTextFor(m => m.Name)
+    @Html.MyMobileTextFor(m => m.Name)
+    <div class="ui-field-contain">
         <fieldset data-role="controlgroup" data-type="horizontal">
             <legend>性别<font color="red">*</font></legend>
             <label class="radio"><input name="Sex" type="radio" value="男" checked />男</label>
             <label class="radio"><input name="Sex" type="radio" value="女" />女</label>
         </fieldset>
-        @Html.ValidationMessageFor(m => m.Sex)
-        @Html.MyMobileTextFor(m => m.Phone1)
-        @Html.MyMobileTextFor(m => m.Phone2)
+    </div>
+    @Html.ValidationMessageFor(m => m.Sex)
+    @Html.MyMobileTextFor(m => m.Phone1)
+    @Html.MyMobileTextFor(m => m.Phone2)
+    <div class="ui-field-contain">
         <fieldset data-role="controlgroup" data-type="horizontal">
             <legend>渠道<font color="red">*</font></legend>
             <select id="WayL1"></select><select id="WayL2"></select>
         </fieldset>
-        @Html.HiddenFor(m => m.Way)
-        @Html.ValidationMessageFor(m => m.Way)
-        @Html.MyMobileTextFor(model => model.WayExtend)
+    </div>
+    @Html.HiddenFor(m => m.Way)
+    @Html.ValidationMessageFor(m => m.Way)
+    @Html.MyMobileTextFor(model => model.WayExtend)
+    <div class="ui-field-contain">
         <fieldset data-role="controlgroup" data-type="horizontal">
             <legend>产品类型<font color="red">*</font></legend>
             @foreach (string s in DepartmentBLL.GetRoomType(Model.ProjectId))
@@ -148,13 +152,13 @@
                 <label class="radio-inline"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
             }
         </fieldset>
-        @Html.ValidationMessageFor(m => m.RoomType)
-        @if (ViewBag.Type == 2)
-        {
-            @Html.MyMobileDropdownFor(m => m.GroupId, Project.GetSalesGroup(Model.ProjectId).ToSelectLists(false));
-        }
-        @Html.MyMobileTextAreaFor(model => model.Remark, 3)
     </div>
+    @Html.ValidationMessageFor(m => m.RoomType)
+    if (ViewBag.Type == 2)
+    {
+        @Html.MyMobileDropdownFor(m => m.GroupId, Project.GetSalesGroup(Model.ProjectId).ToSelectLists(false));
+    }
+    @Html.MyMobileTextAreaFor(model => model.Remark, 3)
     <div id="AppointmentField" data-role="fieldcontain" style="display:none;">
         <h4>
             邀约信息
@@ -163,15 +167,17 @@
                 <text>(可选)</text>
             }
         </h4>
-        <fieldset data-role="controlgroup">
-            <legend>邀约类型</legend>
-            @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
-            {
-                <label class="radio"><input type="radio" name="AppointmentType" value="@s.Value" checked="@s.Value.Equals(Model.AppointmentType)" />@s.Text</label>
+        <div class="ui-field-contain">
+            <fieldset data-role="controlgroup">
+                <legend>邀约类型</legend>
+                @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
+                {
+                    <label class="radio"><input type="radio" name="AppointmentType" value="@s.Value" checked="@s.Value.Equals(Model.AppointmentType)" />@s.Text</label>
 
-            }
-            <label class="radio"><input type="radio" name="AppointmentType" />无</label>
-        </fieldset>
+                }
+                <label class="radio"><input type="radio" name="AppointmentType" />无</label>
+            </fieldset>
+        </div>
         @Html.ValidationMessageFor(m => m.AppointmentType)
         @Html.MyMobileDateTimeFor(model => model.AppointmentPlanTime)
         @Html.MyMobileTextFor(model => model.AppointmentDetail)

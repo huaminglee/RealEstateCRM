@@ -247,6 +247,21 @@
     <Content Include="assets\www1\js\jqueryMobile.js" />
     <Content Include="assets\www1\js\main.js" />
     <Content Include="assets\www1\js\phonegap.js" />
+    <Content Include="assets\www3\css\jquery.mobile.css" />
+    <Content Include="assets\www3\css\main.css" />
+    <Content Include="assets\www3\images\input.jpg" />
+    <Content Include="assets\www3\images\intro.jpg" />
+    <Content Include="assets\www3\images\result.jpg" />
+    <Content Include="assets\www3\images\result_0.png" />
+    <Content Include="assets\www3\images\result_1.png" />
+    <Content Include="assets\www3\images\shake.jpg" />
+    <Content Include="assets\www3\images\shake_anim_all.gif" />
+    <Content Include="assets\www3\images\space.gif" />
+    <Content Include="assets\www3\index.html" />
+    <Content Include="assets\www3\js\jquery.js" />
+    <Content Include="assets\www3\js\jqueryMobile.js" />
+    <Content Include="assets\www3\js\main.js" />
+    <Content Include="assets\www3\js\phonegap.js" />
     <Content Include="assets\www2\css\jquery.mobile.css" />
     <Content Include="assets\www2\css\main.css" />
     <Content Include="assets\www2\images\input.jpg" />
@@ -801,6 +816,7 @@
     <Content Include="Views\Menu\GetMenu.cshtml" />
     <Content Include="Views\Client\TransferBatch.mobile.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Menu\GetProjects.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

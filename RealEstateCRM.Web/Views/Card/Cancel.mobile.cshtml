@@ -28,19 +28,21 @@
         load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("Card"))+"Client/View/"+Model.ClientId)');
     }
 </script>
-    @using (Html.BeginForm())
-    {
-        @Html.ValidationSummary(true)
-        @Html.HiddenFor(model => model.Id)
-        <div data-role="fieldcontain">
-            <h3>客户卡信息</h3>
-            <label for="ClientName">客户姓名</label>
-            <input id="ClientName" name="ClientName" type="text" value="@Client.GetName(Model.ClientId)" disabled />
-            @Html.MyMobileTextFor(model => model.SmallTime)
-            @Html.MyMobileTextFor(model => model.BigTime)
-            @Html.MyMobileDateFor(m => m.CancelTime)
-            @Html.MyMobileTextAreaFor(model => model.Remark, 3)
-            <input name="ismobile" value="true" type="hidden" />
-            <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
-        </div>
-    }
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+
+    <h3>客户卡信息</h3>
+    <div class="ui-field-contain">
+        <label for="ClientName">客户姓名</label>
+        <input id="ClientName" name="ClientName" type="text" value="@Client.GetName(Model.ClientId)" disabled />
+    </div>
+    @Html.MyMobileTextFor(model => model.SmallTime)
+    @Html.MyMobileTextFor(model => model.BigTime)
+    @Html.MyMobileDateFor(m => m.CancelTime)
+    @Html.MyMobileTextAreaFor(model => model.Remark, 3)
+    <input name="ismobile" value="true" type="hidden" />
+    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+
+}
