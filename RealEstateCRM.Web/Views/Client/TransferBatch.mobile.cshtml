@@ -10,7 +10,11 @@
             $('input[type="checkbox"]').bind('click', function () {
                 $(this).prop('checked').checkboxradio("refresh");   // 绑定事件及时更新checkbox的checked值
             });
-            clientQuery()
+            debugger;
+            $("#GroupId option:contains('公共客户')").attr("selected", "selected");
+            $("#GroupId").selectmenu();
+            $("#GroupId").selectmenu("refresh");
+            clientQuery();
         });
         function Transfer() {
             if ($("#newGroupId").val() == "") {
@@ -39,7 +43,7 @@
             var string = "";
             $.post('@Request.Url.AbsoluteUri' + "/../ListQuery", PostData, function (res) {
                 res.rows.forEach(function (e) {
-                    string += "<input type='checkbox' name='selectedId' id='" + e.Id + "' value='" + e.Id + "'/><label for='" + e.Id + "'>" + e.Name + "    " + e.AllPhone + "</label>";
+                    string += "<input type='checkbox' name='selectedId' id='" + e.Id + "' value='" + e.Id + "'/><label for='" + e.Id + "'>" + e.Name + "    " + e.AllPhone + "<br/><font color='grey'>"+e.GroupName+"</font></label>";
                 });
                 if (string.length == 0) {
                     string += "没有符合条件的客户";

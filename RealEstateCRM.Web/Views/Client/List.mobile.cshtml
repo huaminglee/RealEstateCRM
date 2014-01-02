@@ -8,33 +8,6 @@
     <script type="text/javascript">
         jQuery(document).ready(function () {
             showLoader();
-            @*var PostData = {};
-            var data = new Array();
-            var string = "";
-            $.post('@Request.Url.AbsoluteUri' + "/../ListQueryForMobile", PostData, function (res) {
-                res.forEach(function (e) {
-                    string += "<li><a class='ui-grid-b' onclick=\"load('@(Request.Url.AbsoluteUri + "/../View/")" + e.Id + "')\"><div class='ui-block-a' style='width:25%;text-align:left;'>" + e.Name + "</div><div class='ui-block-b' style='width:45%;padding-left:5%;'><div style='text-align:left;'>" + e.Phone1 + (e.Phone2 == null ? "" : "<br/>" + e.Phone2) + "</div></div><div class='ui-block-c'style='width:30%;text-align:center;'>" + e.GroupName + "</div></a></li>";
-                });
-                $('#clientList').html(string);
-                $('#clientList').trigger('create');
-                $('#clientList').listview('refresh');
-
-                $("<div class='ui-loader ui-overlay-shadow ui-body-b ui-corner-all'><h3>默认显示前100条数据，请输入查询条件</h3></div>")
-                .css({
-                    display: "block",
-                    opacity: 0.90,
-                    position: "fixed",
-                    padding: "7px",
-                    "text-align": "center",
-                    width: "270px",
-                    left: ($(window).width() - 284) / 2,
-                    top: $(window).height() / 2
-                })
-                .appendTo($.mobile.pageContainer).delay(1500)
-                .fadeOut(400, function () {
-                    $(this).remove();
-                });
-            });*@
             clientQuery();
         });
         function clientQuery() {
@@ -42,7 +15,7 @@
             var string = "";
             $.post('@Request.Url.AbsoluteUri' + "/../ListQuery", PostData, function (res) {
                 res.rows.forEach(function (e) {
-                    string += "<li><a class='ui-grid-b' onclick=\"load('@(Request.Url.AbsoluteUri + "/../View/")" + e.Id + "')\"><div class='ui-block-a' style='width:25%;text-align:left;'>" + e.Name + "</div><div class='ui-block-b' style='width:45%;padding-left:5%;'><div style='text-align:left;'>" + e.Phone1 + (e.Phone2 == null ? "" : "<br/>" + e.Phone2) + "</div></div><div class='ui-block-c'style='width:30%;text-align:center;'>" + e.GroupName + "</div></a></li>";
+                    string += "<li><a onclick=\"load('@(Request.Url.AbsoluteUri + "/../View/")" + e.Id + "')\"><h3>" + e.Name + "</h3><p><strong>" + e.AllPhone + "</strong></p><p>" + e.GroupName + "</p></a></li>";
                 });
                 if (string.length == 0) {
                     string += "<li>没有符合条件的客户</li>";
