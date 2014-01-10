@@ -1,0 +1,52 @@
+﻿@model List<OUDAL.RoleFunction>
+@using OUDAL;
+@{
+    ViewBag.Title = "角色权限修改";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+    var functionList = (from o in (new Context()).Functions orderby o.Sort select o).ToList();
+}
+@helper ShowRight(List<Function> list, string parent, int level)
+    {
+    foreach (Function f in list)
+    {
+        if (f.ParentName == parent)
+        {
+            for (int i = 0; i < level; i++)
+            {
+    <text>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
+            }
+            
+                string ischecked = (from o in Model where o.FunctionId == f.Id select o).Count() > 0 ? "checked" : "";
+    <input type="checkbox" id="@f.Id" name="rights" value="@f.Id" @ischecked onclick="autocheck(this)"/>@f.Name
+            
+    <br />
+    @ShowRight(list, f.Name, level + 1);
+        }
+    } 
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@section Main{
+    <script type="text/javascript">
+        function autocheck(a) {
+            if (a.checked) {
+                $.post("../GetParentFunctionList", { id: a.id }, function (res) {
+                    document.getElementById(res).checked = true;
+                });
+            }
+        }
+    </script>
+    <div style="width: 300px; margin: 0px auto; margin-top: 10px;">
+        @using (Html.BeginForm())
+        {
+    
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>角色权限修改</legend>
+                @ShowRight(functionList, "-", 0)
+            </fieldset>
+            <p>
+                <input type="submit" value="Save" /></p>
+        }
+    </div>
+}

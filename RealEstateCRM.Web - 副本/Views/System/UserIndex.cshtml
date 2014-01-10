@@ -1,0 +1,58 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "用户列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("UserQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        grid.setCell(rowid,"State",aData.State==0?"正常":"禁用");        
+     }
+}); 
+    var colModelGrid = [{ name: 'id', index: 'id', width: 1, align: 'left', hidden: true }
+
+, { name: 'LoginName', label: "登录名", index: 'LoginName', align: 'left', width: 150 }
+,{ name: 'Name',label:"用户名", index: 'Name', align: 'left',width:150 }
+,{ name: 'Email',label:"邮箱",sortable:false,align: 'left',width:250 }
+,{ name: 'Departments',label:"所属部门",sortable:false,align: 'left',width:200 }
+
+,{ name: 'Roles',label:"角色",sortable:false, align: 'left',width:200 }
+,{ name: 'State',label:"状态", index: 'State', align: 'left',width:100 }];
+function rowclick(id)
+{
+    OpenFullWindow("./UserView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./UserEdit/0");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').appendPostData({ Role: $("#Role").val()}); 
+    $('#listGrid').appendPostData({ Department: $("#Department").val()}); 
+    $('#listGrid').appendPostData({ State1: $("#checkEnabled").prop("checked")}); 
+    $('#listGrid').appendPostData({ State2: $("#checkDisabled").prop("checked")}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+@Html.ShortInput("Name", "用户名称:")
+@Html.ShortInput("Role", "角色:")
+@Html.ShortInput("Department", "部门:")
+状态：<input type="checkbox" id="checkEnabled" />正常
+<input type="checkbox" id="checkDisabled" />禁用
+@MyControls.SearchBtn()
+@MyControls.Btn("新增","AddNew()")
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

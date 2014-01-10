@@ -10,22 +10,6 @@ namespace RealEstateCRM.Web.Controllers
     {
         //
         // GET: /Menu/
-        public ActionResult GetMenu(bool isproject,int? projectid)
-        {
-            ViewBag.IsProject = isproject;
-            if(projectid.HasValue)
-            {
-                ViewBag.ProjectId = projectid.Value;
-            }
-            else
-            {
-                ViewBag.ProjectId = 0;
-            }
-            return View();
-        }
-        public ActionResult GetProjects()
-        {
-            return View();
-        }
+       
 	}
 }

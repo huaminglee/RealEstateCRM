@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "项目指标配置";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript"> jQuery(document).ready(function() {
+    var PostData = {};
+    $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+    curProject = '@ViewBag.Projects[0].Value';
+    SearchClick();
+    
+    
+});
+var list;
+var curProject = 0;
+
+function SearchClick() {
+    $.post("./PerformanceQuery", {}, function(respDate) {
+        if (respDate.success == true) {
+            list = respDate.obj;
+            showEnters(list);
+        } else {
+            alert(respDate.obj);
+        }
+    });
+}
+
+function changeItem(item) {
+    var funded = false;
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].Id == item.Id) {
+            list[i] = item;
+            funded = true;
+            break;
+        }
+    }
+    if (!funded) {
+        list.unshift(item);
+    }
+    showEnters(list);
+}
+
+function removeItem(id) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].Id == id) list.pop(list[i]);
+        showEnters(list);
+
+    }
+}
+
+function showEnters(obj) {
+    var element = $('#resulttable');
+    var tpl = $('#tpl').html();
+    var html = _.template(tpl, obj);
+    element.html(html);
+}
+
+function selectProject(obj, projectid) {
+    //debugger;
+    $(".list-group-item").removeClass("active");
+    $(obj).addClass("active");
+    curProject = projectid;
+    showEnters(list);
+}
+
+function AddNew() {
+    OpenLargeWindow("./PerformanceEdit/0?projectid=" + curProject, "PerformanceEdit");
+
+}
+
+function Edit(id) {
+    OpenLargeWindow("./PerformanceEdit/" + id, "PerformanceEdit");
+}
+
+
+function Delete(id) {
+    if (window.confirm("确定要删除吗?")) {
+        $.post("./PerformanceDelete", { id: id }, function(res) {
+            if (res.success) {
+                removeItem(id);
+            } else {
+                alert(res.obj);
+            }
+        });
+    }
+
+} </script>
+    <div style="height: 20px"></div>
+    <div class="col-lg-3">
+        
+        <h4>项目列表</h4>
+        <div class="list-group">
+            
+            @{
+                var isfirst = "active";
+                foreach (SelectListItem r in ViewBag.Projects)
+                {
+                    <a href="#" class="list-group-item @isfirst" onclick=" selectProject(this, @r.Value); ">@r.Text</a>
+                    isfirst = "";
+                }
+            }
+        </div>
+        
+    </div>
+    
+    <div id="resulttable" class="col-lg-8">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <button class="btn btn-primary pull-right" onclick=" AddNew() ">新增</button>
+
+       
+        <table class="table table-bordered">
+            <thead>
+                <tr><th>指标开始日期</th>
+                    <th>来电数</th>
+                    <th>电转访数</th>
+                    <th>电转访率</th>
+                    <th>来人数</th>
+                    <th>办卡数</th>
+                    <th>办卡率</th>
+                    <th>大定数</th>
+                    <th>大定率</th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <%for(var i=0;i<obj.length;i++){
+                                                 var item=obj[i]; 
+                                                 if(item.ProjectId==curProject){
+                                                 var callRate="";
+                                                 if(item.CallInNum>0){callRate=(item.CallVisitNum*100/item.CallInNum).toFixed(0);}
+                var cardRate="";
+                                                 if(item.VisitNum>0){cardRate=(item.CardNum*100/item.VisitNum).toFixed(0);}
+                var orderRate="";
+                                                 if(item.VisitNum>0){orderRate=(item.OrderNum*100/item.VisitNum).toFixed(0);}
+              
+
+                %>
+
+                    <tr>
+                        <td><%=Date2String(item.BeginDate)%></td>
+                        <td style="text-align:right"><%=item.CallInNum%></td>
+                        <td style="text-align:right"><%=item.CallVisitNum%></td>
+                        <td style="text-align:right"><%=callRate%> %</td>
+                        <td style="text-align:right"><%=item.VisitNum%></td>
+                        <td style="text-align:right"><%=item.CardNum%></td>
+                        <td style="text-align:right"><%=cardRate%> %</td>
+                        <td style="text-align:right"><%=item.OrderNum%></td>
+                        <td style="text-align:right"><%=orderRate%> %</td>
+                        <td> <button class="btn btn-sm" onclick="return(Edit(<%=item.Id%>));"><span class="glyphicon glyphicon-edit">编辑</span></button> 
+                        <button class="btn btn-sm" onclick="return(Delete(<%=item.Id%>));"><span class="glyphicon glyphicon-remove">删除</span></button>
+                        </td>
+                    </tr>
+                    
+                    <%}}%>
+            </tbody>
+        </table>
+
+    
+    </script>
+
+
+}

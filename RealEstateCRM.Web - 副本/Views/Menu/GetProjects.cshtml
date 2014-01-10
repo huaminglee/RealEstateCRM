@@ -1,0 +1,14 @@
+﻿<div data-role="header" data-theme="b" data-position="fixed">
+    <a data-rel="back" data-direction="reverse">返回</a>
+    <h3>切换项目</h3>
+</div>
+<div data-role="content">
+    <ul data-role="listview" data-theme="a">
+        <li data-icon="false"><a onclick="loadandchange('@("http://"+Request.Url.Authority)');">公司</a></li>
+        @foreach (var p in UserInfo.CurUser.GetProjects())
+        {
+            <li data-icon="false"><a href="#" onclick="loadandchange('@Url.Content("http://"+Request.Url.Authority+"/Project/" + p.Id.ToString() + "/Home/MobileProjectIndex")');">@p.Name</a></li>
+        }
+        <li data-icon="false"><a onclick="loadandchange('@Url.Content("http://" + Request.Url.Authority + "/Account/LogOff")');">登出系统</a></li>
+    </ul>
+</div>

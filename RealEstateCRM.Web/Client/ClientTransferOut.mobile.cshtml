@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "客户转出表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $(".datepicker").attr("data-role", "datebox");
+            var opt = {
+                preset: 'date', //日期
+                theme: 'ios', //皮肤样式
+                display: 'modal', //显示方式
+                mode: 'scroller', //日期选择模式
+                lang: 'zh',
+                dateFormat: 'yyyy-mm-dd', // 日期格式
+                dateOrder: 'yymmdd', //面板中日期排列格式
+                endYear: 2020 //结束年份
+            };
+            $('input:jqmData(role="datebox")').mobiscroll(opt);
+            $("#DateFromTransferTime").val('@ViewBag.Date1');
+            $("#DateToTransferTime").val('@ViewBag.Date2');
+            SearchClick();
+        });
+
+        function SearchClick() {
+            var postData={from:$("#DateFromTransferTime").val(),to:$("#DateToTransferTime").val()};
+            $.post("@(Request.Url.AbsoluteUri+"/../ClientTransferOutQuery")",postData, function(respDate) {
+                if (respDate.success == true) {
+                    list = respDate.obj;
+                    showEnters(list);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+    </script>
+    <div class="well well-small" align="center">
+    @Html.MobileSearchDateRange("TransferTime", "转出日期：")
+    @MyControls.SearchBtn()
+
+</div>
+    <div id="resulttable">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>客户姓名</th>
+                    <th>转出时间</th>
+                    <th>转出原因</th>
+                    <th>转出小组</th>
+                    <th>转入小组</th>
+                    <th>操作人</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <%for(var i=0;i<obj.length;i++){var item=obj[i];%>
+
+                    <tr>
+                        <td><%=item.ClientName%></td>
+                        <td style="text-align:left"><%=Date2String(item.TransferDate)%></td>
+                        <td style="text-align:left"><%=item.Reason%></td>
+                        <td style="text-align:left"><%=item.OutGroup%></td>
+                        <td style="text-align:left"><%=item.InGroup%></td>
+                        <td style="text-align:left"><%=item.PersonName%></td>
+                    </tr>
+                    <%}%>
+            </tbody>
+        </table>
+
+    </script>
+}
+

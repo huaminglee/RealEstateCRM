@@ -90,6 +90,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="MvcCaptcha, Version=1.2.0.31133, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MvcCaptcha.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -188,11 +192,10 @@
     <Compile Include="BLL\DictionaryBLL.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AttachmentController.cs" />
-    <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\CardController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
-    <Compile Include="Controllers\RoomTypeController.cs" />
     <Compile Include="Controllers\CustomerJsonResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
@@ -221,10 +224,12 @@
     <Compile Include="Models\JqGridRequest.cs" />
     <Compile Include="Models\MaterialReportModel.cs" />
     <Compile Include="Models\MVCTransferResult.cs" />
+    <Compile Include="Models\PerformanceReportVO.cs" />
     <Compile Include="Models\Removeable.cs" />
     <Compile Include="Models\Result.cs" />
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\TreeNode.cs" />
+    <Compile Include="Models\WayReportVO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +329,8 @@
     <Content Include="assets\www\spec\lib\jasmine-1.2.0\jasmine.css" />
     <Content Include="assets\www\spec\lib\jasmine-1.2.0\jasmine.js" />
     <Content Include="bin\EPPlus.dll" />
+    <Content Include="bin\MvcCaptcha.dll" />
+    <Content Include="bin\MvcCaptcha.pdb" />
     <Content Include="bin\Newtonsoft.Json.dll" />
     <Content Include="bin\Newtonsoft.Json.pdb" />
     <Content Include="bin\Newtonsoft.Json.xml" />
@@ -778,7 +785,7 @@
     <Content Include="Views\Report\ClientStateList.cshtml" />
     <Content Include="Views\Report\ClientStateReport.cshtml" />
     <Content Include="Views\Client\ClientConfirmBatch.cshtml" />
-    <Content Include="Views\Home\ProjectIndex.mobile.cshtml" />
+    <Content Include="Views\Home\MobileProjectIndex.mobile.cshtml" />
     <Content Include="Views\Client\ToCreate.mobile.cshtml" />
     <Content Include="Views\Shared\_InfoLayout.mobile.cshtml" />
     <Content Include="Views\Client\Create.mobile.cshtml" />
@@ -798,10 +805,19 @@
     <Content Include="Views\Order\LevelUp.mobile.cshtml" />
     <Content Include="Views\Order\Cancel.mobile.cshtml" />
     <Content Include="Views\Client\TransferSingle.mobile.cshtml" />
-    <Content Include="Views\Menu\GetMenu.cshtml" />
     <Content Include="Views\Client\TransferBatch.mobile.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <Content Include="Views\Menu\GetProjects.cshtml" />
+    <Content Include="Views\Report\PerformanceProjectReport.cshtml" />
+    <Content Include="Views\Report\PerformanceTeamReport.cshtml" />
+    <Content Include="Views\Home\InviteList.cshtml" />
+    <Content Include="Views\Home\TransferAlert.cshtml" />
+    <Content Include="Views\Client\InviteList.mobile.cshtml" />
+    <Content Include="Views\Report\PerformanceTeamReport.mobile.cshtml" />
+    <Content Include="Views\Client\AlertList.mobile.cshtml" />
+    <Content Include="Views\Home\GetMenu.cshtml" />
+    <Content Include="Views\Home\GetProjects.cshtml" />
+    <Content Include="Views\Home\ProjectMobileReport.mobile.cshtml" />
+    <Content Include="Views\Home\CreateClient.mobile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Excel\" />

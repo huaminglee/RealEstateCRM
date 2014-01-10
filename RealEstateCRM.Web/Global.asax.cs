@@ -20,7 +20,11 @@ namespace RealEstateCRM.Web
 
         }
 
-
+        public static string RootPath
+        {
+            get;
+            set;
+        }
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
@@ -41,7 +45,7 @@ namespace RealEstateCRM.Web
             RegisterGlobalFilters(GlobalFilters.Filters);
             System.Data.Entity.Database.SetInitializer<OUDAL.Context>(null);
             Application["Login"] = System.Configuration.ConfigurationManager.AppSettings["Login"];
-
+            RootPath = System.Configuration.ConfigurationManager.AppSettings["path"];
 
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

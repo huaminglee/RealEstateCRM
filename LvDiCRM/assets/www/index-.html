@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>客户关系管理</title>
+    <link href="http://192.168.10.100/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
+    <script src="http://192.168.10.100/Scripts/jquery-1.9.1.js"></script>
+    <script src="http://192.168.10.100/Scripts/jquery.mobile-1.4.0.js"></script>
+    <script src="http://192.168.10.100/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="http://192.168.10.100/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="http://192.168.10.100/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://192.168.10.100/Scripts/MyJs.js"></script>
+    <script src="http://192.168.10.100/Scripts/underscore-min.js"></script>
+    <script src="http://192.168.10.100/Scripts/backbone-min.js"></script>
+    <link href="http://192.168.10.100/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
+    <link href="http://192.168.10.100/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" />
+    <style>
+        .dropup,
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            *margin-bottom: -3px;
+        }
+
+            .dropdown-toggle:active,
+            .open .dropdown-toggle {
+                outline: 0;
+            }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            display: none;
+            float: right;
+            min-width: 160px;
+            margin: 2px 0 0;
+            list-style: none;
+            background-color: #ffffff;
+        }
+
+        .open {
+            *z-index: 1000;
+        }
+
+            .open > .dropdown-menu {
+                display: block;
+            }
+    </style>
+    <!--<link href="css/jquery.mobile.css" rel="stylesheet" type="text/css" />-->
+    <!--script src="js/jquery.js"></script>
+    <script src="js/jqueryMobile.js"></script>-->
+    <script src="js/phonegap.js"></script>
+    <!--<script src="js/main.js"></script>-->
+</head>
+<body>
+    <div data-role="page" id="first">
+        <div data-role="content">
+            欢迎使用
+        </div>
+    </div>
+    <div data-role="page" id="page"></div>
+    <div data-role="page" id="menu"></div>
+    <div data-role="page" id="projectswitch"></div>
+    <script type="text/javascript">
+        var base_url = "http://192.168.10.100";
+        jQuery(document).ready(function ($) {
+            loadandchange(base_url+"/Account/AppLogOn");
+        });
+        function load(url) {
+            showLoader();
+            $("#page").load(url, function () {
+                $("#page").page();
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+            });
+        }
+        function post(url, data) {
+            showLoader();
+            $.post(url, data, function (res) {
+                $("#page").html(res);
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+            })
+        }
+        function getMenu(data) {
+            $.post(base_url+"/Menu/GetMenu", data, function (res) {
+                $("#menu").html(res);
+                //$("#menu").enhanceWithin();
+                $("#menu").page();
+                $("#menu").page("destroy").page();
+                $("#menu").trigger("updatelayout");
+            })
+            $.post(base_url+"/Menu/GetProjects", function (res) {
+                $("#projectswitch").html(res);
+                //$("#projectswitch").enhanceWithin();
+                $("#projectswitch").page();
+                $("#projectswitch").page("destroy").page();
+                $("#projectswitch").trigger("updatelayout");
+            })
+        }
+
+        function loadandchange(url) {
+            showLoader();
+            $("#page").load(url, function () {
+                $("#page").page();
+                $("#page").page("destroy").page();
+                $("#page").trigger("updatelayout");
+                hideLoader();
+                $.mobile.changePage($('#page'), { transition: 'fade' })
+            });
+        }
+
+        function showLoader() {
+            $.mobile.loading('show', {
+                text: '加载中...', //加载器中显示的文字
+                textVisible: true, //是否显示文字
+                theme: 'b',        //加载器主题样式a-e
+                textonly: false,   //是否只显示文字
+                html: ""           //要显示的html内容，如图片等
+            });
+        }
+
+        function hideLoader() {
+            //隐藏加载器
+            $.mobile.loading('hide');
+        }
+    </script>
+</body>
+</html>

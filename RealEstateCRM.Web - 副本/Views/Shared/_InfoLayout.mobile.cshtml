@@ -1,0 +1,24 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    var isProject = Request.Url.AbsolutePath.ToLower().Contains("/project/");
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<script>
+    jQuery(document).ready(function () {
+        getMenu({ isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+    });
+</script>
+<div data-role="header" data-tap-toggle="false" data-position="fixed" data-theme="b" data-hide-during-focus="">
+    <a data-icon="info" href="#menu" data-transition="slide" data-direction="reverse">菜单</a>
+    <h3>@ViewBag.Title</h3>
+</div>
+<div data-role="content">
+
+    @RenderBody()
+    @RenderSection("Main", false)
+</div>
+@RenderSection("View", false)
+@RenderSection("Footer", false)

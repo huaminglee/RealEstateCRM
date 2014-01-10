@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "GetMenu";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    bool IsProject = ViewBag.IsProject;
+    int projectid = ViewBag.ProjectId;
+}
+
+    <div data-role="content">
+        
+        <ul data-role="listview" data-theme="a">
+
+            @if (IsProject)
+            {
+                <li><a onclick="load('Project_@projectid','@(MvcApplication.RootPath +"/Project/"+projectid+ "/Home/MobileProjectIndex")')">首页</a></li>
+                
+               
+              
+            }
+            else
+            {
+                <li><a onclick="loadandchange('@(MvcApplication.RootPath)')">首页</a></li>
+                
+                    
+               
+            }<li data-role="list-divider">切换项目</li>
+                    
+        <li data-icon="false"><a onclick="loadandchange('@(MvcApplication.RootPath)');">公司</a></li>
+        @foreach (var p in UserInfo.CurUser.GetProjects())
+        {
+            <li data-icon="false"><a href="#" onclick="load('Project_@p.Id','@Url.Content(MvcApplication.RootPath + "/Project/" + p.Id.ToString() + "/Home/MobileProjectIndex")');">@p.Name</a></li>
+        }
+        <li data-icon="false"><a onclick="loadandchange('@Url.Content(MvcApplication.RootPath + "/Account/LogOff")');">登出系统</a></li>
+   
+        </ul>
+
+    </div>

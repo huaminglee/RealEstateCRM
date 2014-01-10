@@ -1,0 +1,31 @@
+﻿@model  Project
+@{
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    ViewBag.Title = "项目编码编辑";
+}
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+        @if (ViewBag.Success == true)
+        {
+                <text>
+                    window.opener.location.reload();
+                    window.close();
+                </text>
+        }
+    });
+</script>
+
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>产品类型配置-@ViewBag.Project.Name</legend>
+            @Html.HiddenFor(model => model.DepartmentId)
+            @Html.MyTextFor(model => model.Code)
+        </fieldset>
+        @MyControls.FormBtn(true)
+    }
+</div>

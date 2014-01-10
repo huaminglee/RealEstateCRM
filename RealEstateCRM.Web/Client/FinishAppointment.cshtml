@@ -1,0 +1,58 @@
+﻿@model OUDAL.ClientActivity
+
+@{
+    ViewBag.Title = "邀约记录完成";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@Scripts.Render("~/Scripts/jquery-ui-timepicker-addon.js")
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datetimepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    });
+</script>
+<style>
+    .datepicker {
+        position: relative;
+        z-index: 1001;
+    }
+</style>
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.ClientId)
+        <fieldset>
+            <legend>邀约信息</legend>
+            <div class='form-group'>
+                @Html.LabelFor(model => model.Type)
+                @Html.TextBoxFor(model => model.Type, new { @readonly = "readonly" })
+            </div>
+            <div class='form-group'>
+                @Html.LabelFor(model => model.PlanTime)
+                @Html.TextBox("PlanTime",Model.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm"), new { @readonly = "readonly" })
+            </div>
+            @Html.MyDateTimeFor(model => model.ActualTime)
+            @if (ViewBag.ChangeGroup == true)
+            {
+                var list = Project.GetSalesGroup(ViewBag.ProjectId);
+                <div class="form-group">
+                <label for="GroupId">接待小组</label>
+                    <select id="GroupId" class="form-control" name="GroupId">
+                        <option></option>
+                        @foreach (var item in list)
+                    {
+                        <option value='@item.Id'>@item.Name</option>
+                    }
+                    </select>
+
+                    <span style="color:red">*</span>
+                    <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+                    </div>
+            }
+            @Html.MyTextAreaFor(model => model.Detail, 3)
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+    }
+</div>

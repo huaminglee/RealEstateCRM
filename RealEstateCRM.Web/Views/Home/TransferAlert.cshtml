@@ -1,0 +1,91 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<script>
+    
+</script>
+<div data-role="content">
+    <h3>转移预警</h3>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>转移类型</th>
+                <td>预警数量</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ClientTransferAlertReport item in ViewBag.transferAlerts)
+            {
+                <tr>
+                    <td>@item.TransferType</td>
+                    <td style="text-align:right">
+                        @if (@item.Num != 0)
+                        {
+                            <a href="#"  onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/AlertList")?type=@item.TransferType')">@item.Num</a>
+                        }
+                        else
+                        {
+                            @item.Num
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>昨日转入</h3>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>转移类型</th>
+                <td>数量</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ClientTransferAlertReport item in ViewBag.transferIns)
+            {
+                <tr>
+                    <td>@item.TransferType</td>
+                    <td style="text-align:right">@item.Num</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>昨日转出</h3>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>转移类型</th>
+                <td>数量</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ClientTransferAlertReport item in ViewBag.transferOuts)
+            {
+                <tr>
+                    <td>@item.TransferType</td>
+                    <td style="text-align:right">@item.Num</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<script>
+
+</script>
+@section Footer{
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        @@Copyright 上海虬溪软件 2013
+    </div>
+}
+
+

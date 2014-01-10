@@ -1,0 +1,48 @@
+﻿
+
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+    
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+   
+}); 
+</script>
+<div style="width:500px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>新增处理</legend>
+        
+        <div class="editor-label">
+            <label for="Address">日期</label>
+        </div>
+        <div class="editor-field">
+            <span>2013-6-8 (自动出系统时间，不可更改)</span>
+        </div> 
+        <div class="editor-label">
+            <label for="Address">本周完成情况</label>
+        </div>
+        <div class="editor-field">
+          <textarea cols="10" id="Remark" name="Remark" rows="3"></textarea>
+        </div> 
+        <div class="editor-label">
+            <label for="Address">下周计划</label>
+        </div>
+        <div class="editor-field">
+          <textarea cols="10" id="Remark" name="Remark" rows="3"></textarea>
+        </div>      
+        <div class="editor-label">
+            <label for="Address">备注</label>
+        </div>
+        <div class="editor-field">
+          <textarea cols="10" id="Remark" name="Remark" rows="3"></textarea>
+        </div>        
+    </fieldset>
+    <p>@MyControls.SubmitBtn("保存") @MyControls.Btn("取消","window.close()")</p>
+}
+</div>
+

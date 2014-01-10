@@ -1,0 +1,802 @@
+﻿@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script type="text/javascript">
+    $(function () {
+        
+        $('#container1').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '电转访排行表'
+            },
+            xAxis: {
+                categories: ['北外滩中心', '绿地梧桐院', '绿地未来中心', '金山吕巷', '香颂' ]
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            plotOptions: {
+                column: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: [{
+                name: '',
+                data: [25,34,22,28,31]
+            }],
+        });
+        $('#container2').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '电转访排行表'
+            },
+            xAxis: {
+                categories: ['武当组', '少林组', '青城组', '峨眉组', '崆峒组']
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            plotOptions: {
+                column: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: [{
+                name: '',
+                data: [25, 34, 22, 28, 31]
+            }],
+        });
+    });
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+    @Html.ShortInput("CardType", "卡类型:")
+    @Html.ShortInput("Department", "发卡单位:")
+    @Html.ShortInput("Company", "记账单位:")
+    @Html.SearchDate("Card", "生效日期:")
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+</div>
+<div class="col-lg-4">
+    <h3>项目排行榜</h3>
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+    <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-primary">电转访率</button>
+        <button type="button" class="btn btn-default">来人指标完成</button>
+        <button type="button" class="btn btn-default">办卡率</button>
+        <button type="button" class="btn btn-default">来人成交比</button>
+        <button type="button" class="btn btn-default">销售指标完成</button>
+    </div><br /><br />
+    <table class="table table-bordered table-hover" style="width:400px">
+        <thead>
+            <tr>
+                <th>项目</th>
+                <th>指标</th>
+                <th>完成</th>
+                <th>完成率</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr class="warning"><td>北外滩中心</td><td class="right"></td><td class="right"><td class="right">%</td></tr>
+            <tr><td>绿地梧桐院</td><td class="right"></td><td class="right"></td><td class="right">%</td></tr>
+            <tr class="warning"><td>金山吕巷</td><td class="right"></td><td class="right"></td><td class="right">%</td></tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <div id="container1" style="height: 300px">
+        
+    </div>
+</div>
+<div class="col-lg-4">
+    <h3>Team排行榜</h3>
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+    <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-primary">电转访率</button>
+        <button type="button" class="btn btn-default">来人指标完成</button>
+        <button type="button" class="btn btn-default">办卡率</button>
+        <button type="button" class="btn btn-default">来人成交比</button>
+        <button type="button" class="btn btn-default">销售指标完成</button>
+    </div><br /><br />
+    <table class="table table-bordered table-hover" style="width:400px">
+        <thead>
+            <tr>
+                <th>项目</th>
+                <th>指标</th>
+                <th>完成</th>
+                <th>完成率</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr class="warning"><td>武当组</td><td class="right"></td><td class="right"><td class="right">%</td></tr>
+            <tr><td>少林组</td><td class="right"></td><td class="right"></td><td class="right">%</td></tr>
+            <tr class="warning"><td>青城组</td><td class="right"></td><td class="right"></td><td class="right">%</td></tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <div id="container2" style="height: 300px">
+
+    </div>
+</div>
+<div class="col-lg-3">
+    <h3>指标预警-武当组</h3>
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr><th>指标</th>
+                <th >目标      </th>
+                <th >完成</th>
+                <th >完成比        </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>电转访率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>办卡率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人成交比</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>销售指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <h3>指标预警-北外滩</h3>
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr><th>组</th>
+                <th>指标</th>
+                <th>目标      </th>
+                <th>完成</th>
+                <th>完成比        </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td rowspan="5">小计</td><td>电转访率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>办卡率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人成交比</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>销售指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="5">武当组</td><td>电转访率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>办卡率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人成交比</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>销售指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="5">少林组</td><td>电转访率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>办卡率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来人成交比</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>销售指标完成率</td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>指标预警-北外滩</h3>
+    <table class="table table-bordered table-hover table-striped" >
+        <thead>
+            <tr>
+                <th rowspan="2">组</th>
+                <th colspan="2">电转访率</th>
+                <th colspan="2">来人指标完成率</th>
+                <th colspan="2">办卡率</th>
+                <th colspan="2">来人成交比</th>
+                <th colspan="2">销售指标完成率</th>
+            </tr>
+            <tr>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>小计</td><td class="right"></td><td class="right"><td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>武当组</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>少林组</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>项目指标预警-汇总</h3>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th rowspan="2">项目</th>
+                <th colspan="2">电转访率</th>
+                <th colspan="2">来人指标完成率</th>
+                <th colspan="2">办卡率</th>
+                <th colspan="2">来人成交比</th>
+                <th colspan="2">销售指标完成率</th>
+            </tr>
+            <tr>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+                <td>目标</td>
+                <td>完成比</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="warning"><td>北外滩中心</td><td class="right"></td><td class="right">60%<td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>绿地梧桐院</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right">30%</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr class="warning"><td>金山吕巷</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right">25%</td></tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>业务进线来人统计表</h3>
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th rowspan="2">项目</th>
+                <th colspan="4">企划</th>
+                <th rowspan="2">电话中心</th>
+                <th rowspan="2">中介</th>
+                <th rowspan="2">拓客</th>
+            </tr>
+            <tr>	
+                <td>短信</td>
+                <td>DM</td>
+                <td>灯箱</td>
+                <td>道旗</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>北外滩中心</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>绿地梧桐院</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>金山吕巷  </td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>业务进线转化率统计表</h3>
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>渠道</th>
+                <th>来电指标完成率</th>
+                <th>电转访率    </th>
+                <th>来人完成率    </th>
+                <th>办卡率    </th>
+                <th>升卡率      </th>
+                <th>卡转定率    </th>
+                <th>签约率    </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>电话中心</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>中介    </td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>拓客    </td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr>
+                <td>短信    </td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+            </tr>
+            <tr>
+                <td>DM      </td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+            </tr>
+            <tr>
+                <td>灯箱    </td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+                <td class="right"></td>
+            </tr>
+            <tr><td>道旗    </td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="col-lg-6">
+    <h3>客户分布统计-武当组</h3>
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>类型</th>
+                <th>来电</th>
+                <th>来人</th>
+                <th>小卡    </th>
+                <th>升卡    </th>
+                <th>大定    </th>
+                <th>签约      </th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr><td>当前客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>公共客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>沉睡客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+                    </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>客户分布统计-北外滩</h3>
+    @Html.SearchDate("Sale", "期间:")
+    <input type="button" onclick="SearchClick();" value="查询" />
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>组</th>
+                <th>类型</th>
+                <th>来电</th>
+                <th>来人</th>
+                <th>小卡    </th>
+                <th>升卡    </th>
+                <th>大定    </th>
+                <th>签约      </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr><td rowspan="3">小计</td><td>当前客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>公共客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>沉睡客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="3">武当组</td><td>当前客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>公共客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>沉睡客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="3">少林组</td><td>当前客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>公共客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>沉睡客户</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+        </tbody>
+    </table>
+</div>
+<div style="clear:both"></div>
+<div class="col-lg-3">
+    <h3>计划提醒&完成情况 - 武当组</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" style="" class="text100 datepicker form-control" type="text" name="DateFromSale" value="2013-10-31">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>类型</th>
+                <th>计划数</th>
+                <th>来人数</th>
+                <th>完成</th>
+                <th>未完成</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>签约</td><td class="right">2</td><td class="right">2</td><td class="right">1</td><td class="right">1</td></tr>
+            <tr><td>大定</td><td class="right">0</td><td class="right">2</td><td class="right">0</td><td class="right">0</td></tr>
+            <tr><td>升卡</td><td class="right">5</td><td class="right">2</td><td class="right">1</td><td class="right">4</td></tr>
+            <tr><td>办卡</td><td class="right">7</td><td class="right">5</td><td class="right">3</td><td class="right">4</td></tr>
+            <tr><td>来访</td><td class="right">11</td><td class="right">5</td><td class="right">5</td><td class="right">6</td></tr>
+            <tr><td>去电</td><td class="right">20</td><td class="right">0</td><td class="right">16</td><td class="right">4</td></tr>
+         </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <h3>计划提醒&完成情况 - 北外滩</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="2013-10-31">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped" style="width:350px">
+        <thead>
+            <tr><th>组/渠道</th>
+                <th>类型</th>
+                <th>计划数</th>
+                <th>来人数</th>
+                <th>完成</th>
+                <th>未完成</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td rowspan="6">小计</td><td>签约</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>大定</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>升卡</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>办卡</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来访</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>去电</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="2">武当组</td><td>签约</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>...</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="2">少林组</td></tr>
+            <tr><td>签约</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>...</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="2">渠道</td><td>中介</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>...</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+        </tbody>                                                                                  
+    </table>
+</div>
+<div class="col-lg-4">
+    <h3>计划提醒&完成情况 - 汇总</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="2013-10-31">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped" style="width:400px">
+        <thead>
+            <tr>
+                <th>项目/业态</th>
+                <th>类型</th>
+                <th>计划数</th>
+                <th>来人数</th>
+                <th>完成</th>
+                <th>未完成</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td rowspan="6">小计</td><td>签约</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>大定</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>升卡</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>办卡</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>来访</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>去电</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="2">北外滩</td><td>签约</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>...</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="2">布鲁斯</td></tr>
+            <tr><td>领域</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>...</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td rowspan="2">蔷薇四季商铺</td><td>中介</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+            <tr><td>...</td><td class="right"></td><td class="right"></td><td class="right"></td><td class="right"></td></tr>
+        </tbody>
+    </table>
+</div>
+<div style="clear:both"></div>
+
+<div class="col-lg-3">
+    <h3>客户转出预警 - 武当组</h3>
+    <table class="table table-bordered table-hover table-striped">
+       
+        <tbody>
+            <tr><td>电转访预警  </td><td class="right">3  <span class="glyphicon glyphicon-arrow-down">展开详单</span></td></tr>
+            <tr><td>来人转卡预警</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+            <tr><td>卡转大定预警</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-3">
+    <h3>客户转出预警 - 武当组</h3>
+    <table class="table table-bordered table-hover table-striped">
+
+        <tbody>
+            <tr><td>电转访逾期</td><td class="right">3  <span class="glyphicon glyphicon-arrow-up">收起详单</span></td></tr>
+            <tr><td colspan="2" style="padding-left:50px;">
+                    张三  1天 &nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-arrow-right">查看客户</span>
+                    <br />李四 2天&nbsp;&nbsp;&nbsp;&nbsp;
+                    <br />王五 4天&nbsp;&nbsp;&nbsp;&nbsp;
+                </td></tr>
+            <tr><td>来人转卡逾期</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+            <tr><td>卡转大定逾期</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-3">
+    <h3>客户转出预警 - 北外滩</h3>
+    <table class="table table-bordered table-hover table-striped">
+        <tbody>
+        <tr><td rowspan="3">小计</td><td>电转访预警</td><td class="right">5  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td>来人转卡预警</td><td class="right">4  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td>卡转大定预警</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td rowspan="3">武当组</td><td>电转访预警</td><td class="right">3  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td>来人转卡预警</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td>卡转大定预警</td><td class="right">2  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+            <tr><td rowspan="3">少林组</td><td>电转访预警</td><td class="right">2 <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td>来人转卡预警</td><td class="right">1  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+        <tr><td>卡转大定预警</td><td class="right">0  <span class="glyphicon glyphicon-arrow-down"></span></td></tr>
+    </table>
+</div>
+<div class="col-lg-3">
+    <h3>已转出客户查询 - 武当组</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="2013-10-30">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>类型</th>
+                <th>姓名</th>
+                <th>转出日期</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>卡转大定逾期</td><td >张三</td><td>2013-10-30</td></tr>
+            <tr><td>来人转卡逾期</td><td >李四</td><td>2013-10-30</td></tr>
+            <tr><td>来人转卡逾期</td><td >王五</td><td>2013-10-30</td></tr>
+            <tr><td>电转访逾期</td>  <td >赵六</td><td>2013-10-30</td></tr>
+            <tr><td>...</td>         <td ></td></tr>
+        </tbody>                         
+    </table>
+</div>
+<div class="col-lg-3">
+    <h3>转入客户查询 - 武当组</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="2013-10-30">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>类型</th>
+                <th>姓名</th>
+                <th>转入日期</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>卡转大定逾期</td><td>张三</td><td>2013-10-30</td></tr>
+            <tr><td>来人转卡逾期</td><td>李四</td><td>2013-10-30</td></tr>
+            <tr><td>来人转卡逾期</td><td>王五</td><td>2013-10-30</td></tr>
+            <tr><td>电转访逾期</td>  <td>赵六</td><td>2013-10-30</td></tr>
+            <tr><td>...</td>         <td></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <h3>待分配公共客户</h3>
+    <input type="checkbox" />电转访逾期 &nbsp;&nbsp;&nbsp;
+    <input type="checkbox" />来人转卡逾期 &nbsp;&nbsp;&nbsp;
+    <input type="checkbox" />来人转卡逾期 &nbsp;&nbsp;&nbsp;
+    <input type="checkbox" />卡转大定逾期 &nbsp;
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <input type="button" value="分配" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>姓名</th>
+                <th>逾期日期</th>
+                <th>原组名</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td><input type="checkbox" /></td><td>张三</td><td>2013-10-30</td><td>武当组</td></tr>
+            <tr><td><input type="checkbox" /></td><td>李四</td><td>2013-10-30</td><td>武当组</td></tr>
+            <tr><td><input type="checkbox" /></td><td>王五</td><td>2013-10-30</td><td>武当组</td></tr>
+            <tr><td><input type="checkbox" /></td>  <td>赵六</td><td>2013-10-30</td><td>武当组</td></tr>
+            <tr><td>...</td>         <td></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <h3>当日邀约客户 - 前台</h3>
+    <label class="len60 right" for="DateFromSale">姓名:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="">
+    <label class="len60 right" for="DateFromSale">渠道:</label>
+    <input  class="text100 datepicker form-control" type="text" name="DateFromSale" value="">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>渠道</th>
+                <th>姓名</th>
+                <th>事项</th>
+                <th>预约时间</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>电话中心</td><td>张三</td><td>来访</td><td>9:30</td></tr>
+            <tr><td>中介（中原）</td><td>李四</td><td>来访</td><td>10:00</td></tr>
+            <tr><td>电话中心</td><td>王五</td><td>来访</td><td>13:00</td></tr>
+            <tr><td>...</td>         <td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-4">
+    <h3>当日邀约客户 - 武当组</h3>
+    
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                
+                <th>姓名</th>
+                <th>事项</th>
+                <th>预约时间</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>张三</td><td>来访</td><td>9:30</td></tr>
+            <tr><td>李四</td><td>来访</td><td>10:00</td></tr>
+            <tr><td>王五</td><td>来访</td><td>13:00</td></tr>
+            <tr><td>...</td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-5">
+    <h3>当日邀约客户 - 北外滩</h3>
+    
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>渠道</th>
+                <th>销售员</th>
+                <th>姓名</th>
+                <th>事项</th>
+                <th>预约时间</th>
+                <th>到访时间</th>
+                <th>完成情况</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>电话中心</td><td>销售员甲</td><td>张三</td><td>来访</td><td>9:30</td><td>9:42</td><td></td></tr>
+            <tr><td>中介（中原）</td><td>李四</td><td>来访</td><td>10:00</td><td></td><td></td></tr>
+            <tr><td></td><td>销售员乙</td><td>王五</td><td>办卡</td><td>13:00</td><td>13:00</td><td>X</td></tr>
+            <tr><td>...</td>         <td></td><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-3">
+    <h3>Team排行 - 转化率</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="2013-10-31">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>组名</th>
+                <th>电转访率</th>
+                <th>电转访率</th>
+                <th>来人数</th>
+                <th>完成</th>
+                <th>未完成</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td>签约</td><td class="right">2</td><td class="right">2</td><td class="right">1</td><td class="right">1</td></tr>
+            <tr><td>大定</td><td class="right">0</td><td class="right">2</td><td class="right">0</td><td class="right">0</td></tr>
+            <tr><td>升卡</td><td class="right">5</td><td class="right">2</td><td class="right">1</td><td class="right">4</td></tr>
+            <tr><td>办卡</td><td class="right">7</td><td class="right">5</td><td class="right">3</td><td class="right">4</td></tr>
+            <tr><td>来访</td><td class="right">11</td><td class="right">5</td><td class="right">5</td><td class="right">6</td></tr>
+            <tr><td>去电</td><td class="right">20</td><td class="right">0</td><td class="right">16</td><td class="right">4</td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>企划推广效果</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <td>项目</td>
+                <th>渠道</th>
+                <th>来电指标<br />完成率</th>
+                <th>电转<br />访率</th>
+                <th>来人<br />完成率</th>
+                <th>办卡率</th>
+                <th>升卡率</th>
+                <th>卡转<br />定率</th>
+                <th>签约率</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td rowspan="5">北外滩</td><td>短信</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>DM</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>道旗</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>报纸</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>平均</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td rowspan="5">布鲁斯</td><td>电话中心</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>DM</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>道旗</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>报纸</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>平均</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td rowspan="5">蔷薇四季商铺</td><td>电话中心</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>DM</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>道旗</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>报纸</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>平均</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="col-lg-6">
+    <h3>渠道来人分析</h3>
+    <label class="len60 right" for="DateFromSale">期间:</label>
+    <input id="DateFromSale" class="text100 datepicker form-control" type="text" name="DateFromSale" value="">
+    -
+    <input id="DateToSale" class="text100 datepicker form-control" type="text" name="DateToSale">
+    <input type="button" value="查询" onclick="SearchClick();" style="min-width:60px;">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <td>项目</td>
+                <th>渠道</th>
+                <th>来电指标<br />完成率</th>
+                <th>电转<br />访率</th>
+                <th>来人<br />完成率</th>
+                <th>办卡率</th>
+                <th>升卡率</th>
+                <th>卡转<br />定率</th>
+                <th>签约率</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr><td rowspan="5">北外滩</td><td>电话中心</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>电转访</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>中介</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>拓客</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>平均</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td rowspan="5">布鲁斯</td><td>电话中心</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>电转访</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>中介</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>拓客</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>平均</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td rowspan="5">蔷薇四季商铺</td><td>电话中心</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>电转访</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>中介</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>拓客</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>平均</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+        </tbody>
+    </table>
+</div>

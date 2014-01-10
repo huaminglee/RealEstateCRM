@@ -1,0 +1,38 @@
+﻿@model  Performance
+@{
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    ViewBag.Title = "项目指标设置";
+}
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+        @if (ViewBag.Success == true)
+        {
+           <text>window.opener.changeItem( @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)) );
+        window.close();
+        </text> 
+        }
+    });
+</script>
+
+<div class="well" style="margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        <fieldset>
+            <legend>项目指标配置-@ViewBag.Project.Name</legend>
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.ProjectId)
+            @Html.MyDateFor(model => model.BeginDate)
+            @Html.MyTextFor(model => model.CallInNum)
+            @Html.MyTextFor(model => model.CallVisitNum)
+            @Html.MyTextFor(model => model.VisitNum)
+            @Html.MyTextFor(model => model.CardNum)
+            @Html.MyTextFor(model => model.OrderNum)
+            <small style="color:red;">注：如果只有率指标，如电转访率20%，则电转数输入20，来电数输入100</small>
+        </fieldset>
+        @MyControls.FormBtn(true)
+    }
+</div>

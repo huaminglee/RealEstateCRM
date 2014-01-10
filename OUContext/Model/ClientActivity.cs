@@ -24,6 +24,7 @@ namespace OUDAL
         public string Detail { get; set; }
         [DisplayName("完成情况")]
         public bool? IsDone { get; set; }
+        //1=初次来电 2=初次来访
         public int FirstType { get; set; }
         public int Person { get; set; }
     }
@@ -43,19 +44,25 @@ namespace OUDAL
         public string AllPhone { get; set; }
         public string Done { get; set; }
 
-         
+        public string Way { get; set; }
+        public string WayExtend { get; set; }
         public static List<ClientActivityListView> GetReport(int projectid, int groupid, DateTime dateFrom,
-            DateTime dateTo,string clientName)
+            DateTime dateTo,string clientName,string isdone)
         {
             List<object> parameters = new List<object>();
-            string sql = @"declare @name nvarchar(50);{5} select c.id as clientid,c.name as client ,c.allphone,d.name as groupname,ca.*
+            string sql = @"declare @name nvarchar(50);{5} select c.id as clientid,c.name as client ,c.allphone,c.way,c.wayextend,d.name as groupname,ca.*
 from clients c join clientactivities ca on c.id=ca.clientid 
 join departments d on d.id=c.groupid
-where c.projectid={0} {1} and ca.plantime between '{2:yyyy-MM-dd}' and '{3:yyyy-MM-dd} 23:59' {4}";
+where c.projectid={0} {1} and ca.plantime between '{2:yyyy-MM-dd}' and '{3:yyyy-MM-dd} 23:59' {4} {6}";
             string group = groupid == 0 ? "" : string.Format(" and c.groupid={0}", groupid);
             string name = string.IsNullOrEmpty(clientName) ? "" : string.Format(" and c.name like @name ");
             string nameParame = string.IsNullOrEmpty(clientName) ? "" : string.Format("set @name='{0}';", clientName);
-            sql = string.Format(sql, projectid, group, dateFrom, dateTo,name,nameParame);
+            string isdoneSql = "";
+            if (isdone == "false")
+            {
+                isdoneSql = " and ca.ActualTime is null";
+            }
+            sql = string.Format(sql, projectid, group, dateFrom, dateTo,name,nameParame,isdoneSql);
             using (Context db = new Context())
             {
                 db.Database.Connection.Open();

@@ -71,6 +71,12 @@ namespace OUDAL
         public string CallPerson { get; set; }
         [DisplayName("无效原因")]
         public string InvalidReason { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="date"></param>
+        /// <returns>返回状态变化的log信息</returns>
         public static string StateUpdate(int id, DateTime? date)
         {
             Context db = new Context();

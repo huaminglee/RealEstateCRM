@@ -1,0 +1,65 @@
+﻿@model OUDAL.SystemUser
+@using OUDAL;
+@using RealEstateCRM.Web;
+@using RealEstateCRM.Web.BLL;
+@{
+    ViewBag.Title = "用户修改";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+    var roles = (from o in (new Context()).Roles select o).ToList();
+}
+@helper SelectRole(List<Role> roles, string index, int id)
+    {
+        var name = "role" + index;
+<select name="@name">
+<option value="0">---</option>
+    @foreach (Role r in roles)
+    {
+        string selected = "";
+        if (r.Id == id) { selected = "selected"; }
+        <option value="@r.Id" @selected>@r.Name</option>
+    }
+</select>
+}
+
+@section Main{
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $("#Password").attr("placeholder", "如不输入新密码则保留旧密码");
+    });
+</script>
+<div  style="width:500px;margin:0px auto;margin-top:10px;"	>
+
+@using (Html.BeginForm())
+{
+    
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>用户修改</legend>
+
+        @Html.HiddenFor(model => model.Id)
+        @Html.MyTextFor(model => model.LoginName)
+        @Html.MyTextFor(model => model.Password)
+        
+        @Html.MyTextFor(model => model.Name)
+        @Html.MyTextFor(model => model.Email)
+        
+        <div class="form-group">
+            <label>角色</label>@SelectRole(roles, "1", ViewBag.Role1) @SelectRole(roles, "2", ViewBag.Role2) @SelectRole(roles, "3", ViewBag.Role3)
+@Html.ValidationMessage("Role");
+        </div>
+        
+       
+        <div class="form-group">
+            <label>状态</label>
+            @Html.DropDownListFor(model => model.State,new SelectListItem[]{new SelectListItem{Text="正常", Value="0"},new SelectListItem{Text="禁用",Value="1"}})
+            
+        </div>         
+    </fieldset>
+    @MyControls.FormBtn(false);
+}
+
+</div>
+}

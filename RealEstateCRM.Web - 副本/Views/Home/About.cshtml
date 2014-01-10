@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "About Us";
+    Layout="~/Views/Shared/_LayoutAngular.cshtml";
+}
+@Scripts.Render("~/bundles/angular")
+<script>
+    var app = angular.module('ng-app', [], function () { console.log('started') });
+    function Controller($scope) {
+        $scope.master = {};
+
+        $scope.update = function (user) {
+            $scope.master = angular.copy(user);
+        };
+
+        $scope.reset = function () {
+            $scope.user = angular.copy($scope.master);
+        };
+
+        $scope.reset();
+    }
+    function Ctrl($scope) {
+        $scope.master = {};
+
+        $scope.update = function (user) {
+            $scope.master = angular.copy(user);
+        };
+
+        $scope.reset = function () {
+            $scope.user = angular.copy($scope.master);
+        };
+
+        $scope.reset();
+    }
+</script>
+<div ng-controller="Controller">
+    <form novalidate class="css-form" name="Form1">
+        User name: <input type="text" name="userName" ng-model="user.name" required>
+        <span class="error" ng-show="Form1.userName.$dirty&&Form1.userName.$error.required" >
+            Required!
+        </span><br>
+        E-mail: <input type="email" ng-model="user.email" required /><br />
+        Gender: <input type="radio" ng-model="user.gender" value="male" />male
+        <input type="radio" ng-model="user.gender" value="female" />female<br />
+        <button ng-click="reset()">RESET</button>
+        <button ng-click="update(user)">SAVE</button>
+    </form>
+</div>
+<div ng-controller="Ctrl">
+    <form novalidate name="Form2" class="css-form">
+        User name: <input type="text" name="userName" ng-model="user.name" required>
+        <span class="error" ng-show="Form2.userName.$error.required">
+            Required!
+        </span><br>
+        Last name: <input type="text" name="lastName" ng-model="user.last"
+                          ng-minlength="3" ng-maxlength="10">
+        <span class="error" ng-show="Form2.lastName.$error.minlength">
+            Too short!
+        </span>
+        <span class="error" ng-show="Form2.lastName.$error.maxlength">
+            Too long!
+        </span><br>
+    </form>
+    <hr>
+   
+</div>
+<style type="text/css">
+    .css-form input.ng-invalid.ng-dirty {
+        background-color: #FA787E;
+    }
+
+    .css-form input.ng-valid.ng-dirty {
+        background-color: #78FA89;
+    }
+</style>
+

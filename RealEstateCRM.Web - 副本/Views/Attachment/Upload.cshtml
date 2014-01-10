@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "附件上传";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+}
+
+
+@section Main{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            addFile(3);
+        });
+        function addFile(num) {
+            var fileNum = parseInt($("#fileNum").val());
+            for (var i = 0; i < num; i++) {
+                var html1 = "<li><input type='file' name='file" + fileNum + "' id='file" + fileNum + "' size='40' /></li>";
+                $("#filediv").append(html1);
+                fileNum++;
+            }
+            $("#fileNum").val(fileNum);
+        }
+    </script>
+    <style type="text/css">
+       li{ padding: 10px;}
+    </style>
+    <div style="width:300px; margin:20px;">
+    @using (Html.BeginForm("Upload", "Attachment", new {MasterId = Request["MasterId"],MasterType=Request["MasterType"]}, FormMethod.Post, new {enctype = "multipart/form-data"}))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>请选择文件</legend>
+            <input type="hidden" name="fileNum" id="fileNum" value="0" />
+            <ol id="filediv">
+                
+            </ol>
+            
+        </fieldset>
+        <input type='button' class="btn btn-default"  onclick='addFile(1);' value='增加文件' />
+        <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>
+        <input type="submit" class="btn btn-primary"  value=" 保 存 " /><br /><br />
+        <div class="alert alert-info">提示：附件文件长度合计不能超过10M</div>
+    }
+   </div>
+}

@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "客户转移";
+    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+}
+<script type="text/javascript">
+    function Transfer() {
+        if ($("#newGroupId").val() == "") {
+            alert("请先选择小组");
+            return;
+        }
+        var data = { newGroupId: $("#newGroupId").val(), clientId: @ViewBag.ClientId};
+        $.post('@(Request.Url.AbsoluteUri+"/../../TransferSingleProcess")', data, function (data) {
+            alert(data.obj);
+            if (data.success == true) {
+                load('@(Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId)');
+            }
+        });
+    }
+    function Back() {
+        load('@(Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId)');
+    }
+</script>
+
+<div data-role="fieldcontain">
+    <h3>新项目选择</h3>
+    <fieldset data-role="controlgroup" data-type="horizontal">
+        <legend>所属小组:<font color="red">*</font></legend>
+        @Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
+    </fieldset>
+    <input name="ismobile" value="true" type="hidden" />
+    <p style="text-align:center">@MyControls.Btn("保存", "Transfer();") @MyControls.Btn("取消", "Back();")</p>
+</div>
+

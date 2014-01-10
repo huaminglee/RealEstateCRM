@@ -1,0 +1,220 @@
+﻿@{
+    ViewBag.Title = "渠道统计表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            $("#DateFrom").val('@ViewBag.Date1');
+            $("#DateTo").val('@ViewBag.Date2');
+            //SearchClick();
+        });
+        var list;
+
+        function SearchClick() {
+            var PostData = {};
+
+
+            PostData.DateFrom = $("#DateFrom").val();
+            if (PostData.DateFrom == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.DateTo = $("#DateTo").val();
+            if (PostData.DateTo == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.RoomType = $("input[name='roomType']:checked").val();
+            $.post("./ClientWayReportQuery", PostData, function(respDate) {
+                if (respDate.success == true) {
+
+
+                    var obj = respDate.obj;
+
+                    var wayList1 = [{ Way: '合计' }, { Way: '电话中心' }, { Way: '来电/直访' }, { Way: '销售员拓客' }, { Way: '中介' }];
+                    var wayList2 = [];
+                    var totalItem = wayList1[0];
+                    totalItem.CallInNum = 0;
+                    totalItem.CallVisitNum = 0;
+                    totalItem.VisitNum = 0;
+                    totalItem.Card1Num = 0;
+                    totalItem.Card2Num = 0;
+                    totalItem.OrderNum = 0;
+                    totalItem.ContractNum = 0;
+                    var directItem = wayList1[2];
+                    directItem.CallInNum = 0;
+                    directItem.CallVisitNum = 0;
+                    directItem.VisitNum = 0;
+                    directItem.Card1Num = 0;
+                    directItem.Card2Num = 0;
+                    directItem.OrderNum = 0;
+                    directItem.ContractNum = 0;
+                    for (var i = 0; i < obj.list.length; i++) {
+                        var item = obj.list[i];
+                        switch (item.Way) {
+                        case '电话中心':
+                            wayList1[1] = item;
+                            break;
+                        case '销售员拓客':
+                            wayList1[3] = item;
+                            break;
+                        case '中介':
+                            wayList1[4] = item;
+                            break;
+                        default:                               
+                            wayList1[2].CallInNum += item.CallInNum;
+                            wayList1[2].CallVisitNum += item.CallVisitNum;
+                            wayList1[2].Card1Num += item.Card1Num;
+                            wayList1[2].Card2Num += item.Card2Num;
+                            wayList1[2].VisitNum += item.VisitNum;
+                            wayList1[2].OrderNum += item.OrderNum;
+                            wayList1[2].ContractNum += item.ContractNum;
+                            wayList2.push(item);                                
+                        }
+                        totalItem.CallInNum += item.CallInNum;
+                        ;
+                        totalItem.CallVisitNum += item.CallVisitNum;
+                        ;
+                        totalItem.VisitNum += item.VisitNum;
+                        ;
+                        totalItem.Card1Num += item.Card1Num;
+                        ;
+                        totalItem.Card2Num += item.Card2Num;
+                        ;
+                        totalItem.OrderNum += item.OrderNum;
+                        ;
+                        totalItem.ContractNum += item.ContractNum;
+                        ;
+                    }
+                    showEnters({ list: wayList1, d1: obj.d1, d2: obj.d2,RoomType:obj.RoomType });
+                    //showEnters2({ list: wayList2, d1: obj.d1, d2: obj.d2 });
+
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+
+        function showEnters2(obj) {
+            var element = $('#resulttable2');
+            var tpl = $('#tpl2').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+
+        function showClient(id) {
+            OpenFullWindow("./View/" + id);
+        }
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        @Html.SearchDateRange("", "日期：")
+        @Html.SearchLabel("","物业类型") <input type="radio" name="roomType" value="" checked="checked" /><span style="width:30px">全部</span>
+                @foreach (RoomType r in ViewBag.RoomTypes)
+        {
+            <input type="radio" name="roomType" value="@r.Name" /><span style="width:30px">@r.Name</span>
+        }
+        @MyControls.SearchBtn()
+    </div>
+    <strong>渠道统计</strong>
+    <div id="resulttable">
+
+    </div>
+   
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:80px">渠道</th>
+                    <th style="width:80px">来电</th>
+                    <th style="width:80px">电转访</th>
+                    <th style="width:80px">来访</th>
+                    <th style="width:80px">小卡</th>
+                    <th style="width:80px">大卡</th>
+                    <th style="width:80px">大定</th>
+                    <th style="width:80px">签约</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%{var item=obj.list[0]; %>
+
+                    <tr>
+                        <td><%=item.Way%></td>
+                        <td style="text-align:right"><%=item.CallInNum%>   </td>
+                        <td style="text-align:right"><%=item.CallVisitNum%></td>
+                        <td style="text-align:right"><%=item.VisitNum%>    </td>
+                        <td style="text-align:right"><%=item.Card1Num%>    </td>
+                        <td style="text-align:right"><%=item.Card2Num%>    </td>
+                        <td style="text-align:right"><%=item.OrderNum%>    </td>
+                        <td style="text-align:right"><%=item.ContractNum%> </td>
+
+                    </tr>
+
+                    <%}%>
+                    <%for(var i=1;i<obj.list.length;i++){var item=obj.list[i]; %>
+
+                        <tr>
+                            <td><%=item.Way%></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=0&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.CallInNum%></a></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=6&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.CallVisitNum%></a></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=1&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.VisitNum%></a></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=2&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.Card1Num%></a></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=3&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.Card2Num%></a></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=4&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.OrderNum%></a></td>
+                            <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&roomtype=<%=obj.RoomType%>&type=5&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.ContractNum%></a></td>
+
+                        </tr>
+
+                        <%}%>
+
+
+</tbody>
+        </table>
+    </script>
+    <script type="text/template" id="tpl2">
+    <table class="table table-bordered table-striped ">
+        <thead>
+            <tr>
+                <th style="width:80px">渠道</th>
+                <th style="width:80px">来电</th>
+                <th style="width:80px">电转访</th>
+                <th style="width:80px">来访</th>
+                <th style="width:80px">小卡</th>
+                <th style="width:80px">大卡</th>
+                <th style="width:80px">大定</th>
+                <th style="width:80px">签约</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%for(var i=0;i<obj.list.length;i++){var item=obj.list[i]; %>
+
+                <tr>
+                    <td><%=item.Way%></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=0&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.CallInNum%></a></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=6&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.CallVisitNum%></a></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=1&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.VisitNum%></a></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=2&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.Card1Num%></a></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=3&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.Card2Num%></a></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=4&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.OrderNum%></a></td>
+                    <td style="text-align:right"><a href="./ClientWayList?projectid=<%=projectid%>&way=<%=item.Way%>&type=5&datefrom=<%=d1%>&dateto=<%=d2%>" target="_blank"><%=item.ContractNum%></a></td>
+
+                </tr>
+
+                <%}%>
+
+
+        </tbody>
+    </table>
+</script>
+
+}

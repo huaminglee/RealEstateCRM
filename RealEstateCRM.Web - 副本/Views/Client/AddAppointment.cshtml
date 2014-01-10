@@ -1,0 +1,43 @@
+﻿@model OUDAL.ClientActivity
+
+@{
+    ViewBag.Title = "邀约记录编辑";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@Scripts.Render("~/Scripts/jquery-ui-timepicker-addon.js")
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datetimepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    });
+</script>
+<style>
+    .datepicker {
+        position: relative;
+        z-index: 1001;
+    }
+</style>
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.ClientId)
+        <fieldset>
+            <legend>邀约信息</legend>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Type)
+                @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
+                {
+                    <label class="radio-inline" style="min-width:40px;"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
+
+                }
+                @Html.ValidationMessageFor(m => m.Type)
+            </div>
+            @Html.MyDateTimeFor(model => model.PlanTime)
+            @* @Html.MyDateTimeFor(model => model.ActualTime)*@
+            @Html.MyTextAreaFor(model => model.Detail, 3)
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+    }
+</div>

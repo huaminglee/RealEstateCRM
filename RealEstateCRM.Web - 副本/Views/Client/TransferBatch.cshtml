@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "客户分配";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+    <script type="text/javascript">
+    jQuery(document).ready(function () {
+        var PostData = { projectid: projectid, GroupId: $("#GroupId").val() };
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+        $("input[value='转移']").popover({ html: true, placement: 'bottom', title: '转移选中的客户', content: $("#submitdiv").html(), trigger: "click" });
+        @Html.Raw(JqGridSimple.OutGrid("ListQuery",true));
+
+        function AfterInsertRow(rowid, aData) {
+            //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");
+            //grid.setCell(rowid,"FoodType",  TypeName(aData.FoodType));
+            //grid.setCell(rowid,"State", StateName(aData.State));
+            grid.setCell(rowid, "State", StateName(aData.State));
+        }
+    });
+    var colModelGrid = [{ name: 'Id', key: true, index: 'id', width: 1, align: 'left', hidden: true }
+    @Html.JqFieldString("Name","名称",150,"c.Name")
+    @Html.JqFieldString("Sex","性别",50,"c.Sex")
+    @Html.JqFieldString("AllPhone","电话",250,"c.AllPhone")
+    @Html.JqFieldString("GroupName","所属小组",150,"d2.GroupName")
+    @Html.JqFieldString("Way","渠道",150,"c.Way") 
+    @Html.JqFieldString("State","当前状态",150,"c.State")
+    @Html.JqFieldDate("StateDate","状态日期")
+    @Html.JqFieldString("Code","编码",100,"c.Code")
+    @Html.JqFieldString("Remark","备注",150,"c.Remark")];
+        @Html.EnumNameFunction("State",typeof(ClientStateEnum))
+    function rowclick(id) {
+        OpenFullWindow("./View/" + id, "_blank");
+    }
+    function AddNew() {
+        OpenFullWindow("./ToCreate", "_blank");
+    }
+    function SearchClick() {
+        $('#listGrid').appendPostData({ Name: $("#Name").val() });
+        $('#listGrid').appendPostData({ PhoneNumber: $("#PhoneNumber").val() });
+        $('#listGrid').appendPostData({ GroupId: $("#GroupId").val() });
+
+        $('#listGrid').trigger('reloadGrid');
+    }
+    function Refresh() {
+        SearchClick();
+    }
+
+    function Transfer() {
+        if ($("#newGroupId").val() == "") {
+            alert("请先选择小组");
+            return;
+        }
+        var data = { newGroupId: $("#newGroupId").val(), selectedIds: $('#listGrid').getGridParam('selarrrow').toString() };
+        $.post('./TransferBatch', data, function (data) {
+            alert(data.obj);
+            if (data.success == true) {
+                $("input[value='转移']").popover('hide');
+                SearchClick();
+            }
+        });
+    }
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        @Html.ShortInput("Name", "名 称:")
+        @Html.ShortInput("PhoneNumber", "电 话:")
+        @Html.SearchLabel("GroupId", "所属小组:")@Html.MyDropdown("GroupId", (ViewBag.Groups as List<SelectListItem>), ViewBag.Default as string)
+        @MyControls.SearchBtn()
+        @MyControls.Btn("转移", "")
+        <div style="display:none" id="submitdiv">
+            新小组 :@Html.MyDropdown("newGroupId", (ViewBag.Groups as List<SelectListItem>))
+            @MyControls.Btn("确定", "Transfer()")
+        </div>
+    </div>
+    @Html.Raw(JqGridSimple.OutTable())
+
+}
+

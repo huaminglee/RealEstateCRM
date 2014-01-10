@@ -1,0 +1,33 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+
+@{
+    ViewBag.Title = "统计报表";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<script>
+    
+</script>
+<div data-role="content">
+    
+    <div class="ui-grid-a">
+        <div class="ui-block-a"><a data-role="button" onclick="load('transferin','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/ClientTransferIn")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/contact.png")"  /><br />客户转入表
+                                </a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="load('transferout','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/ClientTransferOut")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/user.png")"  /><br />客户转出表
+                                </a></div>
+       
+    </div>
+</div>
+<script>
+    getMenu('menupage_@projectid', { isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+</script>
+@section Footer{
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        @@Copyright 上海虬溪软件 2013
+    </div>
+}

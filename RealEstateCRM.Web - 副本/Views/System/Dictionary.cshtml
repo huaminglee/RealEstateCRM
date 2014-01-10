@@ -1,0 +1,157 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@model  System.Collections.Generic.Dictionary<string,List<OUDAL.Dictionary>>
+@{
+    ViewBag.Title = "数据字典";
+    ViewBag.FullTitle = "系统管理";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Styles.Render("~/Content/zTree/css")
+    @Scripts.Render("~/Content/zTree")
+    
+    
+    <script src="@Url.Content("~/Scripts/jquery.tmpl.min.js")" type="text/javascript"></script>
+    <link rel="stylesheet" href="@Url.Content("~/content/colorbox.css")" />
+    <script src="@Url.Content("~/scripts/jquery.colorbox-min.js")"></script>
+    <script language="JavaScript">
+<!-- -->
+    function ShowItems(items) {
+        var str = "<ol>";
+        $.each(items, function (i) {
+            str += "<li><span id='span" + this.Id + "' style='min-width:210px;display: inline-block;'>" + this.Name
+                + "</span><input type='text' id='text" + this.Id + "'  style='display:none' value='"
+                + this.Name + "'/><input class='btn btn-default' type='button' id='" + this.Id + "' onclick='edititem(this);' value='修改'/>" +
+                "<a href='#' onclick='UpItem(" + this.Id + ")'><span class='glyphicon glyphicon-arrow-up'></span></a> " +
+                "<a href='#' onclick='DownItem(" + this.Id + ")'><span class='glyphicon glyphicon-arrow-down'></span></a> " +
+                "<a href='#' onclick='DeleteItem(" + this.Id + ")'><span class='glyphicon glyphicon-remove'></span></a>" +
+                "</li>";
+        });
+        str += "<li><input type='text' id='newitem' style='min-width:200px;'> <input type='button' class='btn btn-default' onclick='addnewitem();' value='添加'/></li><ol>";
+        $("#divItems").html(str);
+    }
+
+    function SelectDict(id, name) {
+        $("#dictId").val(id);
+        $("#spanDict").html(name);
+        $.post("getDictionaryItems", { dictId: id }, function (data, textStatus) {
+            this;
+            if (data.success == false) {
+                alert(data.obj);
+                return;
+            }
+            ShowItems(data.obj);
+        });
+    }
+
+    function addnewitem() {
+        $.post("addDictionaryItem", { dictId: $("#dictId").val(), text: $("#newitem").val() }, function (data, textStatus) {
+            this;
+            if (data.success == false) {
+                alert(data.obj);
+                return;
+            }
+            ShowItems(data.obj);
+        });
+    }
+
+    function edititem(obj) {
+        if (obj.value == "修改") {
+            $("#text" + obj.id).show();
+            $("#span" + obj.id).hide();
+            obj.value = "提交";
+        } else {
+            $.post("editDictionaryItem", { itemId: obj.id, text: $("#text" + obj.id).val() }, function (data, textStatus) {
+                this;
+                if (data.success == false) {
+                    alert(data.obj);
+                    return;
+                }
+                $("#text" + obj.id).hide();
+                $("#span" + obj.id).show();
+                obj.value = "修改";
+                $("#span" + obj.id).html($("#text" + obj.id).val());
+            });
+        }
+    }
+    function DeleteItem(id) {
+        if (confirm('删除后不可恢复，确定要删除吗？')) {
+            $.post("DeleteDictionaryItem", { itemId: id }, function (data, textStatus) {
+                this;
+                if (data.success == false) {
+                    alert(data.obj);
+                    return;
+                }
+                ShowItems(data.obj);
+            });
+        }
+
+    }
+    function UpItem(id) {
+        $.post("UpDictionaryItem", { itemId: id }, function (data, textStatus) {
+            this;
+            if (data.success == false) {
+                alert(data.obj);
+                return;
+            }
+            ShowItems(data.obj);
+        });
+    }
+
+    function DownItem(id) {
+        $.post("DownDictionaryItem", { itemId: id }, function (data, textStatus) {
+            this;
+            if (data.success == false) {
+                alert(data.obj);
+                return;
+            }
+            ShowItems(data.obj);
+        });
+    }
+    </script>
+    <div class="container">
+        <p>数据字典维护</p><div style="width: 900px; margin: auto">
+    <div class="col-xs-3" style=" min-height: 300px; ">
+        @*
+            <ul>@foreach(string s in Model.Keys)
+                {
+                    <li>
+                        @s <ol>
+                               @foreach(Dictionary dict in Model[s])
+                               {
+                                   <li><a href="#" onclick="SelectDict(@dict.Id,'@dict.Name');">@dict.Name</a> </li>
+                               }
+                           </ol>
+                    </li>
+                }
+
+
+            </ul> *@
+        <ul class="nav nav-list">
+            @foreach (string s in Model.Keys)
+            {
+                <li class="nav-header"> @s</li>
+
+                foreach (Dictionary dict in Model[s])
+                {
+                    <li><a href="#" onclick="SelectDict(@dict.Id, '@dict.Name');">@dict.Name</a> </li>
+                }
+
+
+            }
+
+
+    </ul>
+</div>
+<div class="col-xs-8">
+    <input type="hidden" id="dictId" /><span id="spanDict"></span><br />
+    <div id="divItems"></div>
+</div>
+</div>
+
+
+
+    
+    
+}

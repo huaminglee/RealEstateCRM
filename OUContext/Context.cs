@@ -38,6 +38,7 @@ namespace OUDAL
         public DbSet<ContractPay> ContractPays { get; set; }
         public DbSet<ContractPlan> ContractPlans { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Performance> Performance { get; set; }
         public DbSet<ProjectClientCode> ProjectClientCode{get;set;}
         public DbSet<RoomType> RoomTypes { get; set; }
 

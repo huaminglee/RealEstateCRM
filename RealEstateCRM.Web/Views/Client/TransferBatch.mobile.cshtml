@@ -1,6 +1,9 @@
 ﻿@{
     ViewBag.Title = "客户分配";
     Layout = "~/Views/Shared/_MainListLayout.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+
 }
 @section Main{
 
@@ -10,7 +13,7 @@
             $('input[type="checkbox"]').bind('click', function () {
                 $(this).prop('checked').checkboxradio("refresh");   // 绑定事件及时更新checkbox的checked值
             });
-            debugger;
+          
             $("#GroupId option:contains('公共客户')").attr("selected", "selected");
             $("#GroupId").selectmenu();
             $("#GroupId").selectmenu("refresh");
@@ -41,7 +44,7 @@
         function clientQuery() {
             var PostData = $('form#query').serialize();
             var string = "";
-            $.post('@Request.Url.AbsoluteUri' + "/../ListQuery", PostData, function (res) {
+            $.post('@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/ListQuery")', PostData, function (res) {
                 res.rows.forEach(function (e) {
                     string += "<input type='checkbox' name='selectedId' id='" + e.Id + "' value='" + e.Id + "'/><label for='" + e.Id + "'>" + e.Name + "    " + e.AllPhone + "<br/><font color='grey'>"+e.GroupName+"</font></label>";
                 });
@@ -116,6 +119,7 @@
                 <div class="ui-field-contain">
                     @Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
                 </div>
+
                 <p align="center">
                     <a data-role="button" data-inline="true" data-rel="back" data-theme="a">取消</a>
                     <a onclick="Transfer();" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">转移</a>

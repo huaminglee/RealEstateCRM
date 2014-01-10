@@ -1,0 +1,118 @@
+﻿@model OUDAL.Client
+
+@{
+    ViewBag.Title = "租户信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+    
+}
+@section Main{
+    <script type="text/javascript">
+        $(function(){
+            var message='@ViewBag.Message';
+            if(message.length>0)
+            {
+                alert(message);
+            }
+        });
+
+        function Delete() {
+            var data={id:@Model.Id};
+    $.post('../Delete',data,function (data){
+        alert(data.obj);
+        if(data.success==true){        
+            if(data.obj=="已删除"){            
+                window.opener.SearchClick();
+                window.close();
+            }
+            //window.location.reload();
+        }
+    });
+}
+$(function () {
+    window.onunload = function () {
+        window.opener.SearchClick();
+    };
+});
+    </script>
+    <div class="btn-toolbar well">
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="window.location.href=('../Edit/@Model.Id');" >修改</button>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="Delete();">删除</button>
+        </div>
+
+    </div>
+    @Html.HiddenFor(model => model.Id)
+    <div>
+        <div>
+            <table class="table table-bordered">
+                <col width="80" />
+                <col width="200" />
+
+
+                <tr>
+                    @Html.MyDisplayFor(m => m.Name)
+                </tr>
+                @*<tr>
+                    @Html.MyDisplayFor(m => m.FullName)
+                </tr>*@
+                <tr>
+                    @Html.MyDisplayFor(m => m.Contact)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Phone)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Address)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Account)
+                </tr>    
+                <tr>
+                    @Html.MyDisplayFor(m => m.LicenseName)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.LicenseNumber)
+                </tr>
+                 <tr>
+                    @Html.MyDisplayFor(m => m.Remark)
+                </tr>
+            </table>
+        </div>
+         <div>
+        <b>房屋相关合同</b><br />
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr><td>房屋</td>
+                    <td>合同号</td>
+                    <td>起租时间</td>
+                    <td>终止时间</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ClientContract o in ViewBag.ClientContracts)
+                {
+                    <tr>
+                        <td><a href="../../Building/RoomView/@o.RoomId">@o.RoomName</a></td>
+                        <td><a href="../../Rent/ContractView/@o.ContractId">@o.ContractCode</a></td>
+                        <td>@o.RentBeginDate.ToString("yyyy-MM-dd")</td>
+                        <td>@o.RentTerminateDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    </div>
+
+    <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+        <div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Client.LogClass))</div>
+    </div>
+
+
+}
+
+

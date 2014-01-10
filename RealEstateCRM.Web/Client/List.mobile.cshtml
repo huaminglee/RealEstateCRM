@@ -1,0 +1,94 @@
+﻿@model Client
+@{
+    ViewBag.Title = "客户清单";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+}
+@section Main{
+
+   
+    <div data-role="content">
+        <ul data-role="listview" id="clientList" data-inset="true" data-filter="true" data-filter-placeholder="结果中搜索..."></ul>
+        <div data-role="popup" id="search" data-overlay-theme="b" data-theme="a">
+            <div data-role="header"><h3>查询条件</h3></div>
+            <div role="main" class="ui-corner-bottom ui-content">
+                <form>
+                    <input id="rows" name="rows" value="20" type="hidden" />
+                    <input name="page" value="1" type="hidden" />
+                    <input id="sidx" name="sidx" value="" type="hidden" />
+                    <input id="sord" name="sord" value="asc" type="hidden" />
+                    <div class="ui-field-contain">
+                        <label for='Name'>姓名</label>
+                        <input id='Name' type='text' name='Name' />
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for='PhoneNumber'>电话</label>
+                        <input id='PhoneNumber' type='text' name='PhoneNumber' />
+                    </div>
+                </form>
+                <p align="center">
+                    <a data-role="button" data-inline="true" data-rel="back" data-theme="a">取消</a>
+                    <a onclick="clientQuery();" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">查询</a>
+                </p>
+            </div>
+        </div>
+    </div>
+ <script type="text/javascript">
+        jQuery(document).ready(function () {
+           
+        });
+        function clientQuery() {
+            var PostData = $('form').serialize();
+            var string = "";
+            $.post('@Request.Url.AbsoluteUri' + "/../ListQuery", PostData, function (res) {
+                res.rows.forEach(function (e) {
+                    string += "<li><a onclick=\"load('@(Request.Url.AbsoluteUri + "/../View/")" + e.Id + "')\"><h3>" + e.Name + "</h3><p><strong>" + e.AllPhone + "</strong></p><p>" + e.GroupName + "</p></a></li>";
+                });
+                if (string.length == 0) {
+                    string += "<li>没有符合条件的客户</li>";
+                }
+                $('#clientList').html(string);
+                $('#clientList').trigger('create');
+                $('#clientList').listview('refresh');
+                totalPage = res.total;
+                currentPage = res.page;
+                hideLoader();
+            });
+        }
+        function prePage() {
+            if (currentPage == 1) {
+                alert("已经是第一页。");
+                $("#prePage").removeClass("ui-btn-active");
+                return;
+            }
+            $("input[name='page']").val(currentPage - 1);
+            clientQuery();
+            $("#prePage").removeClass("ui-btn-active");
+        }
+        function nextPage() {
+            if (currentPage == totalPage) {
+                alert("已经是最后一页。");
+                $("#nextPage").removeClass("ui-btn-active");
+                return;
+            }
+            $("input[name='page']").val(currentPage + 1);
+            clientQuery();
+            $("#nextPage").removeClass("ui-btn-active");
+        }
+        var currentPage = 1;
+        var totalPage = 1;
+         showLoader();
+            clientQuery();
+    </script>
+}
+@section Footer{
+    <div data-role="footer" data-position="fixed" data-theme="b" data-hide-during-focus="" data-tap-toggle="false">
+    <div data-role="navbar">
+        <ul>
+            <li><a id="prePage" onclick="prePage();">上一页</a></li>
+            <li><a href="#search" data-rel="popup" data-position-to="window" data-transition="pop" data-disabled="true">查询</a></li>
+            <li><a id="nextPage" onclick="nextPage();">下一页</a></li>
+        </ul>
+    </div>
+</div>
+}
+

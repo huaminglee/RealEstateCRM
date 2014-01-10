@@ -1,0 +1,57 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@*  部门编辑界面，选择部门用户 *@
+@{
+    ViewBag.Title = "选择用户";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+    var functionname = "SelectUserSet_" + Request["Name"];
+    var departmentid = Request["departid"];
+    var mallid = Request["mallid"];
+}
+@section Main{
+ @Styles.Render("~/Content/jqGrid/css")
+    @Scripts.Render("~/bundles/jqGrid")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+var PostData = {departmentId:'@departmentid' ,mallid:'@mallid'};
+   
+            @Html.Raw(JqGridSimple.OutGrid("SelectUserQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        var s="'";
+        grid.setCell(rowid,"Name","<a href='#' onclick=\"window.opener.@functionname ("+aData.id+",'"+aData.Name+"');window.close();\">"+aData.Name+"</a>");
+     }
+}); 
+    var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+    ,{ name: 'State', index: 'State', width: 1, align: 'left',hidden:true }
+    ,{ name: 'Department',label:"部门", index: 'Name', align: 'left' ,width:200}
+     ,{ name: 'Name',label:"姓名", index: 'Name', align: 'left',width:200 }];
+    
+
+ function rowclick(id)
+    {
+    var aData= $('#listGrid').getRowData(id);   
+    var reg =/<a\s(?:\s*\w*?\s*=\s*".+?")*(?:\s*href\s*=\s*".+?")(?:\s*\w*?\s*=\s*".+?")*\s*> ([\s\S]*?)<\/a>/; 
+    var name=aData.Name.replace(/<[^>].*?>/g,"");
+      window.opener.@functionname (aData.id,name);
+      window.close();
+    }
+function SearchClick()
+{     
+    $('#listGrid').appendPostData({ Department: $("#Department").val()});
+    $('#listGrid').appendPostData({ Name: $("#Name").val()});  
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+@Html.ShortInput("Department","部门")
+@Html.ShortInput("Name","姓名")
+@MyControls.SearchBtn()
+
+</div>
+
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

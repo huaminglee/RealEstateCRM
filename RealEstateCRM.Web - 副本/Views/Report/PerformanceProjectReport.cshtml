@@ -1,0 +1,205 @@
+﻿@{
+    ViewBag.Title = "项目排名";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Scripts.Render("~/bundles/backbone")
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+            $("#DateFrom").val('@ViewBag.Date1');
+            $("#DateTo").val('@ViewBag.Date2');
+            $('.btn').button();
+
+            //SearchClick();
+        });
+        var list;
+
+        function SearchClick() {
+            var PostData = {};
+
+
+            PostData.DateFrom = $("#DateFrom").val();
+            if (PostData.DateFrom == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.DateTo = $("#DateTo").val();
+            if (PostData.DateTo == "") {
+                alert("请选择日期");
+                return;
+            }
+            $.post("./PerformanceCompanyQuery", PostData, function(respDate) {
+                if (respDate.success == true) {
+                    reportObj = respDate.obj;
+                    showEnters();
+
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        var reportObj;
+        var rateType = 0;
+
+        function SetRate(ratetype) {
+            rateType = ratetype;
+            showEnters();
+
+        }
+
+        function showEnters() {
+            var list = new Array();
+            for (var i = 0; i < reportObj.actList.length; i++) {
+                var actItem = reportObj.actList[i];
+                var targetItem = null;
+                for (var j = 0; j < reportObj.targetList.length; j++) {
+                    if (reportObj.targetList[j].ProjectId == actItem.Id) {
+                        targetItem = reportObj.targetList[j];
+                    }
+                }
+                var item = { Id: actItem.Id, Name: actItem.Name };
+                list.push(item);
+                var aNum1 = 0;
+                var aNum2 = 0;
+                var tNum1 = 0;
+                var tNum2 = 0;
+                switch (rateType) {
+                    case 0:
+                        aNum1 = actItem.CallInNum;
+                        aNum2 = actItem.CallVisitNum;
+                        if (targetItem != null) {
+                            tNum1 = targetItem.CallInNum;
+                            tNum2 = targetItem.CallVisitNum;
+                        }
+                        break;
+                        case 1:
+                        aNum1 = actItem.VisitNum;
+                        aNum2 = actItem.Card1Num;
+                        if (targetItem != null) {
+                            tNum1 = targetItem.VisitNum;
+                            tNum2 = targetItem.CardNum;
+                        }
+                        break;
+                            case 2:
+                        aNum1 = actItem.VisitNum;
+                        aNum2 = actItem.OrderNum;
+                        if (targetItem != null) {
+                            tNum1 = targetItem.VisitNum;
+                            tNum2 = targetItem.OrderNum;
+                        }
+                        break;
+                }
+                if (aNum1 == 0) {
+                    if (aNum2 > 0) {
+                        item.actRate = 100;
+                    } else {
+                        item.actRate = 0;
+                    }
+                } else {
+                    item.actRate = (aNum2 * 100 / aNum1);
+                }
+
+                if (tNum1 == 0) {
+                    item.targetRate = 0;
+                    item.Rate = 0;
+                } else {
+                    item.targetRate = (tNum2 * 100 / tNum1);
+                    if (item.targetRate != 0) {
+                        item.Rate = (item.actRate * 100 / item.targetRate);
+                    }
+                    else {
+                        item.Rate = 0;
+                    }
+                }
+       
+
+
+        }
+
+        list.sort(function(item1, item2) {
+            if (item1.Rate == item2.Rate) {
+                return item1.actRate < item2.actRate;
+            }
+            return item1.Rate < item2.Rate;
+
+        });
+
+        var element = $('#resulttable');
+
+        var tpl = $('#tpl').html();
+
+        var html = _.template(tpl, { list: list });
+
+        element.html(html);
+        }
+
+
+        function showClient(id) {
+            OpenFullWindow("./View/" + id);
+
+
+        }
+
+        function OpenProject(projectid) {
+            var path = '@Url.Content("~/Project")/';
+            OpenLargeWindow(path+projectid+"/Report/PerformanceTeamReport?small=1&datefrom=" + $("#DateFrom").val() + "&dateto=" + $("#DateTo").val());
+        }
+
+    </script>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        @Html.SearchDateRange("", "日期：")
+       
+        
+
+        @MyControls.SearchBtn()
+    </div>
+    <div style="width:800px;margin:auto">
+        <h3 class="pull-left">项目排名统计</h3>
+        <div class="pull-right">
+                                             <div class="btn-group" data-toggle="buttons-radio" style="padding:8px 0px 4px 0px">
+                                                 <button class="btn btn-default active" onclick=" SetRate(0); ">电转访率</button>
+                                                 <button class="btn btn-default" onclick=" SetRate(1); ">办卡率</button>
+                                                 <button class="btn btn-default" onclick=" SetRate(2); ">大定率</button>
+                                             </div> 
+                                         </div>
+                                             <div class="clearfix"></div>
+    <div id="resulttable" >
+
+    </div>
+
+    </div>
+   
+    <script type="text/template" id="tpl">
+        
+            
+        
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:80px">项目</th>
+                    <th style="width:80px">指标</th>
+                    <th style="width:80px">实际完成</th>
+                    <th style="width:80px">完成率</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i=0;i<list.length;i++){var item=list[i]; %>
+                <tr>
+                    <td><a href="#" onclick="OpenProject(<%=item.Id%>);"><%=item.Name%></a> </td>
+                    <td style="text-align:right"><%=item.targetRate.toFixed(0)%> %</td>
+                    <td style="text-align:right"><%=item.actRate.toFixed(0)%> %</td>
+                    <td style="text-align:right"><%=item.Rate.toFixed(0)%> %</td>
+                </tr>
+                <%}%>
+            </tbody>
+        </table>
+    
+    
+    
+    </script>
+  
+
+}

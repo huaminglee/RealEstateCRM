@@ -2,28 +2,37 @@
 @using RealEstateCRM.Web.BLL
 @using OUDAL
 @{
-    var isProject = Request.Url.AbsolutePath.ToLower().Contains("/project/");
+    var isProject = false; 
     var projectid = "";
-    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+    if (Request.RequestContext.RouteData.Values["projectid"] != null)
+    {
+        projectid = Request.RequestContext.RouteData.Values["projectid"].ToString();
+        isProject = true;
+    }
+    else if(Request.Form["projectid"]!=null)
+    {
+        projectid = Request.Form["projectid"];
+        isProject = true;
+    }
 }
 <script>
-    jQuery(document).ready(function () {
-        getMenu({ isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
-    });
+
 </script>
 
-<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
-
-    <a data-icon="info" href="#menu" data-transition="slide" data-direction="reverse">菜单</a>
-    <h3 id="pagetitle">
-        @if (isProject)
-        {@DepartmentBLL.GetNameById(int.Parse(projectid))}
-        else
-        { <text>公司</text>}
+<div data-role="header" data-add-back-btn="true" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
+@if (!isProject)
+{
+    <h3>公司</h3>
+    <a href="#menupage" class=" ui-btn-right" data-icon="gear" data-iconpos="right" data-transition="slide">菜单</a>
+}
+else
+{
+    <h3>
+        @DepartmentBLL.GetNameById(int.Parse(projectid))
     </h3>
 
-    <a href="#projectswitch" data-icon="gear" data-iconpos="right" data-transition="slide">项目切换</a>
-</div>
+    <a href="#menupage_@projectid" class=" ui-btn-right" data-icon="gear" data-iconpos="right" data-transition="slide">菜单</a>
+}</div>
 @RenderBody()
 @RenderSection("Main", false)
 @RenderSection("Footer", false)

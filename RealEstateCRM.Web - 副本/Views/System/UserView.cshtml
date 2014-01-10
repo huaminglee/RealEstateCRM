@@ -1,0 +1,31 @@
+﻿@model OUDAL.SystemUser
+@using OUDAL;
+@using RealEstateCRM.Web;
+@using RealEstateCRM.Web.BLL;
+@{
+    ViewBag.Title = "用户信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@section Main{
+<link rel="stylesheet" href="@Url.Content("~/content/colorbox.css")" />
+<script src="@Url.Content("~/scripts/jquery.colorbox-min.js")"></script>
+    <script type="text/javascript">
+       
+    </script>
+<div>
+@*<input type="button" value="修改" onclick="$.colorbox({iframe:true, width:'600px', height:'90%',href:'../UserEdit/@Model.Id'});" /> *@
+  <input type="button" class="btn btn-primary"  value="修改" onclick="window.location.href=('../UserEdit/@Model.Id');" />    
+</div>
+<hr />
+    @Html.HiddenFor(model => model.Id)
+
+    <table class="table table-bordered">
+    @MyControls.ViewTable(1)
+<tr>@Html.MyDisplayFor(m => m.LoginName)</tr>
+<tr>@Html.MyDisplayFor(m => m.Email)</tr>
+<tr><td class="tdRight">角色</td><td>@ViewBag.Role1 @ViewBag.Role2 @ViewBag.Role3</td></tr>
+<tr>@Html.MyDisplayFor(m => m.Name)</tr>
+<tr><td class="tdRight">状态</td><td>@(Model.State == 0 ? "正常" : "禁用")</td></tr>
+</table>
+    
+}

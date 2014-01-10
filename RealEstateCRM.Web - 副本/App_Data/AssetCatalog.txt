@@ -1,0 +1,33 @@
+﻿[
+ {Name:"机房",CodeRule:"城市-EQU-000",Remark:"包含：消防，UPS，PDU，空调，布线，强电，机柜（不细分）"}
+,{Name:"网络与系统",
+	Children:[
+		 {Name:"网络交换机，路由器",CodeRule:"城市-NET-000"}
+		,{Name:"防火墙",CodeRule:"城市-FW-000"}
+		,{Name:"服务器",CodeRule:"城市-SRV-000"}
+		,{Name:"存储系统",CodeRule:"城市-STR-000",Remark:"带库，SAN存储，磁盘柜，硬盘"}
+		,{Name:"其他",CodeRule:"城市-SI-000",Remark:"媒介转换器， KVM，WIFI Controller，AP，VC， VOIP，PBX"}
+	]}	
+,{Name:"软件",
+	Children:[
+		 {Name:"桌面软件",CodeRule:"城市-SWF-000"}
+		,{Name:"服务端软件",CodeRule:"城市-SWB-000"}
+	]}		
+,{Name:"桌面",
+	Children:[	
+		{Name:"PC",CodeRule:"城市-PCD-000"}
+		,{Name:"Laptop",CodeRule:"城市-PCL-000"}
+		,{Name:"POS",CodeRule:"城市-POS-000"}
+		,{Name:"Mobile Equipment",CodeRule:"城市-MOB-000"}
+		,{Name:"Printer和MFP",CodeRule:"城市-MFP-000"}
+		,{Name:"Scanner",CodeRule:"城市-SCA-000"}
+		,{Name:"其他",CodeRule:"城市-SPR-000",Remark:"LCD，IP Phone，USB HDD，CD(DVD)-RW"}
+	]}	
+		
+,{Name:"其他",
+	Children:[			
+		{Name:"数码类",CodeRule:"城市-DIG-000"}
+		,{Name:"杂类",CodeRule:"城市-OTH-000"}
+	]}		
+,{Name:"低值易耗品",CodeRule:"城市-EAL-000"}
+]

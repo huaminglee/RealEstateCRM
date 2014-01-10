@@ -1,0 +1,45 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "角色列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("RoleQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");        
+     }
+}); 
+var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+,{ name: 'Name',label:"角色名称", index: 'Name', align: 'left' }
+,{ name: 'Num',label:"角色人数", align: 'right' }
+,{ name: 'Remark',label:"备注", index: 'Remark', align: 'left' }];
+function rowclick(id)
+{
+    OpenFullWindow("./RoleView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./RoleEdit/0");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label class="len80">角色名称</label><input id="Name" type="text" />
+@MyControls.SearchBtn()
+@MyControls.Btn("新增","AddNew()")
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

@@ -1,0 +1,84 @@
+﻿  
+@using OUDAL
+@using RealEstateCRM.Web;
+@using RealEstateCRM.Web.BLL;
+@using RealEstateCRM.Web.Models;
+@{
+    ViewBag.Title = "客户计划填报";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+
+<script src="@Url.Content("~/scripts/HighCharts/js/highcharts.js")"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+        var message = '@ViewBag.Message';
+        if (message.length > 0) {
+            alert(message);
+        }
+    });
+    
+    
+   
+    function SearchClick(sidx,sord) {
+        var postdata = {
+            Catalog: $('#Catalog').val()
+            ,Name:$('#Name').val()
+            ,DateFrom: $('#DateFrom').val()
+            , DateTo: $('#DateTo').val()
+            ,sidx: sidx
+            ,sord:sord
+        };
+        
+    }
+</script>
+
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+    类 别:@Html.DropDownList("Catalog",DictionaryBLL.GetList("意向级别",true))
+    @Html.ShortInput("Name", "姓名:")
+   
+    @MyControls.SearchBtn()
+    <input type="hidden" id="orderby" />
+</div>
+<div id="reportDiv" style="margin :auto ;width:900px">
+   <label class="len60 right" for="DateFrom">计划日期:</label><input class="text60 datepicker" id="DateFrom" name="DateFrom" type="text"  />
+    <table class="table table-bordered table-striped" style="width: 900px">
+        <thead><tr><th>姓名</th>
+               <th>上次计划</th>
+               <th>完成情况</th>
+               <th>下周计划</th>
+               <th>备注</th></thead>
+        <tr><td>ABC</td>
+            <td>1.。。。<br/>2.。。。</td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+        </tr>
+        <tr><td>某某</td>
+            <td>1.。。。<br/>2.。。。<br/>3....</td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+        </tr>
+        <tr><td>张三</td>
+            <td>1.。。。<br/>2.。。。</td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+        </tr>
+        <tr><td>李四</td>
+            <td>1.。。。<br/>2.。。。</td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+            <td><textarea cols="10" name="Remark" rows="3"></textarea></td>
+        </tr>
+    </table>
+       <p>    <input type="submit" class="btn btn-primary" value="保存"/>
+     <input type="button" class="btn btn-primary" onclick="window.close();" value="取消" />
+</p>
+</div>                
+
+<div id="chartContainer" style="margin :auto ;width:50%">
+</div>
+<div id="chartContainer2" style="margin :auto ;width:90%">
+</div>

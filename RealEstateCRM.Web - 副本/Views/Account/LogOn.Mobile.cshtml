@@ -1,0 +1,51 @@
+@model RealEstateCRM.Web.Models.LogOnModel
+
+@{
+    ViewBag.Title = "登录";
+}
+<style>
+    page {
+        background-color: #F1F1F1;
+    }
+</style>
+<div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+    <h3>登录</h3>
+</div>
+<div data-role="content">
+    <div style="text-align:center">
+    <img src="@("http://"+Request.Url.Authority+"/Content/Images/lvdilogo.gif")" width="366px" height="53px"/>
+    <img src="@("http://"+Request.Url.Authority+"/Content/Images/logo.png")"width="384px" height="112px" /></div>
+    @using (Html.BeginForm())
+    {
+
+        <div class="form-group">
+            <label for="UserName">用户名</label>
+            @Html.TextBoxFor(m => m.UserName, new { autofocus = "autofocus" })
+            @*@Html.ValidationMessageFor(m => m.UserName)*@
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password)
+            @*@Html.ValidationMessageFor(m => m.Password)*@
+            @Html.ValidationSummary(true, "用户名或密码错误，请再试一次")
+        </div>
+        <div align="center">
+            <input type="button" data-inline="true" value="确 定" onclick="post('@Request.Url.AbsoluteUri', $('form').serialize());" /><input type="reset" data-inline="true" value="重置" />
+        </div>
+
+    }
+</div>
+<div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+    @@Copyright 上海虬溪软件 2013
+</div>
+
+@*</div>
+
+        <script type="text/javascript">
+            var rootpath = '@Url.Content("~")';
+            var formsubmited = false;
+        </script>
+    </body>
+    </html>*@

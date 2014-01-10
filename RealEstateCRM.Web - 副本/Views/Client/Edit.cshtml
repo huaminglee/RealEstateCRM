@@ -1,0 +1,76 @@
+﻿@model OUDAL.Client
+
+@{
+    ViewBag.Title = "客户信息编辑";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+        $(".form-group").addClass("col-md-6"); $("#Phone1").change(PhoneCheck(this.val));
+
+    });
+    //function RoomTypeChanged() {
+    //    var roomtype = "";
+    //    $('input[name="RoomType"]:checked').each(function () {
+    //        if (roomtype == "")
+    //            roomtype += $(this).val();
+    //        else
+    //            roomtype += ("," + $(this).val());
+    //    });
+    //    //alert(roomtype);
+    //    $("#RoomType").val(roomtype);
+    //}
+
+    function PhoneCheck(phone) {
+        if (phone != null && phone != "") {
+            $.post("../PhoneCheck/@Model.Id", { phone: phone }, function (res) {
+                if (!res.success) {
+                    alert(res.obj);
+                }
+            });
+        }
+    }
+    $(function () {
+        window.onunload = function () {
+            window.opener.Refresh();
+        };
+    });
+</script>
+<div class="well" style="margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.ValidationMessageFor(m => m.AllPhone)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.ProjectId)
+        @Html.HiddenFor(model => model.GroupId)
+        <input id="RoomType" type="text" style="display:none" />
+        <fieldset>
+            <legend>客户信息</legend>
+            @Html.MyTextFor(model => model.Name)
+            <div class='form-group'>
+                @Html.LabelFor(m => m.Sex)
+                <label class="radio-inline" style="min-width:initial"><input name="Sex" type="radio" value="男" checked="@Model.Sex.Equals("男")" />男</label>
+                <label class="radio-inline" style="min-width:initial"><input name="Sex" type="radio" value="女" checked="@Model.Sex.Equals("女")" />女</label>
+                @Html.ValidationMessageFor(m => m.Sex)
+            </div>
+            @Html.MyTextFor(m=>m.Phone1)
+            @Html.MyTextFor(m=>m.Phone2)
+            <div class='form-group'>
+                @Html.LabelFor(m => m.RoomType)
+                @foreach (string s in DepartmentBLL.GetRoomType(Model.ProjectId))
+                {
+                    <label class="radio-inline" style="min-width:40px;"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
+                }
+                @Html.ValidationMessageFor(m => m.RoomType)
+            </div>
+            @Html.MyTextFor(m => m.WayExtend)
+            @Html.MyTextAreaFor(model => model.Remark, 3)
+
+            
+        </fieldset>
+        <p style="text-align:center">@MyControls.FormBtn(false)</p>
+    }
+</div>

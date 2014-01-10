@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "客户分配";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+    <script type="text/javascript">
+        var PostData = { projectid: '@Html.ViewContext.RouteData.Values["projectid"]', GroupId: $("#GroupId").val() };
+        jQuery(document).ready(function () {
+            $('input[type="checkbox"]').bind('click', function () {
+                $(this).prop('checked').checkboxradio("refresh");   // 绑定事件及时更新checkbox的checked值
+            });
+            debugger;
+            $("#GroupId option:contains('公共客户')").attr("selected", "selected");
+            $("#GroupId").selectmenu();
+            $("#GroupId").selectmenu("refresh");
+            clientQuery();
+        });
+        function Transfer() {
+            if ($("#newGroupId").val() == "") {
+                alert("请先选择小组");
+                return;
+            }
+            var ids="";
+            $('input[type=checkbox]:checked').each(function(){
+                ids += $(this).val();
+                ids += ",";
+            });
+            if (ids.length != 0)
+            {
+                ids = ids.substr(0, ids.length - 1);
+            }
+            var data = { newGroupId: $("#newGroupId").val(), selectedIds: ids };
+            $.post('@(Request.Url.AbsoluteUri)', data, function (data) {
+                alert(data.obj);
+                if (data.success == true) {
+                    clientQuery()
+                }
+            });
+        }
+        function clientQuery() {
+            var PostData = $('form#query').serialize();
+            var string = "";
+            $.post('@Request.Url.AbsoluteUri' + "/../ListQuery", PostData, function (res) {
+                res.rows.forEach(function (e) {
+                    string += "<input type='checkbox' name='selectedId' id='" + e.Id + "' value='" + e.Id + "'/><label for='" + e.Id + "'>" + e.Name + "    " + e.AllPhone + "<br/><font color='grey'>"+e.GroupName+"</font></label>";
+                });
+                if (string.length == 0) {
+                    string += "没有符合条件的客户";
+
+                }
+                $('#clientList').html(string);
+                $('#page').page("destroy").page();
+                totalPage = res.total;
+                currentPage = res.page;
+                hideLoader();
+            });
+        }
+        function prePage() {
+            if (currentPage == 1) {
+                alert("已经是第一页。");
+                $("#prePage").removeClass("ui-btn-active");
+                return;
+            }
+            $("input[name='page']").val(currentPage - 1);
+            clientQuery();
+            $("#prePage").removeClass("ui-btn-active");
+        }
+        function nextPage() {
+            if (currentPage == totalPage) {
+                alert("已经是最后一页。");
+                $("#nextPage").removeClass("ui-btn-active");
+                return;
+            }
+            $("input[name='page']").val(currentPage + 1);
+            clientQuery();
+            $("#nextPage").removeClass("ui-btn-active");
+        }
+        var currentPage = 1;
+        var totalPage = 1;
+    </script>
+    <div data-role="content">
+        <a data-role="button" href="#submitdiv" data-rel="popup" data-position-to="window" data-transition="pop" data-disabled="true">转移</a>
+        <fieldset data-role="controlgroup">
+            <div class="ui-controlgroup-controls" id="clientList"></div>
+        </fieldset>
+        <div data-role="popup" id="search" data-overlay-theme="b" data-theme="a">
+            <div data-role="header"><h3>查询条件</h3></div>
+            <div role="main" class="ui-corner-bottom ui-content">
+                <form id="query">
+                    <input id="rows" name="rows" value="20" type="hidden" />
+                    <input name="page" value="1" type="hidden" />
+                    <input id="sidx" name="sidx" value="" type="hidden" />
+                    <input id="sord" name="sord" value="asc" type="hidden" />
+                    <div class="ui-field-contain">
+                        <label for='Name'>姓名</label>
+                        <input id='Name' type='text' name='Name' />
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for='PhoneNumber'>电话</label>
+                        <input id='PhoneNumber' type='text' name='PhoneNumber' />
+                    </div>
+                    <div class="ui-field-contain">
+                        @Html.DropDownList("GroupId", (ViewBag.Groups as List<SelectListItem>))
+                    </div>
+                </form>
+                <p align="center">
+                    <a data-role="button" data-inline="true" data-rel="back" data-theme="a">取消</a>
+                    <a onclick="clientQuery();" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">查询</a>
+                </p>
+            </div>
+        </div>
+        <div data-role="popup" id="submitdiv" data-overlay-theme="b" data-theme="a">
+            <div data-role="header"><h3>选择新小组</h3></div>
+            <div role="main" class="ui-corner-bottom ui-content">
+                <div class="ui-field-contain">
+                    @Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
+                </div>
+
+                <p align="center">
+                    <a data-role="button" data-inline="true" data-rel="back" data-theme="a">取消</a>
+                    <a onclick="Transfer();" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">转移</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+}
+@section Footer{
+    <div data-role="footer" data-position="fixed" data-theme="b" data-hide-during-focus="" data-tap-toggle="false">
+        <div data-role="navbar">
+            <ul>
+                <li><a id="prePage" onclick="prePage();">上一页</a></li>
+                <li><a href="#search" data-rel="popup" data-position-to="window" data-transition="pop" data-disabled="true">查询</a></li>
+                <li><a id="nextPage" onclick="nextPage();">下一页</a></li>
+            </ul>
+        </div>
+    </div>
+}

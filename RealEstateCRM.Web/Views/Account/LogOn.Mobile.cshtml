@@ -1,13 +1,21 @@
 @model RealEstateCRM.Web.Models.LogOnModel
-
+@using RealEstateCRM.Web
 @{
+    
     ViewBag.Title = "登录";
 }
-
+<style>
+    page {
+        background-color: #F1F1F1;
+    }
+</style>
 <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
     <h3>登录</h3>
 </div>
 <div data-role="content">
+    <div style="text-align:center">
+        <img src="@(MvcApplication.RootPath + "/Content/Images/lvdilogo.gif")" width="244px" height="35px"/><br />
+    <img src="@(MvcApplication.RootPath + "/Content/Images/logo.png")"width="256x" height="75px" /></div>
     @using (Html.BeginForm())
     {
 
@@ -25,7 +33,7 @@
             @Html.ValidationSummary(true, "用户名或密码错误，请再试一次")
         </div>
         <div align="center">
-            <input type="button" data-inline="true" value="确 定" onclick="post('@Request.Url.AbsoluteUri', $('form').serialize());" /><input type="reset" data-inline="true" value="重置" />
+            <input type="button" data-inline="true" value="确 定" onclick="post('homePage','@Request.Url.AbsoluteUri', $('form').serialize());" /><input type="reset" data-inline="true" value="重置" />
         </div>
 
     }

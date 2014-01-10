@@ -20,14 +20,8 @@
 
         function add() {
             var _type = '@ViewBag.Type';
-            @if (ViewBag.Projects == null)
-            {
-                <text>load("http://" + '@Request.Url.Authority' + '@Request.Url.AbsolutePath' + "/../" + "./Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));</text>
-            }
-            else
-            {
-                <text>load("http://" + '@Request.Url.Authority' + '@Request.Url.AbsolutePath' + "/../" + "../Project/" +@Model.ProjectId +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));</text>
-            }
+            load('clientedit','@(MvcApplication.RootPath + "/Project/" +Model.ProjectId)' +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));
+            
             $("#Name").val('');
             $("#AllPhone").val('');
         }
@@ -75,7 +69,7 @@
                         @foreach (ClientView c in ViewBag.Clients1)
                         {
                             <tr>
-                                <td align="center"><a onclick="loadandchange(base_url+'@(Request.Url.AbsolutePath+"/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center"><a onclick="load('clientview','@(Request.Url.AbsoluteUri + "/../View/" + c.Id)')">@c.Name</a></td>
                                 <td align="center">@c.Phone1<br />@c.Phone2</td>
                                 <td align="center">@c.GroupName</td>
                             </tr>
@@ -89,7 +83,7 @@
                         @foreach (ClientView c in ViewBag.Clients2)
                         {
                             <tr>
-                                <td align="center"><a onclick="loadandchange(base_url+'@(Request.Url.AbsolutePath+"/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center"><a onclick="load('clientview','@(Request.Url.AbsoluteUri + "/../View/" + c.Id)')">@c.Name</a></td>
                                 <td align="center">@c.MarkedPhone1<br /> @c.MarkedPhone2 </td>
                                 <td align="center">@c.GroupName</td>
                             </tr>

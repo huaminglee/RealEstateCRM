@@ -2,6 +2,10 @@
 @{
     ViewBag.Title = "客户信息";
     Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+
 }
 @section View{
 <script type="text/javascript">
@@ -110,7 +114,7 @@
         <div data-role="controlgroup">
             @if (UserInfo.CurUser.HasRight("客户管理-客户编辑"))
             {
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../Edit/"+Model.Id)');">修改</button>
+            <button onclick="load('@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/Edit/" + Model.Id)');">修改</button>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-客户删除"))
             {
@@ -119,23 +123,23 @@
             }
 
 
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../AddContact/0?clientid="+Model.Id)');">添加联系记录</button>
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../AddAppointment/"+Model.Id)');">添加邀约记录</button>
+            <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/AddContact/0?clientid="+Model.Id)');">添加联系记录</button>
+            <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/AddAppointment/0?clientid=" + Model.Id)');">添加邀约记录</button>
 
             @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-小卡大卡"))
             {
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../../Card/Create/"+Model.Id)');">办卡</button>
+                <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Card/Create/" + Model.Id)');">办卡</button>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))
             {
 
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../../Order/Create/"+Model.Id+"?type=1")');">大定</button>
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../../Order/Create/"+Model.Id+"?type=2")');">直签</button>
+                <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Create/" + Model.Id + "?type=1")');">大定</button>
+    <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Create/" + Model.Id + "?type=2")');">直签</button>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
             {
 
-            <button onclick="load('@(Request.Url.AbsoluteUri+" />../../TransferSingle/"+Model.Id)');">客户转移</button>
+            <button onclick="load('clienttransfer','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/TransferSingle/" + Model.Id)');">客户转移</button>
             }
         </div>
     </div>
@@ -193,11 +197,11 @@
 
                 if (!c.SignTime.HasValue && !c.CancelTime.HasValue)
                 {
-                <button data-inline="true" onclick="load('@(Request.Url.AbsoluteUri+" />../../../Order/LevelUp/"+c.Id)');">签约</button>
+                <button data-inline="true" onclick="load('order','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/LevelUp/" + c.Id)');">签约</button>
                 }
                 if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退定退房"))
                 {
-                <button data-inline="true" onclick="load('@(Request.Url.AbsoluteUri+" />../../../Order/Cancel/"+c.Id)');">退单</button>
+                <button data-inline="true" onclick="load('order','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Cancel/" + c.Id)');">退单</button>
                 }
                 <button data-inline="true" onclick="ToDeleteOrder(@c.Id)">删除</button>
                 }

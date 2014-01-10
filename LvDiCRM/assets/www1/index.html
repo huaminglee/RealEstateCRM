@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Shake Shake Game</title>
+	<link href="http://192.168.0.148:19717/Content/jquery.mobile-1.3.2.css" rel="stylesheet" type="text/css" />
+	<script src="http://192.168.0.148:19717/Scripts/jquery-1.9.1.js"></script>
+	<script src="http://192.168.0.148:19717/Scripts/jquery.mobile-1.3.2.js"></script>
+	<script src="js/phonegap.js"></script>
+	<script src="js/main.js"></script>
+</head>
+
+<body> 
+	<div data-role="page">
+		<div id="abc" data-role="content"></div>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			//$.support.cors = true;
+			//$("#view").load("http://192.168.0.148:19717/Client/List");
+			$("#abc").load("http://192.168.0.148:19717");
+			//$("#view").load("http://180.166.191.160/crmtest");
+		});
+	</script>
+</body>
+</html>

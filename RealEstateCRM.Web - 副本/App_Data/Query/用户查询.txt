@@ -1,0 +1,19 @@
+﻿{
+"Name":"用户查询",
+MainTable:{"Name":"systemusers","TableName":"systemusers","Alias":"u","Sql":""},
+TableList:[
+        {"Name":"Company","TableName":"companies","Alias":"c","Sql":"","On":" on u.companyid=c.id"}
+    ],
+"FieldList":[
+    {"Name":"内部编码", "FieldName":"id",  "Alias":"", "TableAlias":"u","IsHidden":true}, 
+	{"Name":"AD",   "FieldName":"adname",            "TableAlias":"u","IsDefault":true}	, 
+	{"Name":"中文名",   "FieldName":"chinesename",            "TableAlias":"u","IsDefault":true}, 
+	{"Name":"英文名",   "FieldName":"englishname",            "TableAlias":"u","IsDefault":true}, 
+	{"Name":"Email",   "FieldName":"email",            "TableAlias":"u","IsDefault":true}, 
+	{"Name":"状态",   "FieldName":"state",            "TableAlias":"u","IsDefault":true}, 
+	{"Name":"所属公司",   "FieldName":"name", Alias:"company",           "TableAlias":"c"}
+	],
+FilterList:[
+	{Name:"normaluser",FieldFullName:"u.state" ,BuildType:"S",Sql:"u.state=0"}
+]
+}

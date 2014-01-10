@@ -1,0 +1,56 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<script>
+    
+</script>
+<div data-role="content">
+    <h3>当日邀约</h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>邀约类型</th>
+                        <td>组数</td>
+                        <td>到访</td>
+                        <td>完成</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ClientActivityReportView item in ViewBag.InviteList)
+                {
+                <tr>
+                    <td>@item.Type</td>
+                    <td style="text-align:right">
+                        @if (@item.Num != 0)
+                            {
+                            <a href="#" onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/InviteList")?type=@item.Type')" >@item.Num</a>
+                            }
+                            else
+                            {
+                            @item.Num
+                            }
+                    </td>
+                    <td style="text-align:right">@item.VisitNum</td>
+                    <td style="text-align:right">@item.DoneNum</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+</div>
+<script>
+
+</script>
+@section Footer{
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        @@Copyright 上海虬溪软件 2013
+    </div>
+}
+
+

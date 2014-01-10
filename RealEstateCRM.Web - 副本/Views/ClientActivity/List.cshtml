@@ -1,0 +1,68 @@
+﻿@{
+
+    ViewBag.Title = "客户活动清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("ListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");    
+        //grid.setCell(rowid,"FoodType",  TypeName(aData.FoodType));
+        grid.setCell(rowid,"State", StateName(aData.State));
+     }
+    
+}); 
+var colModelGrid = [{ name: 'Id', key: true, index: 'id', width: 1, align: 'left', hidden: true }
+   @Html.JqFieldString("FundName","基金",150,"c.FundName")
+@Html.JqFieldString("Name","活动名称",150,"c.Name")
+@Html.JqFieldDate("ActivityDate","活动日期",index:"c.ActivityDate")
+@Html.JqFieldString("OwnnerId","负责人",120,"c.OwnnerId")
+@Html.JqFieldString("State","活动状态",120,"c.State")
+
+];
+ @Html.EnumNameFunction("State",typeof(ActivityState))
+function rowclick(id)
+{
+    OpenFullWindow("./View/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./ClientActivityEdit/0");
+}
+function SearchClick()
+{ 
+        $('#listGrid').appendPostData({ Name: $("#Name").val()});      
+        $( '#listGrid').appendPostData({ ActivityDate:$("#ActivityDate").val()});
+        $( '#listGrid').appendPostData({ ActivityBeginDate:$("#DateFromActivityDate").val()});
+        $( '#listGrid').appendPostData({ ActivityEndDate:$("#DateToActivityDate").val()});
+    $('#listGrid').trigger('reloadGrid');
+}        
+function ShowHidSearchDiv()
+    {
+        $("#SearchDiv").toggle();
+        if($("#SearchDiv").css('display')=='none')
+        {
+            $("#btnShowHide1").val("打开搜索条件");
+            $("#btnShowHide2").val("打开搜索条件");            
+        }else{
+            $("#btnShowHide1").val("关闭搜索条件");
+            $("#btnShowHide2").val("关闭搜索条件");
+        }        
+    }
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+@Html.ShortInput("Name", "活动名称:")
+@Html.SearchDateRange("ActivityDate","活动日期")
+@MyControls.SearchBtn()
+@MyControls.Btn("新增","AddNew()")
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

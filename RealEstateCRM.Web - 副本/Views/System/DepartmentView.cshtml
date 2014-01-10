@@ -1,0 +1,251 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "部门管理";
+    ViewBag.FullTitle = "系统管理";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+    @Styles.Render("~/Content/zTree/css")
+    @Scripts.Render("~/Content/zTree")
+    
+    
+    <script src="@Url.Content("~/Scripts/jquery.tmpl.min.js")" type="text/javascript"></script>
+    <link rel="stylesheet" href="@Url.Content("~/content/colorbox.css")" />
+    <script src="@Url.Content("~/scripts/jquery.colorbox-min.js")"></script>
+    <script language="JavaScript">
+		<!--
+        var setting = {
+            edit: {
+                enable: true,
+                showRemoveBtn: false,
+				showRenameBtn: false,
+		        drag: {
+			        isCopy: false,
+			        isMove: true
+		        }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                onClick: NodeClick,
+                beforeDrop: zTreeBeforeDrop
+            }
+        };
+
+        $(document).ready(function () {
+            loadTree();
+            $('#btnAdd').toggle();
+            $('#btnDelete').toggle();
+            $('#btnEdit').toggle();
+            $('#btnUser').toggle();
+            $('#btnSubmit').toggle();
+            $('#btnCancel').toggle();
+        });
+        function loadTree() {
+            $.post("departmentjson", {}, function (data, textStatus) {
+                this;
+                var nodes = eval(data);
+                $.fn.zTree.init($("#treeDemo"), setting, nodes.obj);
+                var zTree = $.fn.zTree.getZTreeObj("treeDemo");                
+
+                var treenodes = zTree.getNodes();
+                if (treenodes.length > 0) zTree.expandNode(treenodes[0]);
+            });
+
+        }
+        function zTreeBeforeDrop(treeId, treeNodes, targetNode, moveType) {
+            if((targetNode == null || (moveType != "inner" && !targetNode.parentTId)))return false;
+            
+            treeNodes[0].pId = targetNode.id;
+            $.post("updatedepartmentparent", { id: treeNodes[0].id, pid: targetNode.id }, function (data, textStatus) {
+                this;
+                var a = eval(data);
+                if (a.success == false) {
+                    alert(a.obj);
+                    return;
+                }
+            });
+            return true;
+        };
+        function NodeClick(event, treeId, treeNode, clickFlag) {
+            nodeClick(treeNode);
+        }
+        function nodeClick(treeNode){
+            document.getElementById('deptid').value = treeNode.id;
+            
+            if (document.getElementById('txtName') != undefined) {
+                document.getElementById('txtName').value = treeNode.name;
+                $("#txtType").val(treeNode.tag);
+            }
+            $('#pid').val('');
+            $('#btnAdd').show();
+            $('#btnDelete').show();
+            $('#btnEdit').show();
+            $('#btnUser').show();
+            $('#btnSubmit').hide();
+            $('#btnCancel').hide();
+            getusers(treeNode.id);
+        }
+        function EditNode() {
+            $('#btnSubmit').show();
+            $('#btnCancel').show();
+            $('#btnAdd').hide();
+            $('#btnDelete').hide();
+            $('#btnEdit').hide();
+            $('#btnUser').hide();
+        }
+        function Cancel() {            
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodes = zTree.getSelectedNodes();
+            if (nodes.length > 0) {
+                var node = nodes[0];
+                nodeClick(node);
+            }
+            
+        }
+        function Submit() {
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodes = zTree.getSelectedNodes();
+            if (nodes.length == 0) {
+                alert("请先选择一个节点");
+            }
+            var node = nodes[0];
+            var id = $("#deptid").val();
+            var pid = $("#pid").val();
+
+            $.post("updatedepartment"
+            , { id: id, pid: pid, name: document.getElementById('txtName').value ,departmentType:$('#txtType').val()}
+            , function (data, textStatus) {
+                this;
+                var a = eval(data);
+                if (a.success == false) {
+                    alert(a.obj);
+                    return;
+                }
+                if ($('#pid').val() == '') {
+                    node.name = document.getElementById('txtName').value;
+                    zTree.updateNode(node);
+                } else {
+                    var c = { id: a.obj.Id, pId: a.obj.PId, name: a.obj.Name };
+                    var n = zTree.addNodes(node, c, false);
+                    var newnode = zTree.getNodeByParam("id", a.obj.Id);
+                    zTree.selectNode(newnode);
+                    nodeClick(newnode);
+                }
+            });
+        }
+        function AddChild() {
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodes = zTree.getSelectedNodes();
+            if (nodes.length == 0) {
+                alert("请先选择父节点");
+                return;
+            }
+            var node = nodes[0];
+            EditNode();
+            $('#txtName').val('');
+            $('#deptid').val(0);
+            $('#pid').val(node.id);
+            
+        }
+        function DeleteNode() {
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodes = zTree.getSelectedNodes();
+            if (nodes.length == 0) {
+                alert("请先选择一个节点");
+            }
+            var node = nodes[0];
+            var id = $("#deptid").val();
+            $.post("deletedepartment", { id: id }, function (data, textStatus) {
+                this;
+                var a = eval(data);
+                if (a.success == false) {
+                    alert(a.obj);
+                    return;
+                }
+                var newnode = zTree.getNodeByParam("id", node.pId);
+                zTree.selectNode(newnode);
+                nodeClick(newnode);
+                zTree.removeNode(node);
+
+            });
+        }
+        function getusers(id) {
+            $.post("departmentuser", { id: id }, function (data, textStatus) {
+                this;
+                var a = eval(data);
+                if (a.success == false) {
+                    alert(a.obj);
+                    return;
+                }
+                $("#usertbody").empty();
+                $("#tmplView").tmpl(a.obj).appendTo("#usertbody");
+            });
+        }
+        function EditUser() {
+            var id = $("#deptid").val();
+            if (id == "") { alert("请先选择一个部门"); return; }
+            $.colorbox({ iframe: true, width: '900px', height: '90%', href: 'DepartmentUserEdit/'+id });
+        }
+		//-->
+    </script>
+    <div class="content_wrap">
+        <div class="leftDiv">
+            <ul id="treeDemo" class="ztree">
+            </ul>
+        </div>
+        <div>
+            <div>
+                <input class="btn" id="btnAdd" type="button" value="增加子部门" onclick="AddChild();" />
+                <input class="btn" id="btnUser" type="button" value="调整部门人员" onclick="EditUser();" />
+                <input class="btn" id="btnEdit" type="button" value="编辑" onclick="EditNode();" />
+
+                <input class="btn" id="btnDelete" type="button" value="删除" onclick="DeleteNode();" />
+            </div>
+            <input type="hidden" id="deptid" /><input type="hidden" id="pid" />
+            <div><strong>部门信息</strong><hr/>
+            <table class="form" width="400px">
+                <tr>
+                    <td class="form-item">
+                        部门名称：
+                    </td>
+                    <td>
+                        <input type="text" id="txtName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form-item">
+                        部门类型：
+                    </td>
+                    <td><select name="txtType" id="txtType">
+                            <option></option>
+                            <option>公司</option>
+                            <option>公司部门</option>
+                            <option>项目</option>
+                            <option>小组</option>
+                        </select>
+                    </td>
+                </tr>
+            </table></div>
+            <input id="btnSubmit" type="button" value="提交" onclick="Submit();" />
+            <input id="btnCancel" type="button" value="放弃" onclick="Cancel();" />
+        </div>
+        <div>
+            <div><strong>部门人员</strong><hr/>
+<script id="tmplView" type="text/x-jquery-tmpl">
+<tr><td>${username} ${workno}</td><td>{{if ismanager==1}}是{{/if}} </td></tr>     
+</script>
+    <table class="form" width="300">
+            <tr><td>姓名</td><td>是否经理</td>
+            </tr>
+            <tbody id="usertbody"></tbody>
+    </table></div>
+    
+        </div>
+    </div>
+}

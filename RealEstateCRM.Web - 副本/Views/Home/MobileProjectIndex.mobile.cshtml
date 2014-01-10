@@ -1,0 +1,97 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<script>
+    
+</script>
+<div data-role="content">
+    @*<div data-role="fieldcontain">
+        <h3>当日邀约</h3><div class="pull-right">
+            [<a href="../Client/InviteReport">报表</a>] [<a href="../Client/InviteList">明细</a>]
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>邀约类型</th>
+                    <td>组数</td>
+                    <td>到访</td>
+                    <td>完成</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ClientActivityReportView item in ViewBag.InviteList)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td style="text-align:right">
+                            @if (@item.Num != 0)
+                            {
+                                <a href="../Client/InviteList?type=@item.Type" target="_blank">@item.Num</a>
+                            }
+                            else
+                            {
+                                @item.Num
+                            }
+                        </td>
+                        <td style="text-align:right">@item.VisitNum</td>
+                        <td style="text-align:right">@item.DoneNum</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div data-role="fieldcontain">
+        <h3>转移预警</h3><div class="pull-right">
+            [<a href="../Client/AlertList">明细</a>]
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>转移类型</th>
+                    <td>预警数量</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ClientTransferAlertReport item in ViewBag.transferAlerts)
+                {
+                    <tr>
+                        <td>@item.TransferType</td>
+                        <td style="text-align:right">
+                            @if (@item.Num != 0)
+                            {
+                                <a href="../Client/AlertList?type=@item.TransferType" target="_blank">@item.Num</a>
+                            }
+                            else
+                            {
+                                @item.Num
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>*@
+    <div class="ui-grid-a">
+        <div class="ui-block-a"><a data-role="button" onclick="loadandchange('@("http://"+Request.Url.Authority+"/Project/"+projectid.ToString()+"/Home/InviteList")')"><img src="@("http://"+Request.Url.Authority+"/Content/Images/play-all.png")"  /><br />计划提醒&完成</a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="loadandchange('@("http://"+Request.Url.Authority+"/Project/"+projectid.ToString()+"/Home/TransferAlert")')"><img src="@("http://" + Request.Url.Authority + "/Content/Images/appointment-urgent.png")"  /><br />预警</a></div>
+        <div class="ui-block-a"><a data-role="button" onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/InviteList")')"><img src="@("http://" + Request.Url.Authority + "/Content/Images/order_159.png")"  /><br />客户邀约表</a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Report/PerformanceTeamReport")')"><img src="@("http://" + Request.Url.Authority + "/Content/Images/transfer-document.png")"  /><br />T间排名</a></div>
+        <div class="ui-block-a"><a data-role="button" onclick="loadandchange('@("http://"+Request.Url.Authority+"/Project/"+projectid.ToString()+"/Client/List")')"><img src="@("http://"+Request.Url.Authority+"/Content/Images/search.png")" /><br />客户查询</a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=5")')"><img src="@("http://"+Request.Url.Authority+"/Content/Images/plus.png")" /><br />客户录入</a></div>
+    </div>
+</div>
+<script>
+
+</script>
+@section Footer{
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        @@Copyright 上海虬溪软件 2013
+    </div>
+}

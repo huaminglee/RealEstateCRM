@@ -1,0 +1,188 @@
+﻿@model OUDAL.ClientCreate
+
+@{
+    ViewBag.Title = "客户信息编辑";
+    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+}
+<script type="text/javascript">
+    var way = @Html.Raw( Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.QuDao));
+    jQuery(document).ready(function () {
+        $(".datetimepicker").attr("data-role", "datebox");
+        var opt = {
+            preset: 'datetime', //日期
+            theme: 'ios', //皮肤样式
+            display: 'modal', //显示方式
+            mode: 'scroller', //日期选择模式
+            lang: 'zh',
+            dateFormat: 'yyyy-mm-dd', // 日期格式
+            dateOrder: 'yymmdd', //面板中日期排列格式
+            endYear: 2020 //结束年份
+        };
+        $('input:jqmData(role="datebox")').mobiscroll(opt);
+
+
+        $("#AppointmentField").show();
+
+        $("#Phone1").attr("readonly", "readonly");
+
+
+        var l1str = "";
+        if (way.length > 1) {
+            l1str += "<option value=''></option>";
+        }
+        for (var i = 0; i < way.length; i++) {
+            l1str += "<option value='" + way[i].L1 + "'>" + way[i].L1 + "</option>";
+        }
+        $("#WayL1").html(l1str);
+        $("#WayL1").change(L1Change);
+
+        var wayValues = $("#Way").val().split('-');
+
+        if (wayValues.length > 0) {
+            $("#WayL1").val(wayValues[0]);
+            //L1Change();
+            if (wayValues.length > 1) {
+                $("#WayL2").val(wayValues[1]);
+            }
+        }
+        //$("#WayL2").change(function() {
+        //$("#Way").val($("#WayL1").val()+'-'+$("#WayL2").val());
+        //});
+    });
+    function Create() {
+        var l1 = $("#WayL1").val();
+        var l2 = $("#WayL2").val();
+        if (l2 != undefined && l2 != "") {
+            $("#Way").val(l1 + '-' + l2);
+        } else {
+            $("#Way").val(l1);
+        }
+        post('@Request.Url.AbsoluteUri', $('form').serialize());
+    }
+    function Back() {
+        load('@Request.Url.AbsoluteUri.Replace("Create","ToCreate")');
+    }
+    function L1Change() {
+
+        var l1 = $("#WayL1").val();
+        for (var i = 0; i < way.length; i++) {
+            if (l1 == way[i].L1) {
+                var l2str = "";
+                if (way[i].L2.length == 0) {
+                    l2str += "<option value=''></option>"
+                }
+                for (var j = 0; j < way[i].L2.length; j++) {
+                    l2str += "<option value='" + way[i].L2[j] + "'>" + way[i].L2[j] + "</option>";
+                }
+                $("#WayL2").html(l2str);
+                $("#WayL2").val(0);
+                $("#WayL2").selectmenu("refresh");
+            }
+        }
+
+    }
+    //function RoomTypeChanged() {
+    //    var roomtype = "";
+    //    $('input[name="RoomType"]:checked').each(function () {
+    //        if (roomtype == "")
+    //            roomtype += $(this).val();
+    //        else
+    //            roomtype += ("," + $(this).val());
+    //    });
+    //    //alert(roomtype);
+    //    $("#RoomType").val(roomtype);
+    //}
+
+    //function PhoneCheck(phone) {
+    //    if (phone != null && phone != "") {
+    //        $.post("./PhoneCheck/0", { phone: phone }, function (res) {
+    //            if (!res.success) {
+    //                alert(res.obj);
+    //            }
+    //        });
+    //    }
+    //}
+    function ShowAppointment(checked) {
+        //$("#AppointmentField").toggle();
+        if (checked) {
+            $("#AppointmentField").show();
+        }
+        else {
+            $("#AppointmentField").hide();
+        }
+    }
+
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <h4>@ViewBag.Msg</h4>
+    if (ViewBag.Type == 4)
+    {
+        @Html.MyMobileTextFor(m => m.CallPerson)
+    }
+
+    @Html.MyMobileTextFor(m => m.Name)
+    <div class="ui-field-contain">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <legend>性别<font color="red">*</font></legend>
+            <label class="radio"><input name="Sex" type="radio" value="男" checked />男</label>
+            <label class="radio"><input name="Sex" type="radio" value="女" />女</label>
+        </fieldset>
+    </div>
+    @Html.ValidationMessageFor(m => m.Sex)
+    @Html.MyMobileTextFor(m => m.Phone1)
+    @Html.MyMobileTextFor(m => m.Phone2)
+    <div class="ui-field-contain">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <legend>渠道<font color="red">*</font></legend>
+            <select id="WayL1"></select><select id="WayL2"></select>
+        </fieldset>
+    </div>
+    @Html.HiddenFor(m => m.Way)
+    @Html.ValidationMessageFor(m => m.Way)
+    @Html.MyMobileTextFor(model => model.WayExtend)
+    <div class="ui-field-contain">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <legend>产品类型<font color="red">*</font></legend>
+            @foreach (string s in DepartmentBLL.GetRoomType(Model.ProjectId))
+            {
+                <label class="radio-inline"><input name="RoomType" type="radio" checked="@s.Equals(Model.RoomType)" value="@s" /> @s</label>
+            }
+        </fieldset>
+    </div>
+    @Html.ValidationMessageFor(m => m.RoomType)
+    if (ViewBag.Type == 2)
+    {
+        @Html.MyMobileDropdownFor(m => m.GroupId, Project.GetSalesGroup(Model.ProjectId).ToSelectLists(false));
+    }
+    @Html.MyMobileTextAreaFor(model => model.Remark, 3)
+    <div id="AppointmentField" data-role="fieldcontain" style="display:none;">
+        <h4>
+            邀约信息
+            @if (ViewBag.Type == 1 || ViewBag.Type == 2)
+            {
+                <text>(可选)</text>
+            }
+        </h4>
+        <div class="ui-field-contain">
+            <fieldset data-role="controlgroup">
+                <legend>邀约类型</legend>
+                @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
+                {
+                    <label class="radio"><input type="radio" name="AppointmentType" value="@s.Value" checked="@s.Value.Equals(Model.AppointmentType)" />@s.Text</label>
+
+                }
+                <label class="radio"><input type="radio" name="AppointmentType" />无</label>
+            </fieldset>
+        </div>
+        @Html.ValidationMessageFor(m => m.AppointmentType)
+        @Html.MyMobileDateTimeFor(model => model.AppointmentPlanTime)
+        @Html.MyMobileTextFor(model => model.AppointmentDetail)
+        <input type="hidden" value="@ViewBag.Type" name="type" id="type" />
+    </div>
+    <p style="text-align:center"><input type="button" value="确认" onclick="Create();" /> @MyControls.Btn("取消", "Back();")</p>
+
+}

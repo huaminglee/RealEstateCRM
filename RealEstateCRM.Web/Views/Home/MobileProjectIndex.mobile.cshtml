@@ -1,0 +1,50 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+<script>
+    
+</script>
+<div data-role="content">
+    
+    <div class="ui-grid-a">
+        <div class="ui-block-a"><a data-role="button" onclick="load('invitealert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/InviteList")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/play-all.png")"  /><br />计划提醒&完成
+                                </a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="load('transferalert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/TransferAlert")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/appointment-urgent.png")"  /><br />预警
+                                </a></div>
+        <div class="ui-block-a"><a data-role="button" onclick="load('invitelist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/InviteList")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/order_159.png")"  /><br />客户邀约表
+                                </a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="load('teams','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceTeamReport")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/transfer-document.png")"  /><br />T间排名
+                                </a></div>
+        <div class="ui-block-a"><a data-role="button" onclick="load('clientlist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/List")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/search.png")" /><br />客户查询
+                                </a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/CreateClient")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/plus.png")" /><br />客户录入
+                                </a></div>
+        <div class="ui-block-a"><a data-role="button" onclick="load('invitealert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/TransferBatch")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/play-all.png")"  /><br />客户分配
+                                </a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/ProjectReport")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/plus.png")" /><br />统计报表
+                                </a></div>
+    </div>
+</div>
+<script>
+    getMenu('menupage_@projectid', { isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+</script>
+@section Footer{
+    <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+        @@Copyright 上海虬溪软件 2013
+    </div>
+}

@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<log4net>
+	<logger name="ErrorLog">
+		<level value="WARN"/>
+		<appender-ref ref="ErrorAppender"/>
+		<appender-ref ref="AdoNetAppender"/>
+	</logger>
+	<logger name="InfoLog">
+		<level value="INFO"/>
+		<appender-ref ref="InfoAppender"/>
+		<appender-ref ref="AdoNetAppender"/>
+	</logger>
+	<!-- Appender for Level : warn error fatal-->
+	<appender name="ErrorAppender" type="log4net.Appender.RollingFileAppender">
+		<param name="File" value=".\\Log\\Error"/>
+		<param name="AppendToFile" value="true"/>
+		<param name="MaxFileSize" value="10240"/>
+		<param name="MaxSizeRollBackups" value="100"/>
+		<param name="StaticLogFileName" value="false"/>
+		<param name="DatePattern" value="yyyyMMdd&quot;.htm&quot;"/>
+		<param name="RollingStyle" value="Date"/>
+		<layout type="log4net.Layout.PatternLayout">
+			<param name="ConversionPattern" value="&lt;HR COLOR=blue&gt;%n日志时间：%d [%t] &lt;BR&gt;%n日志级别：%-5p &#xA;   &lt;BR&gt;%n日 志 类：%c [%x] &lt;BR&gt;%n%m &lt;BR&gt;%n &lt;HR Size=1&gt;"/>
+		</layout>
+	</appender>
+	<!-- Appender fro Level : debug,info -->
+	<appender name="InfoAppender" type="log4net.Appender.RollingFileAppender">
+		<param name="File" value=".\\Log\\Info"/>
+		<param name="AppendToFile" value="true"/>
+		<param name="MaxFileSize" value="10240"/>
+		<param name="MaxSizeRollBackups" value="100"/>
+		<param name="StaticLogFileName" value="false"/>
+		<param name="DatePattern" value="yyyyMMdd&quot;.htm&quot;"/>
+		<param name="RollingStyle" value="Date"/>
+		<layout type="log4net.Layout.PatternLayout">
+			<param name="ConversionPattern" value="&lt;HR COLOR=blue&gt;%n日志时间：%d [%t] &lt;BR&gt;%n日志级别：%-5p &#xA;   &lt;BR&gt;%n日 志 类：%c [%x] &lt;BR&gt;%n%m &lt;BR&gt;%n &lt;HR Size=1&gt;"/>
+		</layout>
+	</appender>
+	<!--Appender for ADO -->
+	<appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+		<bufferSize value="1" />
+		<connectionType value="System.Data.SqlClient.SqlConnection, System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+		<commandText value="INSERT INTO Log ([Date],[Thread],[Level],[Logger],[Message],[Exception]) VALUES (@log_date, @thread, @log_level, @logger, @message, @exception)" />
+		<parameter>
+			<parameterName value="@log_date" />
+			<dbType value="DateTime" />
+			<layout type="log4net.Layout.RawTimeStampLayout" />
+		</parameter>
+		<parameter>
+			<parameterName value="@thread" />
+			<dbType value="String" />
+			<size value="255" />
+			<layout type="log4net.Layout.PatternLayout">
+				<conversionPattern value="%thread" />
+			</layout>
+		</parameter>
+		<parameter>
+			<parameterName value="@log_level" />
+			<dbType value="String" />
+			<size value="50" />
+			<layout type="log4net.Layout.PatternLayout">
+				<conversionPattern value="%level" />
+			</layout>
+		</parameter>
+		<parameter>
+			<parameterName value="@logger" />
+			<dbType value="String" />
+			<size value="255" />
+			<layout type="log4net.Layout.PatternLayout">
+				<conversionPattern value="%logger" />
+			</layout>
+		</parameter>
+		<parameter>
+			<parameterName value="@message" />
+			<dbType value="String" />
+			<size value="4000" />
+			<layout type="log4net.Layout.PatternLayout">
+				<conversionPattern value="%message" />
+			</layout>
+		</parameter>
+		<parameter>
+			<parameterName value="@exception" />
+			<dbType value="String" />
+			<size value="2000" />
+			<layout type="log4net.Layout.ExceptionLayout" />
+		</parameter>
+	</appender>
+</log4net>

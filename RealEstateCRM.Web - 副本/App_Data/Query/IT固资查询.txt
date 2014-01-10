@@ -1,0 +1,34 @@
+{
+"Name":"IT固资查询",
+MainTable:{"Name":"Asset","TableName":"Assets","Alias":"a","Sql":""},
+TableList:[
+        {"Name":"Department","TableName":"Departments","Alias":"c","Sql":"","On":" on a.storeid=c.id","IsDefault":"true"}
+		
+
+	],
+"FieldList":[
+    {"Name":"内部编码", "FieldName":"id",  "Alias":"", "TableAlias":"a","IsHidden":true}, 
+	{"Name":"名称",   "FieldName":"name",            "TableAlias":"a","IsDefault":true}	, 
+	{"Name":"序列号",   "FieldName":"sn",            "TableAlias":"a","IsDefault":true}, 
+	{"Name":"规格",   "FieldName":"spec",            "TableAlias":"a","IsDefault":true}, 
+	{"Name":"供应商",   "FieldName":"supplier",            "TableAlias":"a","IsDefault":true}, 
+	{"Name":"状态", width:40,  "FieldName":"state",  FunctionStr:"case a.state when 0 then '在用' when 1 then '会计报废' when 2 then '报废' when 3 then '售出' else '' end",Alias:"state", "TableAlias":"a","IsDefault":true}, 
+	{"Name":"门店",   "FieldName":"name", Alias:"store",           "TableAlias":"c"}, 
+	{"Name":"备注",   "FieldName":"remark",            "TableAlias":"a"}, 
+	
+	],
+FilterList:[
+{Name:"Right",BuildType:"S",Sql:"(client.saleid={0} or client.techid={0})"},
+    {Name:"name",FieldFullName:"a.name" ,BuildType:"P",Sql:"(a.name like @name or a.brand like @name or a.spec like @name)"},
+	{Name:"catalog",FieldFullName:"a.catalog" ,BuildType:"P",Sql:"a.catalog like @catalog"},
+	{Name:"remark",FieldFullName:"a.remark" ,BuildType:"P",Sql:"a.remark like @remark"},
+	{Name:"sn",FieldFullName:"a.sn" ,BuildType:"P",Sql:"a.sn like @sn"},
+	{Name:"supplier",FieldFullName:"a.supplier" ,BuildType:"P",Sql:"a.supplier like @supplier"},
+	{Name:"assetno",FieldFullName:"a.assetno" ,BuildType:"P",Sql:"(a.assetno like @assetno or a.oldassetno like @assetno)"},
+	{Name:"buydatebegin",FieldFullName:"a.buydate" ,BuildType:"P",Sql:"a.buydate>= @buydatebegin"},
+	{Name:"buydateend",FieldFullName:"a.buydate" ,BuildType:"P",Sql:"a.buydate <= @buydateend"},
+    {Name:"company",FieldFullName:"a.companyid" ,BuildType:"P",Sql:"a.companyid = @company"},
+	{Name:"area",FieldFullName:"a.area" ,BuildType:"P",Sql:"a.area = @area"},
+    {Name:"user",FieldFullName:"u.chinesename" ,BuildType:"P",Sql:"(au.location like @user or u.adname like @user or u.chinesename like @user or u.englishname like @user)"}
+    ]
+}

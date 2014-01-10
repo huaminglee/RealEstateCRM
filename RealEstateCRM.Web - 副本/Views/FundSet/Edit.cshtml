@@ -1,0 +1,29 @@
+﻿@model OUDAL.Fund
+
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+    
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+   
+}); 
+</script>
+<div class="well" style="width:650px;margin:0px auto" >
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>基金信息</legend>
+        @Html.MyTextFor(model => model.Name)
+@Html.MyEnumFor(model => model.State,typeof(FundState))
+@Html.MyDateFor(model=>model.CreateDate)
+@Html.MyTextAreaFor(model => model.Remark,3)
+        
+    </fieldset>
+    @MyControls.FormBtn(false)
+}
+</div>
+

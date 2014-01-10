@@ -1,0 +1,65 @@
+﻿@model OUDAL.Order
+
+@{
+    if (ViewBag.Type == 1)
+    {
+        ViewBag.Title = "大定信息编辑";
+    }
+    if (ViewBag.Type == 2)
+    {
+        ViewBag.Title = "签约信息编辑";
+    }
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    });
+</script>
+<style>
+    .datepicker {
+        position: relative;
+        z-index: 1001;
+    }
+</style>
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.GroupId)
+        @Html.HiddenFor(model => model.ClientId)
+        <fieldset>
+            @if (ViewBag.Type == 1)
+            {
+                <legend>大定信息</legend>
+            }
+            else if (ViewBag.Type == 2)
+            {
+                <legend>签约信息</legend>
+            }
+            <div class="form-group">
+                <label>客户姓名</label>
+                <input type="text" disabled value="@Client.GetName(Model.ClientId)" />
+            </div>
+            @if (ViewBag.Type == 1)
+            {
+                @Html.MyDateFor(model => model.OrderTime)
+            }
+            else if (ViewBag.Type == 2)
+            {
+                @Html.MyDateFor(model => model.SignTime)
+            }
+            @Html.MyTextFor(model=>model.Room)
+            @Html.MyTextAreaFor(model => model.Remark, 3)
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+        if(ViewBag.Type == 2)
+         {
+             <div class="alert alert-dismissable alert-danger">
+                这里是直签。 如是大定转合同，请在客户信息页面上，大定合同列表中找到大定记录，点击记录右侧的“签约”按钮。
+             </div>
+        }
+    }
+</div>

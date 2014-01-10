@@ -1,0 +1,41 @@
+﻿@model OUDAL.Card
+
+@{
+    ViewBag.Title = "客户卡升级";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    });
+</script>
+<style>
+    .datepicker {
+        position: relative;
+        z-index: 1001;
+    }
+</style>
+<div class="well" style="width:650px;margin:0px auto">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.GroupId)
+        @Html.HiddenFor(model => model.ClientId)
+        <fieldset>
+            <legend>客户卡信息</legend>
+            <div class="form-group">
+                <label>客户姓名</label>
+                <input type="text" disabled value="@Client.GetName(Model.ClientId)" />
+            </div>
+            <div class="form-group">
+                <label>小卡时间</label>
+                @Html.TextBox("SmallTime",Model.SmallTime.ToString("yyyy-MM-dd"), new { @readonly = "readonly" })
+            </div>
+            @Html.MyDateFor(model => model.BigTime)
+            @Html.MyTextAreaFor(model => model.Remark, 3)
+        </fieldset>
+        <p style="text-align:center">@MyControls.SubmitBtn("保存") @MyControls.Btn("取消", "window.close()")</p>
+    }
+</div>

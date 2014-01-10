@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "客户转移预警明细表";
+    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+
+}
+@section Main{
+   
+  
+    <div data-role="content">
+        
+    </div>
+    <div class="ui-widget ui-widget-content ui-corner-all searchdiv">
+        转移类型：
+        @Html.MyDropdown("Type", Project.GetOutTimeType(false))
+        @MyControls.SearchBtn()
+    </div>
+    <div id="resulttable">
+
+    </div>
+    <script type="text/template" id="tpl">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:100px">姓名</th>
+                    <th style="width:80px">销售组</th>
+                    <th style="width:120px">转移类型</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="display:none">
+                    <td></td>
+                </tr>
+                <%for(var i=0;i
+                <obj.length;i++){var item=obj[i]; %>
+
+                    <tr onclick="showClient(<%=item.ClientId%>)">
+                        <td><%=item.Name%></td>
+                        <td><%=item.GroupName%></td>
+                        <td><%=item.Type%></td>
+                    </tr>
+
+                    <%}%>
+            </tbody>
+        </table>
+    </script>
+    <script type="text/template" id="tpl2">
+        <td><%=item.Name%></td>
+        <td><%=showIntent(item.Intent)%></td>
+        <td><%=item.PlanMoney%></td>
+        <td><%=item.IntentMoney%></td>
+        <td><%=item.LastPlan%></td>
+        <td><%=item.LastAction%></td>
+        <td><%=item.ThisPlan%></td>
+
+    </script>
+      <script type="text/javascript">
+        
+          
+        
+        var list;
+        function SearchClick() {
+            var PostData = {};
+            PostData.Type=$("#Type").val();
+            $.post("@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/AlertListQuery")", PostData, function (respDate) {
+                if (respDate.success == true) {
+                    list = respDate.obj;
+                    showEnters(list);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+        function showEnters(obj) {
+            var element = $('#resulttable');
+            var tpl = $('#tpl').html();
+            var html = _.template(tpl, obj);
+            element.html(html);
+        }
+       function showClient(id) {
+            loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/View/")' + id);
+        }
+        function Refresh(){
+            SearchClick();
+        }
+        $(function () {
+            window.onunload = function () {
+                window.opener.Refresh();
+            };
+        });
+        var PostData = {};
+            SearchClick();
+    </script>
+}

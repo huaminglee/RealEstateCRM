@@ -1,0 +1,108 @@
+﻿@model OUDAL.Client
+@{
+    ViewBag.Title = "创建客户";
+    if (ViewBag.Projects == null)
+    {
+        Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    }
+
+}
+@section Main{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$("#AllPhone").attr("placeholder", "手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式");
+        });
+
+        function add() {
+            var _type = '@ViewBag.Type';
+            @if (ViewBag.Projects == null)
+            {
+                <text>load("http://" + '@Request.Url.Authority' + '@Request.Url.AbsolutePath' + "/../" + "./Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));</text>
+            }
+            else
+            {
+                <text>load("http://" + '@Request.Url.Authority' + '@Request.Url.AbsolutePath' + "/../" + "../Project/" +@Model.ProjectId +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));</text>
+            }
+            $("#Name").val('');
+            $("#AllPhone").val('');
+        }
+    </script>
+    <div data-role="content">
+        @using (Html.BeginForm())
+        {
+
+            if (ViewBag.Projects != null)
+            {
+                @Html.MyMobileDropdownFor(m => m.ProjectId, ViewBag.Projects as List<SelectListItem>, appendBlank: false)
+            }
+            @Html.MyMobileTextFor(m => m.Name)
+            @Html.MyMobileTextFor(m => m.AllPhone)
+            <p style="text-align: center">
+                <input type="button" value="查找" onclick="post('@Request.Url.AbsoluteUri',$('form').serialize());" />
+                @if (ViewBag.Button)
+                {
+                    @MyControls.Btn("新增客户", " add(); ")
+                }
+            </p>
+
+        }
+        <p>备注：手机号码必须是11位，外地固话请使用 区号-电话号码 这样的格式</p>
+
+        @if (ViewBag.Button == true)
+        {
+            if (ViewBag.Clients1.Count > 0)
+            {
+                <div data-role="fieldcontain"><p style="color: red">找到完全符合条件的客户,无法创建新客户</p></div>
+            }
+            else if (ViewBag.Clients2 != null && ViewBag.Clients2.Count > 0)
+            {
+                <div data-role="fieldcontain"><p style="color: red">找到相似条件的客户,请核对</p></div>
+            }
+        }
+
+        @if (ViewBag.Show)
+        {
+            <div id="Clients">
+                @if (ViewBag.Clients1.Count != 0)
+                {
+                    <table class="table">
+                        <tr><th width="50px">姓名</th><th width="100px">电话</th><th>销售组</th></tr>
+                        @foreach (ClientView c in ViewBag.Clients1)
+                        {
+                            <tr>
+                                <td align="center"><a onclick="loadandchange(base_url+'@(Request.Url.AbsolutePath+"/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center">@c.Phone1<br />@c.Phone2</td>
+                                <td align="center">@c.GroupName</td>
+                            </tr>
+                        }
+                    </table>
+                }
+                @if (ViewBag.Clients2 != null && ViewBag.Clients2.Count != 0)
+                {
+                    <table class="table">
+                        <tr><th width="50px">姓名</th><th width="100px">电话</th><th>销售组</th></tr>
+                        @foreach (ClientView c in ViewBag.Clients2)
+                        {
+                            <tr>
+                                <td align="center"><a onclick="loadandchange(base_url+'@(Request.Url.AbsolutePath+"/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center">@c.MarkedPhone1<br /> @c.MarkedPhone2 </td>
+                                <td align="center">@c.GroupName</td>
+                            </tr>
+                        }
+                    </table>
+                }
+            </div>
+        }
+    </div>
+}
+
+@*@section Footer{
+        <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
+            <button onclick="load('@("http://"+Request.Url.Authority)');">返回主页</button>
+        </div>
+    }*@

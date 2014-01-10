@@ -13,36 +13,36 @@
 
             @if (IsProject)
             {
-                <li><a onclick="loadandchange('@("http://"+Request.Url.Authority+"/Project/"+projectid.ToString()+"/Home/ProjectIndex")')">首页</a></li>
+                <li><a onclick="loadandchange('@("http://"+Request.Url.Authority+"/crm/Project/"+projectid.ToString()+"/Home/MobileProjectIndex")')">首页</a></li>
                 if (UserInfo.CurUser.HasRight("客户管理"))
                 {
                     <li data-role="list-divider">
                         客户管理
                     </li>
-                    <li><a onclick="loadandchange('@("http://"+Request.Url.Authority+"/Project/"+projectid.ToString()+"/Client/List")')">客户列表</a></li>
+                    <li><a onclick="loadandchange('@("http://"+Request.Url.Authority+"/crm/Project/"+projectid.ToString()+"/Client/List")')">客户列表</a></li>
                     if (UserInfo.CurUser.HasRight("客户管理-销售员"))
                     {
-                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=1")')">来电客户登记</a></li>
+                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ToCreate?type=1")')">来电客户登记</a></li>
                     }
                     if (UserInfo.CurUser.HasRight("客户管理-销售员"))
                     {
-                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=5")')">销售拓客登记</a></li>
+                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ToCreate?type=5")')">销售拓客登记</a></li>
                     }
                     if (UserInfo.CurUser.HasRight("客户管理-前台"))
                     {
-                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=2")')">直访客户登记</a></li>
+                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ToCreate?type=2")')">直访客户登记</a></li>
                     }
                     if (UserInfo.CurUser.HasRight("客户管理-前台"))
                     {
-                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=3")')">中介客户报备</a></li>
+                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ToCreate?type=3")')">中介客户报备</a></li>
                     }
                     if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
                     {
-                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/TransferBatch")')">客户分配</a></li>
+                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/TransferBatch")')">客户分配</a></li>
                     }
                     @*if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
                     {
-                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ClientConfirmBatch")')">电话中心客户确认</a></li>
+                        <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ClientConfirmBatch")')">电话中心客户确认</a></li>
                     }*@
 
                 }
@@ -51,10 +51,10 @@
                     <li data-role="list-divider">
                         统计报表
                     </li>
-                    @*<li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Report/ClientStateReport")')">客户统计表</a></li>*@
-                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ClientTransferIn")')">客户转入表</a></li>
-                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Client/ClientTransferOut")')">客户转出表</a></li>
-                    @*<li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Project/" + projectid.ToString() + "/Report/CallCenterList")')">电话中心客户统计</a></li>*@
+                    @*<li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Report/ClientStateReport")')">客户统计表</a></li>*@
+                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ClientTransferIn")')">客户转入表</a></li>
+                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/ClientTransferOut")')">客户转出表</a></li>
+                    @*<li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Report/CallCenterList")')">电话中心客户统计</a></li>*@
                 }
                 @*if (UserInfo.CurUser.HasRight(""))
                 {
@@ -72,8 +72,8 @@
                 if (UserInfo.CurUser.HasRight("客户管理"))
                 {
                     <li data-role="list-divider">电话中心</li>
-                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Client/ToCreate?projectid=0&type=4")')">客户报备</a></li>
-                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority + "/Report/CallCenterList")')">客户清单</a></li>
+                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Client/ToCreate?projectid=0&type=4")')">客户报备</a></li>
+                    <li><a onclick="loadandchange('@("http://" + Request.Url.Authority+"/crm/Report/CallCenterList")')">客户清单</a></li>
                 }
             }
         </ul>

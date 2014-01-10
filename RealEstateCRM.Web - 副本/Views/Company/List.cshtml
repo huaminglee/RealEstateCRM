@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "公司清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+    
+    
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("ListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");    
+        //grid.setCell(rowid,"FoodType",  TypeName(aData.FoodType));
+        //grid.setCell(rowid,"State", StateName(aData.State));
+     }
+    
+}); 
+    var colModelGrid = [{ name: 'Id', key: true, index: 'id', width: 1, align: 'left', hidden: true }
+   
+,{ name: 'Name',label:"名称", index: 'a.Name', align: 'left' ,width:300}
+, { name: 'AccountNumber', label: "账号", index: 'a.AccountNumber', align: 'left', width: 100 }
+,{ name: 'Remark',label:"备注", index: 'a.Remark', align: 'left' ,width:300}];
+function rowclick(id)
+{
+    OpenFullWindow("./View/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./Edit/0");
+}
+function SearchClick()
+{ 
+        $('#listGrid').appendPostData({ Name: $("#Name").val()});  
+
+    $('#listGrid').trigger('reloadGrid');
+}        
+function ShowHidSearchDiv()
+    {
+        $("#SearchDiv").toggle();
+        if($("#SearchDiv").css('display')=='none')
+        {
+            $("#btnShowHide1").val("打开搜索条件");
+            $("#btnShowHide2").val("打开搜索条件");            
+        }else{
+            $("#btnShowHide1").val("关闭搜索条件");
+            $("#btnShowHide2").val("关闭搜索条件");
+        }        
+    }
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+@Html.ShortInput("Name", "名 称:")
+@MyControls.SearchBtn()
+@MyControls.Btn("新增","AddNew()")
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+
