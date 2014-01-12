@@ -466,6 +466,7 @@ namespace RealEstateCRM.Web.Controllers
 
         public ActionResult View(int id)
         {
+            
             Client c = db.Clients.Find(id);
             List<ClientActivity> ContactList = new List<ClientActivity>();
             List<ClientActivity> AppointmentList = new List<ClientActivity>();
@@ -626,10 +627,10 @@ namespace RealEstateCRM.Web.Controllers
                     }
                 }
                 db.SaveChanges();
-                if (!string.IsNullOrEmpty(ismobile))
-                {
-                    return Redirect("../View/" + client.Id.ToString());
-                }
+                //if (!string.IsNullOrEmpty(ismobile))
+                //{
+                //    return Redirect("../View/" + client.Id.ToString());
+                //}
 
                 return Redirect("~/Content/close.htm");
             }

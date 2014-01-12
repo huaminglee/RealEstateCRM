@@ -2,7 +2,18 @@
 
 @{
     ViewBag.Title = "客户信息编辑";
-    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_EditLayout.mobile.cshtml";
+      var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+
+    if (Model.Id == 0)
+    {
+        ViewBag.BackUrl = MvcApplication.RootPath + "/Project/" + projectid + "/Home/CreateClient";
+    }
+    else
+    {
+        ViewBag.BackUrl = @Request.Url.AbsoluteUri.Replace("Edit", "View");
+    }
 }
 
 <script type="text/javascript">
@@ -22,10 +33,10 @@
     }
 
     function Submit() {
-        post('@Request.Url.AbsoluteUri', $('form').serialize());
+        post('','@Request.Url.AbsoluteUri', $('#clientview form').serialize());
     }
     function Back() {
-        load('@Request.Url.AbsoluteUri.Replace("Edit","View")');
+        loadCurPage('@Request.Url.AbsoluteUri.Replace("Edit","View")');
     }
 </script>
 @using (Html.BeginForm())

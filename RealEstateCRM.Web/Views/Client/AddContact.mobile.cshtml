@@ -20,10 +20,11 @@
         $('input:jqmData(role="datebox")').mobiscroll(opt);
     });
     function Submit() {
-        post('@Request.Url.AbsoluteUri', $('form').serialize());
+        $('form').submit();
+        //post('clientcontact','@Request.Url.AbsoluteUri', $('#clientcontact form').serialize());
     }
     function Back() {
-        load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("AddContact"))+"View/"+Model.ClientId)');
+        window.history.go(-1);
     }
 </script>
 @using (Html.BeginForm())

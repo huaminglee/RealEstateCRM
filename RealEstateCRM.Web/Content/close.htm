@@ -2,19 +2,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-<script type="text/javascript">
-    var father = window.opener;
-    if (father) { father.location.reload();
-       window.close(); }
-    if (parent) {
-        if (parent.CloseWin) {
-            parent.CloseWin();
-        } else {
-            parent.location.reload();
+    <script type="text/javascript">
+        alert('close.htm');
+        var father = window.opener;
+        alert(father);
+        alert(father.curUrl);
+        if (father) {
+            if (father.Reload) {
+                father.Reload();
+            } else if (father.SearchClick) {
+                father.SearchClick();
+            } else {
+                father.location.reload();
+            }
+            window.close(); }
+        else if (parent) {
+            if (parent.CloseWin) {
+                parent.CloseWin();
+            } else {
+                parent.location.reload();
+            }
         }
-    }
-   
-</script>
+
+    </script>
 </head>
 <body>
 

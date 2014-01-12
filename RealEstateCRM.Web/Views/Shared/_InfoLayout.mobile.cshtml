@@ -16,27 +16,71 @@
         isProject = true;
     }
 }
-<script>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>客户关系管理</title>
+    <link href="@(MvcApplication.RootPath)/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
+    <script src="@(MvcApplication.RootPath)/Scripts/jquery-1.9.1.js"></script>
+    <script src="@(MvcApplication.RootPath)/Scripts/jquery.mobile-1.4.0.js"></script>
+    <script src="@(MvcApplication.RootPath)/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="@(MvcApplication.RootPath)/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="@(MvcApplication.RootPath)/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="@(MvcApplication.RootPath)/Scripts/MyJs.js"></script>
+    <script src="@(MvcApplication.RootPath)/Scripts/underscore-min.js"></script>
+    <script src="@(MvcApplication.RootPath)/Scripts/backbone-min.js"></script>
+    <link href="@(MvcApplication.RootPath)/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
+    <link href="@(MvcApplication.RootPath)/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" /> 
+    <style>
+        .dropup,
+        .dropdown {
+            position: relative;
+        }
 
-</script>
+        .dropdown-toggle {
+            *margin-bottom: -3px;
+        }
 
-<div data-role="header" data-add-back-btn="true" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
-    @if (!isProject)
-    {
-        <h3>公司</h3>
-        <a href="#menupage" class=" ui-btn-right" data-icon="gear" data-iconpos="right" data-transition="slide">菜单</a>
-    }
-    else
-    {
-        <h3>
-            @DepartmentBLL.GetNameById(int.Parse(projectid))
-        </h3>
+        .dropdown-toggle:active,
+        .open .dropdown-toggle {
+            outline: 0;
+        }
 
-        <a href="#menupage_@projectid" class=" ui-btn-right" data-icon="gear" data-iconpos="right" data-transition="slide">菜单</a>
-    }</div>
-<div data-role="content">
-    @RenderBody()
-    @RenderSection("Main", false)
-    @RenderSection("View", false)
-    @RenderSection("Footer", false)
-</div>
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            display: none;
+            float: right;
+            min-width: 160px;
+            margin: 2px 0 0;
+            list-style: none;
+            background-color: #ffffff;
+        }
+
+        .open {
+            *z-index: 1000;
+        }
+
+        .open > .dropdown-menu {
+            display: block;
+        }
+    </style>
+    <script>
+        $.mobile.ajaxEnabled = false;
+    </script>
+</head>
+<body>
+<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
+    <h3>@ViewBag.Title</h3>
+    
+        <a href="#" class=" ui-btn-right" data-icon="gear" data-iconpos="right" data-transition="slide" onclick='alert(window.openner.popupWin); window.openner.popupWin.close();'>关闭</a>
+    </div>
+    <div data-role="content">
+        <button onclick="window.href.location = '../../content/close.htm';">bac</button>
+        @RenderBody()
+        @RenderSection("Main", false)
+        @RenderSection("View", false)
+        @RenderSection("Footer", false)
+    </div>
+</body>

@@ -1,13 +1,13 @@
 ﻿@model OUDAL.Client
 @{
     ViewBag.Title = "客户信息";
-    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
 
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 
 }
-@section View{
+
 <script type="text/javascript">
     $(function () {
         var message = '@ViewBag.Message';
@@ -114,7 +114,7 @@
         <div data-role="controlgroup">
             @if (UserInfo.CurUser.HasRight("客户管理-客户编辑"))
             {
-            <button onclick="load('@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/Edit/" + Model.Id)');">修改</button>
+                <button onclick="loadCurPage('@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/Edit/" + Model.Id)');">修改</button>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-客户删除"))
             {
@@ -123,8 +123,8 @@
             }
 
 
-            <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/AddContact/0?clientid="+Model.Id)');">添加联系记录</button>
-            <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/AddAppointment/0?clientid=" + Model.Id)');">添加邀约记录</button>
+            <button onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/AddContact/0?clientid="+Model.Id)');">添加联系记录</button>
+            <button onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/AddAppointment/0?clientid=" + Model.Id)');">添加邀约记录</button>
 
             @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-小卡大卡"))
             {
@@ -328,10 +328,5 @@
 </div>
 }
 
-@*@section Footer{
-<div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
-    <button onclick="load('@Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.LastIndexOf(" />")).Replace("View", "List")');">返回客户列表</button>
-</div>
-}*@
 
 

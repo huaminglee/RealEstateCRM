@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>客户关系管理</title>
+    <link href="http://192.168.10.102/crm/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
+    <script src="http://192.168.10.102/crm/Scripts/jquery-1.9.1.js"></script>
+    <script src="http://192.168.10.102/crm/Scripts/jquery.mobile-1.4.0.js"></script>
+    <script src="http://192.168.10.102/crm/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="http://192.168.10.102/crm/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="http://192.168.10.102/crm/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://192.168.10.102/crm/Scripts/MyJs.js"></script>
+    <script src="http://192.168.10.102/crm/Scripts/underscore-min.js"></script>
+    <script src="http://192.168.10.102/crm/Scripts/backbone-min.js"></script>
+    <link href="http://192.168.10.102/crm/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
+    <link href="http://192.168.10.102/crm/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" /> 
+    <style>
+        .dropup,
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            *margin-bottom: -3px;
+        }
+
+            .dropdown-toggle:active,
+            .open .dropdown-toggle {
+                outline: 0;
+            }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            display: none;
+            float: right;
+            min-width: 160px;
+            margin: 2px 0 0;
+            list-style: none;
+            background-color: #ffffff;
+        }
+
+        .open {
+            *z-index: 1000;
+        }
+
+            .open > .dropdown-menu {
+                display: block;
+            }
+    </style>
+    <!--<link href="css/jquery.mobile.css" rel="stylesheet" type="text/css" />-->
+    <!--script src="js/jquery.js"></script>
+    <script src="js/jqueryMobile.js"></script>-->
+    <!--<script src="js/phonegap.js"></script>
+    <script src="js/main.js"></script>-->
+</head>
+<body>   
+      
+    <script type="text/javascript">
+        var baseUrl = "http://192.168.10.102/crm";
+        jQuery(document).ready(function ($) {           
+        });
+        function showLoader() {
+            $.mobile.loading('show', {
+                text: '加载中...', //加载器中显示的文字
+                textVisible: true, //是否显示文字
+                theme: 'b',        //加载器主题样式a-e
+                textonly: false,   //是否只显示文字
+                html: ""           //要显示的html内容，如图片等
+            });
+        }
+
+        function hideLoader() {
+            //隐藏加载器
+            $.mobile.loading('hide');
+        }
+         function loadCurPage(url) {
+
+             var page = $.mobile.activePage;
+             
+            showLoader();
+            page.load(url, function () {
+                //page.page("destroy").page();
+                //page.trigger("updatelayout");
+                page.enhanceWithin();
+                hideLoader();  
+            });
+        }
+    </script>
+ <!-- Start of first page: #one -->
+<div data-role="page" id="one">
+
+	<div data-role="header"  data-add-back-btn="true" >
+		<h1>Multi-page</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content" >
+		<h2>One</h2>
+
+		<p><a href="#two" class="ui-btn ui-shadow ui-corner-all">Show page "two"</a></p>
+		<p><a href="#popup" class="ui-btn ui-shadow ui-corner-all" data-rel="dialog" data-transition="pop">Show page "popup" (as a dialog)</a></p>
+	</div><!-- /content -->
+
+	<div data-role="footer" data-theme="a">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
+</div><!-- /page one -->
+
+<!-- Start of second page: #two -->
+<div data-role="page" id="two" data-theme="a" data-direction="reverse" >
+
+	<div data-role="header"  data-add-back-btn="true" >
+		<h1>Two</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<h2>Two</h2>
+	    <a href="#" onclick="loadCurPage('http://192.168.10.102/crm/Project/4/Client/View/14'); return false;">A</a>
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
+</div><!-- /page two -->
+
+<!-- Start of third page: #popup -->
+<div data-role="page" id="popup">
+
+	<div data-role="header" data-theme="b">
+		<h1>Dialog</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<h2>Popup</h2>
+		<p>I have an id of "popup" on my page container and only look like a dialog because the link to me had a <code>data-rel="dialog"</code> attribute which gives me this inset look and a <code>data-transition="pop"</code> attribute to change the transition to pop. Without this, I'd be styled as a normal page.</p>
+		<p><a href="#one" data-rel="back" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ui-icon-back ui-btn-icon-left">Back to page "one"</a></p>
+	</div><!-- /content -->
+
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
+</div><!-- /page popup -->
+</body>
+</html>

@@ -33,7 +33,7 @@
             @Html.ValidationSummary(true, "用户名或密码错误，请再试一次")
         </div>
         <div align="center">
-            <input type="button" data-inline="true" value="确 定" onclick="post('homePage','@Request.Url.AbsoluteUri', $('form').serialize());" /><input type="reset" data-inline="true" value="重置" />
+            <input type="button" data-inline="true" value="确 定" onclick="post('homePage','@Request.Url.AbsoluteUri', $('#homePage form').serialize());" /><input type="reset" data-inline="true" value="重置" />
         </div>
 
     }

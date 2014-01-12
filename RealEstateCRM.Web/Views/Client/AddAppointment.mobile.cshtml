@@ -20,7 +20,7 @@
         $('input:jqmData(role="datebox")').mobiscroll(opt);
     });
     function Submit() {
-        post('@Request.Url.AbsoluteUri', $('form').serialize());
+        post('@Request.Url.AbsoluteUri', $('#contact form').serialize());
     }
     function Back() {
         load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("AddAppointment"))+"View/"+Model.ClientId)');

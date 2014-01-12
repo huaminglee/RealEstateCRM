@@ -1,19 +1,19 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>å®¢æˆ·å…³ç³»ç®¡ç†</title>
-    <link href="http://192.168.10.102/crm/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
-    <script src="http://192.168.10.102/crm/Scripts/jquery-1.9.1.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/jquery.mobile-1.4.0.js"></script>
-    <script src="http://192.168.10.102/crm/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
-    <link href="http://192.168.10.102/crm/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
-    <script src="http://192.168.10.102/crm/bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/MyJs.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/underscore-min.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/backbone-min.js"></script>
-    <link href="http://192.168.10.102/crm/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
-    <link href="http://192.168.10.102/crm/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" />
+    <title>¿Í»§¹ØÏµ¹ÜÀí</title>
+    <link href="http://192.168.1.100/crm/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
+    <script src="http://192.168.1.100/crm/Scripts/jquery-1.9.1.js"></script>
+    <script src="http://192.168.1.100/crm/Scripts/jquery.mobile-1.4.0.js"></script>
+    <script src="http://192.168.1.100/crm/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="http://192.168.1.100/crm/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="http://192.168.1.100/crm/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://192.168.1.100/crm/Scripts/MyJs.js"></script>
+    <script src="http://192.168.1.100/crm/Scripts/underscore-min.js"></script>
+    <script src="http://192.168.1.100/crm/Scripts/backbone-min.js"></script>
+    <link href="http://192.168.1.100/crm/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
+    <link href="http://192.168.1.100/crm/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" />
     <style>
         .dropup,
         .dropdown {
@@ -53,15 +53,15 @@
     <!--<link href="css/jquery.mobile.css" rel="stylesheet" type="text/css" />-->
     <!--script src="js/jquery.js"></script>
     <script src="js/jqueryMobile.js"></script>-->
-    <script src="js/phonegap.js"></script>
-    <script src="js/main.js"></script>
+    <!--<script src="js/phonegap.js"></script>
+    <script src="js/main.js"></script>-->
 </head>
 <body>   
         <div data-role="page" id="menupage">
             
         </div>
     <script type="text/javascript">
-        var baseUrl = "http://192.168.10.102/crm";
+        var baseUrl = "http://192.168.1.100/crm";
         jQuery(document).ready(function ($) {
            
             load('homePage',baseUrl+'/Account/AppLogOn'); 
@@ -131,7 +131,19 @@
             //    $.mobile.changePage($('#page'), { transition: 'fade' });
             //});
         }
-         var pagestyle="<div data-role='page' data-url='#' data-add-back-btn='true' id='#'></div>";
+        var pagestyle = "<div data-role='page' data-url='#' data-add-back-btn='true' id='#'></div>";
+        var curPage;
+        var curUrl;
+        function Reload() {
+            
+            var page = curPage;
+            showLoader();
+            page.load(curUrl, function () {
+                page.page("destroy").page();
+                page.trigger("updatelayout");
+                hideLoader();  
+            });
+        }
         function load(pageName,url){
             var page = $("#" + pageName);
             //debugger;
@@ -152,8 +164,9 @@
                 hideLoader();
                 $.mobile.changePage(page, { transition: 'fade' });
                 curPage = page;
-                //window.location.href = "#" + pageName;
-            });
+        	    curUrl = url;
+        	    //window.location.href = "#" + pageName;
+        	});
 
         }
         function post(pageName,url, data) {
@@ -181,16 +194,16 @@
         }
         function showLoader() {
             $.mobile.loading('show', {
-                text: 'åŠ è½½ä¸­...', //åŠ è½½å™¨ä¸­æ˜¾ç¤ºçš„æ–‡å­—
-                textVisible: true, //æ˜¯å¦æ˜¾ç¤ºæ–‡å­—
-                theme: 'b',        //åŠ è½½å™¨ä¸»é¢˜æ ·å¼a-e
-                textonly: false,   //æ˜¯å¦åªæ˜¾ç¤ºæ–‡å­—
-                html: ""           //è¦æ˜¾ç¤ºçš„htmlå†…å®¹ï¼Œå¦‚å›¾ç‰‡ç­‰
+                text: '¼ÓÔØÖĞ...', //¼ÓÔØÆ÷ÖĞÏÔÊ¾µÄÎÄ×Ö
+                textVisible: true, //ÊÇ·ñÏÔÊ¾ÎÄ×Ö
+                theme: 'b',        //¼ÓÔØÆ÷Ö÷ÌâÑùÊ½a-e
+                textonly: false,   //ÊÇ·ñÖ»ÏÔÊ¾ÎÄ×Ö
+                html: ""           //ÒªÏÔÊ¾µÄhtmlÄÚÈİ£¬ÈçÍ¼Æ¬µÈ
             });
         }
 
         function hideLoader() {
-            //éšè—åŠ è½½å™¨
+            //Òş²Ø¼ÓÔØÆ÷
             $.mobile.loading('hide');
         }
     </script>

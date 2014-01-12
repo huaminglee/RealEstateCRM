@@ -22,7 +22,7 @@
         $("#BigTime").attr("readonly", "readonly");
     });
     function Submit() {
-        post('@Request.Url.AbsoluteUri', $('form').serialize());
+        post('@Request.Url.AbsoluteUri', $('#card form').serialize());
     }
     function Back() {
         load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("Card"))+"Client/View/"+Model.ClientId)');

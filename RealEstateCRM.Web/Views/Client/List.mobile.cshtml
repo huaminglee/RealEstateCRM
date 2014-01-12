@@ -1,7 +1,7 @@
 ﻿@model Client
 @{
     ViewBag.Title = "客户清单";
-    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 
@@ -11,7 +11,8 @@
    
     <div data-role="content">
         <ul data-role="listview" id="clientList" data-inset="true" data-filter="true" data-filter-placeholder="结果中搜索..."></ul>
-        <div data-role="popup" id="search" data-overlay-theme="b" data-theme="a">
+      
+         <div data-role="popup" id="search" data-overlay-theme="b" data-theme="a">
             <div data-role="header"><h3>查询条件</h3></div>
             <div role="main" class="ui-corner-bottom ui-content">
                 <form>
@@ -36,15 +37,24 @@
         </div>
     </div>
  <script type="text/javascript">
-        jQuery(document).ready(function () {
-           
-        });
+        //$( document ).on( "pagecreate", "#clientlist", function( event ) {
+            var currentPage = 1;
+            var totalPage = 1;
+            showLoader();
+            clientQuery();
+     // });
+            function Close() {
+                alert('');
+                popupWin.close();
+            }
         function clientQuery() {
-            var PostData = $('form').serialize();
+            var PostData = $('#clientlist form').serialize();
             var string = "";
-            $.post('@Request.Url.AbsoluteUri' + "/../ListQuery", PostData, function (res) {
+            $.post('@(MvcApplication.RootPath +"/Project/"+projectid+ "/Client/ListQuery")', PostData, function (res) {
                 res.rows.forEach(function (e) {
                     string += "<li><a onclick=\"load('clientview','@(Request.Url.AbsoluteUri + "/../View/")" + e.Id + "')\"><h3>" + e.Name + "</h3><p><strong>" + e.AllPhone + "</strong></p><p>" + e.GroupName + "</p></a></li>";
+                    //var u = '@(Request.Url.AbsoluteUri + "/../View/")' + e.Id;
+                   
                 });
                 if (string.length == 0) {
                     string += "<li>没有符合条件的客户</li>";
@@ -77,10 +87,7 @@
             clientQuery();
             $("#nextPage").removeClass("ui-btn-active");
         }
-        var currentPage = 1;
-        var totalPage = 1;
-         showLoader();
-            clientQuery();
+       
     </script>
 }
 @section Footer{

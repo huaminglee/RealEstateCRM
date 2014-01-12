@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "客户转移预警明细表";
-    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
 
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }

@@ -1,0 +1,17 @@
+index.html
+用load 和 post两个方法加载 page，给page一个page name
+
+如果用window.open，则是打开一个inAppBroswer 
+http://docs.phonegap.com/en/edge/cordova_inappbrowser_inappbrowser.md.html#close
+缺点：
+	打开时有短暂白屏现象，是构建broswer时的等待，不是网络等待
+	无法关闭自身，解决办法：父窗口用 var win=window.open(); 打开窗口用 window.opener.win.close(). 因为有跨域限制， 这种办法要求打开的是同一个域。 也就是说需要在local打开一个html，然后再load远程的html。
+优点： 新窗口，对原窗口影响小。 原有的controller中返回close.htm的方式可以继续使用（将close改为动态页面，根据不同方式分别返回普通close和mobile的close） 。 原来页面的加载，返回等业务逻辑可以继续保留。
+
+如果用新增page的方式
+客户编辑，客户查看，如果使用同一个pagename(clientview)；这样返回就返回到调用页面。但“取消”按钮就应该是重定向。（要定义一个mobile的submit 和cancel的helper，在mycontrol中），这种方式的问题在于，从客户查看页面到客户编辑页面，html没有改变，这时候按 back，就回到了上一个页面，而不是客户查看页面，如何解决？
+
+
+如果客户编辑在一个新页面中(比如clientedit)，就有如何返回的问题，比如返回查看页面到page:clientedit，那么返回按钮就回到clientview，这时候看的是旧查看页面。
+
+新增联系记录，如果也在同一个pagename中，就等同于edit。

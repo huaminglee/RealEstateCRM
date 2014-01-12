@@ -1,14 +1,8 @@
 ﻿@model OUDAL.Client
 @{
     ViewBag.Title = "创建客户";
-    if (ViewBag.Projects == null)
-    {
-        Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
-    }
-    else
-    {
-        Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
-    }
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+   
 
 }
 @section Main{
@@ -37,7 +31,7 @@
             @Html.MyMobileTextFor(m => m.Name)
             @Html.MyMobileTextFor(m => m.AllPhone)
             <p style="text-align: center">
-                <input type="button" value="查找" onclick="post('@Request.Url.AbsoluteUri',$('form').serialize());" />
+                <input type="button" value="查找" onclick="post('clientedit','@Request.Url.AbsoluteUri',$('#clientedit form').serialize());" />
                 @if (ViewBag.Button)
                 {
                     @MyControls.Btn("新增客户", " add(); ")

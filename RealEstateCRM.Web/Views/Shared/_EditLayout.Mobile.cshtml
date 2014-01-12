@@ -19,9 +19,9 @@
 
 </script>
 
-<div data-role="header" data-add-back-btn="true" data-direction="reverse"  data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
-    <a href="#" class=" ui-btn-left" data-icon="carat-l" data-iconpos="left" data-transition="slide" data-rel="back"
-       >Back1</a>
+<div data-role="header" data-add-back-btn="true" data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
+    <a href="#" class=" ui-btn-left" data-icon="carat-l" data-iconpos="left" data-transition="slide"
+       onclick="loadCurPage('@ViewBag.BackUrl');">back</a>
     @if (!isProject)
     {
         <h3>公司</h3>
@@ -33,9 +33,9 @@
             @DepartmentBLL.GetNameById(int.Parse(projectid))
         </h3>
 
-        <a href="#menupage_@projectid" class=" ui-btn-right" data-icon="grid" data-iconpos="right" data-transition="slide">菜单</a>
+        <a href="#menupage_@projectid" class=" ui-btn-right" data-icon="grid" data-iconpos="right" data-transition="slide">菜单?</a>
     }
-</div>
+</div> 
 @RenderBody()
 @RenderSection("Main", false)
 @RenderSection("Footer", false)

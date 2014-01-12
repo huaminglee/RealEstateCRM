@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.qiuxi.LvDiCRM;  
+package com.qiuxi.LvDiCRM;   
 
 import org.apache.cordova.CordovaActivity;
 

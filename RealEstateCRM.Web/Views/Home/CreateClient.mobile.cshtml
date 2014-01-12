@@ -4,7 +4,7 @@
 
 @{
     ViewBag.Title = "新增客户";
-    Layout = "~/Views/Shared/_MainListLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
@@ -14,23 +14,23 @@
 <div data-role="content">
     
     <div class="ui-grid-a">
-        <div class="ui-block-a"><a data-role="button" onclick="load('clientedit1','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=1")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/contact.png")"  /><br />来电客户登记
+        <div class="ui-block-a"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=1")')">
+                                    <img src="@(MvcApplication.RootPath  + "/Content/Images/contact.png")"  /><br />来电客户登记
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit2','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=2")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/user.png")"  /><br />直访客户登记
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=2")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/user.png")"  /><br />直访客户登记
                                 </a></div>
-        <div class="ui-block-a"><a data-role="button" onclick="load('clientedit3','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=3")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/phone.png")"  /><br />中介客户报备
+        <div class="ui-block-a"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=3")')">
+                                    <img src="@(MvcApplication.RootPath  + "/Content/Images/phone.png")"  /><br />中介客户报备
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit5','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=5")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/free_for_job.png")"  /><br />销售拓客登记
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=5")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/free_for_job.png")"  /><br />销售拓客登记
                                 </a></div>
        
     </div>
 </div>
 <script>
-    getMenu('menupage_@projectid', { isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+    
 </script>
 @section Footer{
     <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">

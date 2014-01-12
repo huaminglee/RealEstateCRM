@@ -131,7 +131,20 @@
             //    $.mobile.changePage($('#page'), { transition: 'fade' });
             //});
         }
-         var pagestyle="<div data-role='page' data-url='#' data-add-back-btn='true' id='#'></div>";
+        var pagestyle = "<div data-role='page' data-url='#' data-add-back-btn='true' id='#'></div>";
+        var curPage;
+        var curUrl;
+        function loadCurPage(url) {
+
+            var page = curPage;// $.mobile.activePage;
+            showLoader();
+            page.load(url, function () {
+                //page.page("destroy").page();
+                //page.trigger("updatelayout");
+                page.enhanceWithin();
+                hideLoader();  
+            });
+        }
         function load(pageName,url){
             var page = $("#" + pageName);
             //debugger;
@@ -144,16 +157,20 @@
         	//url=baseUrl+url;
         	page.load(url, function () {
                 try{
-                	page.page("destroy").page();
+                    page.page();
+                    page.enhanceWithin();
                 }catch(err){
-                	page.page();
+                    page.page();
+                    page.enhanceWithin();
                 }
-                page.trigger("updatelayout");
+        	    //page.trigger("updatelayout");
+        	    //page.enhanceWithin();
                 hideLoader();
                 $.mobile.changePage(page, { transition: 'fade' });
                 curPage = page;
-                //window.location.href = "#" + pageName;
-            });
+        	    curUrl = url;
+        	    //window.location.href = "#" + pageName;
+        	});
 
         }
         function post(pageName,url, data) {
@@ -193,6 +210,8 @@
             //隐藏加载器
             $.mobile.loading('hide');
         }
+
+        var popupWin;
     </script>
 </body>
 </html>
