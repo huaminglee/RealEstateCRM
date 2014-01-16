@@ -29,6 +29,10 @@
 {
     <input type="button" class="btn btn-primary" onclick="SearchClick();" value="查询" />
 }
+@helper MobileSearchBtn(string name)
+{
+    <input type="button" class="btn btn-primary" onclick="@("SearchClickFor"+name+"();")" value="查询" />
+}
 @helper PrintBtn(){
     <input type="button" class="btn btn-primary" value="打印" onclick="var printwindow = window.open(rootpath + 'home/output');  "/>
 }

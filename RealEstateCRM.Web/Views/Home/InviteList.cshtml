@@ -8,9 +8,6 @@
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
-<script>
-    
-</script>
 <div data-role="content">
     <h3>当日邀约</h3>
             <table class="table table-bordered table-striped">
@@ -30,7 +27,7 @@
                     <td style="text-align:right">
                         @if (@item.Num != 0)
                             {
-                            <a href="#" onclick="load('invitelist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/InviteList")?type=@item.Type')" >@item.Num</a>
+                            <a href="#" onclick="load('invitelist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/InviteList")?type=@item.Type')" >@item.Num</a>
                             }
                             else
                             {

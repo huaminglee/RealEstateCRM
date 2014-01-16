@@ -1,0 +1,196 @@
+﻿@{
+    ViewBag.Title = "项目排名";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+
+}
+@section Main{
+
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            var PostData = {};
+            $("#companyReport [name='DateFrom']").val('@ViewBag.Date1');
+            $("#companyReport [name='DateTo']").val('@ViewBag.Date2');
+            $('.btn').button();
+
+            SearchClickForPerformanceProject();
+        });
+        var projectreport = {};
+        projectreport.reportObj={};
+        projectreport.rateType = 0;
+        function SearchClickForPerformanceProject() {
+            var PostData = {};
+
+
+            PostData.DateFrom = $("#companyReport [name='DateFrom']").val();
+            if (PostData.DateFrom == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.DateTo = $("#companyReport [name='DateTo']").val();
+            if (PostData.DateTo == "") {
+                alert("请选择日期");
+                return;
+            }
+            $.post("@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceCompanyQuery")", PostData, function(respDate) {
+                if (respDate.success == true) {
+                    projectreport.reportObj = respDate.obj;
+                    showEntersForPerformanceProject();
+
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        
+        function SetRate(ratetype) {
+            projectreport.rateType = ratetype;
+            showEntersForPerformanceProject();
+        }
+
+        function showEntersForPerformanceProject() {
+            var list = new Array();
+            for (var i = 0; i < projectreport.reportObj.actList.length; i++) {
+                var actItem = projectreport.reportObj.actList[i];
+                var targetItem = null;
+                for (var j = 0; j < projectreport.reportObj.targetList.length; j++) {
+                    if (projectreport.reportObj.targetList[j].ProjectId == actItem.Id) {
+                        targetItem = projectreport.reportObj.targetList[j];
+                    }
+                }
+                var item = { Id: actItem.Id, Name: actItem.Name };
+                list.push(item);
+                var aNum1 = 0;
+                var aNum2 = 0;
+                var tNum1 = 0;
+                var tNum2 = 0;
+                switch (projectreport.rateType) {
+                    case 0:
+                        aNum1 = actItem.CallInNum;
+                        aNum2 = actItem.CallVisitNum;
+                        if (targetItem != null) {
+                            tNum1 = targetItem.CallInNum;
+                            tNum2 = targetItem.CallVisitNum;
+                        }
+                        break;
+                    case 1:
+                        aNum1 = actItem.VisitNum;
+                        aNum2 = actItem.Card1Num;
+                        if (targetItem != null) {
+                            tNum1 = targetItem.VisitNum;
+                            tNum2 = targetItem.CardNum;
+                        }
+                        break;
+                    case 2:
+                        aNum1 = actItem.VisitNum;
+                        aNum2 = actItem.OrderNum;
+                        if (targetItem != null) {
+                            tNum1 = targetItem.VisitNum;
+                            tNum2 = targetItem.OrderNum;
+                        }
+                        break;
+                }
+                if (aNum1 == 0) {
+                    if (aNum2 > 0) {
+                        item.actRate = 100;
+                    } else {
+                        item.actRate = 0;
+                    }
+                } else {
+                    item.actRate = (aNum2 * 100 / aNum1);
+                }
+
+                if (tNum1 == 0) {
+                    item.targetRate = 0;
+                    item.Rate = 0;
+                } else {
+                    item.targetRate = (tNum2 * 100 / tNum1);
+                    if (item.targetRate != 0) {
+                        item.Rate = (item.actRate * 100 / item.targetRate);
+                    }
+                    else {
+                        item.Rate = 0;
+                    }
+                }
+
+
+            }
+
+            list.sort(function(item1, item2) {
+                if (item1.Rate == item2.Rate) {
+                    return item1.actRate < item2.actRate;
+                }
+                return item1.Rate < item2.Rate;
+
+            });
+
+            var element = $('#resulttableForPPR');
+
+            var tplForPPR = $('#tplForPPR').html();
+
+            var html = _.template(tplForPPR, { list: list });
+
+            element.html(html);
+        }
+
+        function OpenProject(projectid) {
+            var path = '@(MvcApplication.RootPath+"/Project/")';
+            load("projectReport",path+projectid+"/Report/PerformanceTeamReport?dateFrom=" + $("#companyReport [name='DateFrom']").val() + "&dateTo=" + $("#companyReport [name='DateTo']").val());
+        }
+
+    </script>
+    <div data-role="content">
+        <div class="well well-small">
+            @Html.MobileSearchDateRange("", "日期：")
+            @MyControls.MobileSearchBtn("PerformanceProject")
+        </div>
+        <div>
+            <h3>项目排名统计</h3>
+            <div class="ui-field-contain">
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <label class="radio"><input name="radiotype" type="radio" value="0" checked="checked" onchange=" SetRate(0); " />电转访率</label>
+                    <label class="radio"><input name="radiotype" type="radio" value="1" onchange=" SetRate(1); " />办卡率</label>
+                    <label class="radio"><input name="radiotype" type="radio" value="2" onchange=" SetRate(2); " />大定率</label>
+                </fieldset>
+            </div>
+            <div class="clearfix"></div>
+            <div id="resulttableForPPR">
+
+            </div>
+
+        </div>
+
+        <script type="text/template" id="tplForPPR">
+
+
+
+            <table class="table table-bordered table-striped ">
+                <thead>
+                    <tr>
+                        <th style="width:80px">项目</th>
+                        <th style="width:80px">指标</th>
+                        <th style="width:80px">实际完成</th>
+                        <th style="width:80px">完成率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%for(var i=0;i<list.length;i++){var item=list[i]; %>
+                        <tr>
+                            <td><a href="#" onclick="OpenProject(<%=item.Id%>);"><%=item.Name%></a> </td>
+                            <td style="text-align:right"><%=item.targetRate.toFixed(0)%> %</td>
+                            <td style="text-align:right"><%=item.actRate.toFixed(0)%> %</td>
+                            <td style="text-align:right"><%=item.Rate.toFixed(0)%> %</td>
+                        </tr>
+                        <%}%>
+                </tbody>
+            </table>
+
+
+
+        </script>
+    </div>
+
+}

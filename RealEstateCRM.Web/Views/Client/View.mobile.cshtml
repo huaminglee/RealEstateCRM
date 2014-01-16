@@ -29,7 +29,7 @@
             alert(data.obj);
             if (data.success == true) {
                 if (data.obj == "已删除") {
-                    load('@Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.LastIndexOf("/")).Replace("View", "List")');
+                    $(".ui-btn-left").click();
                 }
             }
         });
@@ -45,7 +45,7 @@
     function DeleteContact(id) {
         $.post('@(Request.Url.AbsoluteUri + "/../../RemoveContact")', { id: id }, function (res) {
             if (res.success) {
-                load('@Request.Url.AbsoluteUri');
+                loadCurPage('@Request.Url.AbsoluteUri');
             }
             else {
                 alert(res.obj);
@@ -63,7 +63,7 @@
     function DeleteAppointment(id) {
         $.post('@(Request.Url.AbsoluteUri + "/../../RemoveAppointment")', { id: id }, function (res) {
             if (res.success) {
-                load('@Request.Url.AbsoluteUri');
+                loadCurPage('@Request.Url.AbsoluteUri');
             }
             else {
                 alert(res.obj);
@@ -81,7 +81,7 @@
     function DeleteCard(id) {
         $.post('@(Request.Url.AbsoluteUri + "/../../../Card/Delete")', { id: id }, function (res) {
             if (res.success) {
-                load('@Request.Url.AbsoluteUri');
+                loadCurPage('@Request.Url.AbsoluteUri');
             }
             else {
                 alert(res.obj);
@@ -99,7 +99,7 @@
     function DeleteOrder(id) {
         $.post('@(Request.Url.AbsoluteUri + "/../../../Order/Delete")', { id: id }, function (res) {
             if (res.success) {
-                load('@Request.Url.AbsoluteUri');
+                loadCurPage('@Request.Url.AbsoluteUri');
             }
             else {
                 alert(res.obj);
@@ -119,7 +119,7 @@
             @if (UserInfo.CurUser.HasRight("客户管理-客户删除"))
             {
 
-            <button onclick="ToDelete(@Model.Id)">删除</button>
+                <button onclick="ToDelete(@Model.Id)">删除</button>
             }
 
 
@@ -128,18 +128,18 @@
 
             @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-小卡大卡"))
             {
-                <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Card/Create/" + Model.Id)');">办卡</button>
+                <button onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Card/Create/" + Model.Id)');">办卡</button>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))
             {
 
-                <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Create/" + Model.Id + "?type=1")');">大定</button>
-    <button onclick="load('clientcontact','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Create/" + Model.Id + "?type=2")');">直签</button>
+                <button onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Create/" + Model.Id + "?type=1")');">大定</button>
+                <button onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Create/" + Model.Id + "?type=2")');">直签</button>
             }
             @if (UserInfo.CurUser.HasRight("客户管理-客户分配"))
             {
 
-            <button onclick="load('clienttransfer','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/TransferSingle/" + Model.Id)');">客户转移</button>
+                <button onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/TransferSingle/" + Model.Id)');">客户转移</button>
             }
         </div>
     </div>
@@ -162,171 +162,167 @@
     </div>
     @if (ViewBag.Orders.Count != 0)
     {
-    <div data-role="collapsible">
-        <h3>大定签约信息</h3>
+        <div data-role="collapsible">
+            <h3>大定签约信息</h3>
 
-        @foreach (Order c in ViewBag.Orders)
-        {
-        <ul data-role="listview" data-inset="true">
-            <li data-icon="false">大定时间<font style="float:right">@c.OrderTime.ToString("yyyy-MM-dd")</font></li>
-            @if (c.SignTime.HasValue)
+            @foreach (Order c in ViewBag.Orders)
             {
-            <li data-icon="false">签约时间<font style="float:right">@c.SignTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
-            }
-            else
-            {
-
-            }
-            @if (!c.Room.IsEmpty())
-            {
-            <li data-icon="false">房间<font style="float:right">@c.Room</font></li>
-            }
-
-            <li data-icon="false">备注<font style="float:right">@c.Remark</font></li>
-            @if (c.CancelTime.HasValue)
-            {
-            <li data-icon="false">取消时间<font style="float:right">@c.CancelTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
-            }
-            else
-            {
-
-            }
-            <li data-icon="false">
-                @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))
-                {
-
-                if (!c.SignTime.HasValue && !c.CancelTime.HasValue)
-                {
-                <button data-inline="true" onclick="load('order','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/LevelUp/" + c.Id)');">签约</button>
-                }
-                if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退定退房"))
-                {
-                <button data-inline="true" onclick="load('order','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Cancel/" + c.Id)');">退单</button>
-                }
-                <button data-inline="true" onclick="ToDeleteOrder(@c.Id)">删除</button>
-                }
-            </li>
-        </ul>
-        }
-    </div>
-    }
-    @if (ViewBag.Cards.Count != 0)
-    {
-    <div data-role="collapsible">
-        <h3>卡信息</h3>
-
-        @foreach (Card c in ViewBag.Cards)
-        {
-        <ul data-role="listview" data-inset="true">
-            <li data-icon="false">小卡时间<font style="float:right">@c.SmallTime.ToString("yyyy-MM-dd")</font></li>
-            @if (c.BigTime.HasValue)
-            {
-            <li data-icon="false">大卡时间<font style="float:right">@c.BigTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
-            }
-            else
-            {
-
-            }
-            <li data-icon="false">备注<font style="float:right">@c.Remark</font></li>
-            @if (c.CancelTime.HasValue)
-            {
-            <li data-icon="false">退卡时间<font style="float:right">@c.CancelTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
-            }
-            else
-            {
-
-            }
-            <li data-icon="false">
-                @if (UserInfo.CurUser.HasRight("客户管理-大卡小卡"))
-                {
-
-                if (!c.BigTime.HasValue && !c.CancelTime.HasValue)
-                {
-                <button data-inline="true" onclick="load('@(Request.Url.AbsoluteUri+" />../../../Card/LevelUp/"+c.Id)');">升卡</button>
-                }
-                if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退卡"))
-                {
-                <button data-inline="true" onclick="load('@(Request.Url.AbsoluteUri+" />../../../Card/Cancel/"+c.Id)');">退卡</button>
-                }
-                <button data-inline="true" onclick="ToDeleteCard(@c.Id)">删除</button>
-
-                }
-            </li>
-        </ul>
-        }
-    </div>
-    }
-    @if (ViewBag.Appointments.Count != 0)
-    {
-    <div data-role="collapsible">
-        <h3>邀约及联系记录</h3>
-        @foreach (ClientActivity c in ViewBag.Appointments)
-        {
-        <ul data-role="listview" data-inset="true">
-            <li data-role="list-divider" data-icon="false">
-                @c.Type
-                <font style="float:right">
-                    @if (c.IsDone != null)
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false">大定时间<font style="float:right">@c.OrderTime.ToString("yyyy-MM-dd")</font></li>
+                    @if (c.SignTime.HasValue)
                     {
-                    if (c.IsDone == true)
-                    {
-                    <text>完成</text>
+                        <li data-icon="false">签约时间<font style="float:right">@c.SignTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
                     }
                     else
                     {
-                    <text>未完成</text>
-                    }
-                    }
-                </font>
-            </li>
-            @if (c.PlanTime.HasValue)
-            {
-            <li data-icon="false">
-                预约时间
-                <font style="float:right">
-                    @c.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")
-                </font>
-            </li>
-            }
-            @if (c.ActualTime.HasValue)
-            {
-            <li data-icon="false">
-                实际时间
-                <font style="float:right">@c.ActualTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")</font>
-            </li>
-            }
-            @if (!c.Detail.IsEmpty())
-            {
-            <li data-icon="false">@c.Detail</li>
-            }
 
-            <li data-icon="false">
-                @if (c.PlanTime == null)
-                {
-                <button data-inline="true" class="btn-default" onclick="load('@(Request.Url.AbsoluteUri+"/../../AddContact/"+c.Id)');">修改</button>
-                if (!c.Type.Equals("来电") && !c.Type.Equals("来访"))
-                {
-                <button data-inline="true" class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button>
-                }
-                }
-                else
-                {
-                if (UserInfo.CurUser.HasRight("客户管理-客户到访记录") && !c.ActualTime.HasValue)
-                {
-                <button data-inline="true" class="btn-default" onclick="load('@(Request.Url.AbsoluteUri+"/../../FinishAppointment/"+c.Id)');">完成</button>
-                }
-                <button data-inline="true" class="btn-default" onclick="load('@(Request.Url.AbsoluteUri+"/../../EditAppointment/"+c.Id)');">修改</button>
-                <button data-inline="true" class="btn-default" onclick="ToDeleteAppointment(@c.Id)">删除</button>
-                }
+                    }
+                    @if (!c.Room.IsEmpty())
+                    {
+                        <li data-icon="false">房间<font style="float:right">@c.Room</font></li>
+                    }
 
-            </li>
-        </ul>
-        }
-    </div>
+                    <li data-icon="false">备注<font style="float:right">@c.Remark</font></li>
+                    @if (c.CancelTime.HasValue)
+                    {
+                        <li data-icon="false">取消时间<font style="float:right">@c.CancelTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
+                    }
+                    else
+                    {
+
+                    }
+                    <li data-icon="false">
+                        @if (UserInfo.CurUser.HasRight("客户管理-大定签约"))
+                        {
+
+                            if (!c.SignTime.HasValue && !c.CancelTime.HasValue)
+                            {
+                                <button data-inline="true" onclick="load('order','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/LevelUp/" + c.Id)');">签约</button>
+                            }
+                            if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退定退房"))
+                            {
+                                <button data-inline="true" onclick="load('order','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Order/Cancel/" + c.Id)');">退单</button>
+                            }
+                            <button data-inline="true" onclick="ToDeleteOrder(@c.Id)">删除</button>
+                        }
+                    </li>
+                </ul>
+            }
+        </div>
     }
-    @MyControls.AccessLogTableForMobile(AccessLog.GetByClass(@Model.Id, Client.LogClass))
+    @if (ViewBag.Cards.Count != 0)
+    {
+        <div data-role="collapsible">
+            <h3>卡信息</h3>
+
+            @foreach (Card c in ViewBag.Cards)
+            {
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false">小卡时间<font style="float:right">@c.SmallTime.ToString("yyyy-MM-dd")</font></li>
+                    @if (c.BigTime.HasValue)
+                    {
+                        <li data-icon="false">大卡时间<font style="float:right">@c.BigTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
+                    }
+                    else
+                    {
+
+                    }
+                    <li data-icon="false">备注<font style="float:right">@c.Remark</font></li>
+                    @if (c.CancelTime.HasValue)
+                    {
+                        <li data-icon="false">退卡时间<font style="float:right">@c.CancelTime.GetValueOrDefault().ToString("yyyy-MM-dd")</font></li>
+                    }
+                    else
+                    {
+
+                    }
+                    <li data-icon="false">
+                        @if (UserInfo.CurUser.HasRight("客户管理-大卡小卡"))
+                        {
+
+                            if (!c.BigTime.HasValue && !c.CancelTime.HasValue)
+                            {
+                                <button data-inline="true" onclick="loadCurPage('@(MvcApplication.RootPath+"/Project/"+projectid+"/Card/LevelUp/"+c.Id)');">升卡</button>
+                            }
+                            if (!c.CancelTime.HasValue && UserInfo.CurUser.HasRight("客户管理-退卡"))
+                            {
+                                <button data-inline="true" onclick="loadCurPage('@(MvcApplication.RootPath + "/Project/" + projectid + "/Card/Cancel/" + c.Id)');">退卡</button>
+                            }
+                            <button data-inline="true" onclick="ToDeleteCard(@c.Id)">删除</button>
+
+                        }
+                    </li>
+                </ul>
+            }
+        </div>
+    }
+    @if (ViewBag.Appointments.Count != 0)
+    {
+        <div data-role="collapsible">
+            <h3>邀约及联系记录</h3>
+            @foreach (ClientActivity c in ViewBag.Appointments)
+            {
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider" data-icon="false">
+                        @c.Type
+                        <font style="float:right">
+                            @if (c.IsDone != null)
+                            {
+                                if (c.IsDone == true)
+                                {
+                                    <text>完成</text>
+                                }
+                                else
+                                {
+                                    <text>未完成</text>
+                                }
+                            }
+                        </font>
+                    </li>
+                    @if (c.PlanTime.HasValue)
+                    {
+                        <li data-icon="false">
+                            预约时间
+                            <font style="float:right">
+                                @c.PlanTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")
+                            </font>
+                        </li>
+                    }
+                    @if (c.ActualTime.HasValue)
+                    {
+                        <li data-icon="false">
+                            实际时间
+                            <font style="float:right">@c.ActualTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm")</font>
+                        </li>
+                    }
+                    @if (!c.Detail.IsEmpty())
+                    {
+                        <li data-icon="false">@c.Detail</li>
+                    }
+
+                    <li data-icon="false">
+                        @if (c.PlanTime == null)
+                        {
+                            <button data-inline="true" class="btn-default" onclick="loadCurPage('@(Request.Url.AbsoluteUri+"/../../AddContact/"+c.Id)');">修改</button>
+                            if (!c.Type.Equals("来电") && !c.Type.Equals("来访"))
+                            {
+                                <button data-inline="true" class="btn-default" onclick="ToDeleteContact(@c.Id)">删除</button>
+                            }
+                        }
+                        else
+                        {
+                            if (UserInfo.CurUser.HasRight("客户管理-客户到访记录") && !c.ActualTime.HasValue)
+                            {
+                                <button data-inline="true" class="btn-default" onclick="loadCurPage('@(Request.Url.AbsoluteUri+"/../../FinishAppointment/"+c.Id)');">完成</button>
+                            }
+                            <button data-inline="true" class="btn-default" onclick="loadCurPage('@(Request.Url.AbsoluteUri+"/../../EditAppointment/"+c.Id)');">修改</button>
+                            <button data-inline="true" class="btn-default" onclick="ToDeleteAppointment(@c.Id)">删除</button>
+                        }
+
+                    </li>
+                </ul>
+            }
+        </div>
+    }
+    @MyControls.AccessLogTableForMobile(AccessLog.GetByClass(Model.Id, Client.LogClass))
 </div>
-}
-
-
-

@@ -8,22 +8,19 @@
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
-<script>
-    
-</script>
 <div data-role="content">
     
     <div class="ui-grid-a">
-        <div class="ui-block-a"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=1")')">
+        <div class="ui-block-a"><a data-role="button" onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=1")')">
                                     <img src="@(MvcApplication.RootPath  + "/Content/Images/contact.png")"  /><br />来电客户登记
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=2")')">
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=2")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/user.png")"  /><br />直访客户登记
                                 </a></div>
-        <div class="ui-block-a"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=3")')">
+        <div class="ui-block-a"><a data-role="button" onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=3")')">
                                     <img src="@(MvcApplication.RootPath  + "/Content/Images/phone.png")"  /><br />中介客户报备
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=5")')">
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()  + "/Client/ToCreate?type=5")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/free_for_job.png")"  /><br />销售拓客登记
                                 </a></div>
        

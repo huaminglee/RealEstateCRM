@@ -127,7 +127,7 @@
        
 
             <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddContact/0?clientid=@Model.Id');">添加联系记录</button></div>
-            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/@Model.Id');">添加邀约记录</button></div>
+            <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../AddAppointment/0?clientid=@Model.Id');">添加邀约记录</button></div>
         
         @if (ViewBag.Cards.Count == 0 && UserInfo.CurUser.HasRight("客户管理-小卡大卡"))
         {

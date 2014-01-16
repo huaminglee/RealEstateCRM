@@ -627,10 +627,10 @@ namespace RealEstateCRM.Web.Controllers
                     }
                 }
                 db.SaveChanges();
-                //if (!string.IsNullOrEmpty(ismobile))
-                //{
-                //    return Redirect("../View/" + client.Id.ToString());
-                //}
+                if (!string.IsNullOrEmpty(ismobile))
+                {
+                    return Redirect("../View/" + client.Id.ToString());
+                }
 
                 return Redirect("~/Content/close.htm");
             }
@@ -659,15 +659,15 @@ namespace RealEstateCRM.Web.Controllers
             //ToDo:来访记录删除后要处理客户状态
         }
 
-        public ActionResult AddAppointment(int id)//id为client的id
+        public ActionResult AddAppointment(int id, int? clientid)
         {
             ClientActivity c = new ClientActivity { Person = UserInfo.CurUser.Id };
-            c.ClientId = id;
+            c.ClientId = (int)clientid;
             return View(c);
         }
 
         [HttpPost]
-        public ActionResult AddAppointment(string ismobile, FormCollection collection)
+        public ActionResult AddAppointment(int id, int? clientid,string ismobile, FormCollection collection)
         {
             ClientActivity c = new ClientActivity { Person = UserInfo.CurUser.Id };
             db.ClientActivities.Add(c);

@@ -758,10 +758,7 @@ namespace RealEstateCRM.Web
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
             MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
             string fullName = ExpressionHelper.GetExpressionText(expression);
-            string str = @"<div class='ui-field-contain'><label for='{0}'>{1}{4}</label>
-   
-    <input id='{0}' class='datepicker' type='text' value='{2}' name='{0}' {3} />    
-    {5}</div>";
+            string str = "<div class='ui-field-contain'><label for='{0}'>{1}{4}</label><input id='{0}' data-role='datebox' data-options='{{\"mode\":\"calbox\", \"useNewStyle\":true}}' type='text' value='{2}' name='{0}' {3} />{5}</div>";
             string valueStr = "";
             if (metadata.Model != null)
             {
@@ -822,12 +819,10 @@ namespace RealEstateCRM.Web
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, helper.ViewData);
             MvcHtmlString m3 = ValidationExtensions.ValidationMessageFor<TModel, TValue>(helper, expression);
             string fullName = ExpressionHelper.GetExpressionText(expression);
-            string str = @"<fieldset data-role='controlgroup' data-type='horizontal'>
-    <legend>{1}{3}</legend>{2}  
-    {4}</fieldset>";
+            string str = @"<div class='ui-field-contain'><label for={0}>{1}{3}</label>{2}{4}</div>";
             MvcHtmlString m2 = SelectExtensions.DropDownList(helper, fullName, list);
             string fullStr = string.Format(str, fullName, metadata.DisplayName ?? metadata.PropertyName, m2.ToHtmlString()
-                 , metadata.IsRequired == true ? " <font style='color:red'>*</font>" : ""
+                 , metadata.IsRequired == true ? "<font style='color:red'>*</font>" : ""
             ,m3.ToHtmlString()
              
               );
@@ -835,14 +830,24 @@ namespace RealEstateCRM.Web
 
         }
 
+        //public static MvcHtmlString MobileSearchDateRange(this HtmlHelper helper, string name, string label)
+        //{
+        //    string temp =
+        //        "<div class='ui-grid-c'><div class=\"ui-block-a\" style='width:30%'><h3>{1}</h3></div><div class='ui-block-b' style='width:32%'><input class=\"datepicker\" id=\"DateFrom{0}\" name=\"DateFrom{0}\" type=\"text\" {2} /></div><div class='ui-block-c' style='width:6%' align='center'><h3>-</h3></div><div class='ui-block-d' style='width:32%'><input class=\"datepicker\" id=\"DateTo{0}\" name=\"DateTo{0}\" type=\"text\" {3} /></div></div>";
+        //    return MvcHtmlString.Create(string.Format(temp, name, label
+        //        , helper.ViewData["DateFrom" + name] == null ? "" : string.Format("value='{0}'", helper.ViewData["DateFrom" + name])
+        //        , helper.ViewData["DateTo" + name] == null ? "" : string.Format("value='{0}'", helper.ViewData["DateTo" + name])));
+
+        //}
         public static MvcHtmlString MobileSearchDateRange(this HtmlHelper helper, string name, string label)
         {
             string temp =
-                "<div class='ui-grid-c'><div class=\"ui-block-a\" style='width:30%'><h3>{1}</h3></div><div class='ui-block-b' style='width:32%'><input class=\"datepicker\" id=\"DateFrom{0}\" name=\"DateFrom{0}\" type=\"text\" {2} /></div><div class='ui-block-c' style='width:6%' align='center'><h3>-</h3></div><div class='ui-block-d' style='width:32%'><input class=\"datepicker\" id=\"DateTo{0}\" name=\"DateTo{0}\" type=\"text\" {3} /></div></div>";
+                "<div class='ui-grid-c'><div class=\"ui-block-a\" style='width:30%'><h3>{1}</h3></div><div class='ui-block-b' style='width:32%'><input   name=\"DateFrom{0}\" type=\"text\" data-role=\"datebox\" data-options='{{\"mode\":\"calbox\", \"useNewStyle\":true}}' {2} /></div><div class='ui-block-c' style='width:6%' align='center'><h3>-</h3></div><div class='ui-block-d' style='width:32%'><input  name=\"DateTo{0}\" type=\"text\" data-role=\"datebox\" data-options='{{\"mode\":\"calbox\", \"useNewStyle\":true}}' {3} /></div></div>";
             return MvcHtmlString.Create(string.Format(temp, name, label
                 , helper.ViewData["DateFrom" + name] == null ? "" : string.Format("value='{0}'", helper.ViewData["DateFrom" + name])
                 , helper.ViewData["DateTo" + name] == null ? "" : string.Format("value='{0}'", helper.ViewData["DateTo" + name])));
 
         }
+
     }
 }

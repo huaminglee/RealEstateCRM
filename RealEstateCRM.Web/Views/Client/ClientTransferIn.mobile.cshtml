@@ -6,53 +6,51 @@
 @section Main{
     <script type="text/javascript">
         jQuery(document).ready(function () {
-            jQuery(document).ready(function () {
-                $(".datepicker").attr("data-role", "datebox");
-                var opt = {
-                    preset: 'date', //日期
-                    theme: 'ios', //皮肤样式
-                    display: 'modal', //显示方式
-                    mode: 'scroller', //日期选择模式
-                    lang: 'zh',
-                    dateFormat: 'yyyy-mm-dd', // 日期格式
-                    dateOrder: 'yymmdd', //面板中日期排列格式
-                    endYear: 2020 //结束年份
-                };
-                $('input:jqmData(role="datebox")').mobiscroll(opt);
-            });
-            $("#DateFromTransferTime").val('@ViewBag.Date1');
-            $("#DateToTransferTime").val('@ViewBag.Date2');
-            SearchClick();
+                //$(".datepicker").attr("data-role", "datebox");
+                //var opt = {
+                //    preset: 'date', //日期
+                //    theme: 'ios', //皮肤样式
+                //    display: 'modal', //显示方式
+                //    mode: 'scroller', //日期选择模式
+                //    lang: 'zh',
+                //    dateFormat: 'yyyy-mm-dd', // 日期格式
+                //    dateOrder: 'yymmdd', //面板中日期排列格式
+                //    endYear: 2020 //结束年份
+                //};
+                //$('input:jqmData(role="datebox")').mobiscroll(opt);
+            $("[name='DateFromTransferInTime']").val('@ViewBag.Date1');
+            $("[name='DateToTransferInTime']").val('@ViewBag.Date2');
+            SearchClickForTransferIn();
         });
 
-        function SearchClick() {
-            var postData={groupid:'@ViewBag.GroupId',from:$("#DateFromTransferTime").val(),to:$("#DateToTransferTime").val()};
-            $.post("@(Request.Url.AbsoluteUri+"/../ClientTransferInQuery")",postData, function(respDate) {
+        function SearchClickForTransferIn() {
+            var postData = { groupid: '@ViewBag.GroupId', from: $("[name='DateFromTransferInTime']").val(), to: $("[name='DateToTransferInTime']").val() };
+            $.post("@(Request.Url.AbsoluteUri+"/../ClientTransferInQuery")", postData, function (respDate) {
                 if (respDate.success == true) {
                     list = respDate.obj;
-                    showEnters(list);
+                    showEntersForTransferIn(list);
                 } else {
                     alert(respDate.obj);
                 }
             });
         }
 
-        function showEnters(obj) {
-            var element = $('#resulttable');
-            var tpl = $('#tpl').html();
-            var html = _.template(tpl, obj);
+        function showEntersForTransferIn(obj) {
+            var element = $('#resulttableForTransferIn');
+            var tplForTransferIn = $('#tplForTransferIn').html();
+            var html = _.template(tplForTransferIn, obj);
             element.html(html);
         }
     </script>
     <div class="well well-small">
-    @Html.MobileSearchDateRange("TransferTime", "转入日期：")
-    @MyControls.SearchBtn()
+    @Html.MobileSearchDateRange("TransferInTime", "转入日期：")
+    @MyControls.MobileSearchBtn("TransferIn")
 
 </div>
-    <div id="resulttable">
+    <div id="resulttableForTransferIn">
 
     </div>
-    <script type="text/template" id="tpl">
+    <script type="text/template" id="tplForTransferIn">
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>

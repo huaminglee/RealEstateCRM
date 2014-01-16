@@ -6,20 +6,20 @@
 
 }
 @section Main{
- 
-    
+
+
     <div data-role="content">
         <input type="hidden" id="DateFrom" /><input type="hidden" id="DateTo" /><input type="hidden" id="Type" />
-        
-   
-        
-        <div id="resulttable">
 
-              </div>
+
+
+        <div name="resulttable">
+
+        </div>
     </div>
-    
-    
-    <script type="text/template" id="tpl">
+
+
+    <script type="text/template" id="tplForInvitelist">
         <table class="table table-bordered table-striped ">
             <thead>
                 <tr>
@@ -31,15 +31,14 @@
                     <th style="width:120px">电话</th>
                     <th style="width:80px">销售组</th>
                     @*<th style="width:100px">到访时间</th>
-                    <th style="width:80px">完成情况</th>*@
+                        <th style="width:80px">完成情况</th>*@
                 </tr>
             </thead>
             <tbody>
                 <tr style="display:none">
                     <td></td>
                 </tr>
-                <%for(var i=0;i
-                <obj.length;i++){var item=obj[i]; %>
+                <%for(var i=0;i<obj.length;i++){var item=obj[i]; %>
 
                     <tr onclick="showClient(<%=item.ClientId%>)">
                         <td><%=Time2String(item.PlanTime)%></td>
@@ -52,49 +51,36 @@
                         <td><%=item.AllPhone%></td>
                         <td><%=item.GroupName%></td>
                         @*<td><%=Time2String(item.ActualTime)%></td>
-                        <td><%=item.Done%></td>*@
+                            <td><%=item.Done%></td>*@
                     </tr>
 
                     <%}%>
             </tbody>
         </table>
     </script>
-    <script type="text/template" id="tpl2">
-        <td><%=item.Name%></td>
-        <td><%=showIntent(item.Intent)%></td>
-        <td><%=item.PlanMoney%></td>
-        <td><%=item.IntentMoney%></td>
-        <td><%=item.LastPlan%></td>
-        <td><%=item.LastAction%></td>
-        <td><%=item.ThisPlan%></td>
-
-    </script>
     <script type="text/javascript">
+        $("#invitelist [name='DateFrom']").val('@ViewBag.Date1');
+        $("#invitelist [name='DateTo']").val('@ViewBag.Date2');
+        $("#invitelist [name='Type']").val('@ViewBag.Type');
+        SearchClick();
+
         
-            var PostData = {};
-           $("#DateFrom").val('@ViewBag.Date1');
-            $("#DateTo").val('@ViewBag.Date2');
-            $("#Type").val('@ViewBag.Type');
-            SearchClick();
-     
-        var list;
         function SearchClick() {
+            var list;
             var PostData = {isdone:false};
-            PostData.Type=$("#Type").val();
-            PostData.Client = $("#Client").val();
-            PostData.Phone = $("#Phone").val();
-            PostData.DateFrom = $("#DateFrom").val();
+            PostData.Type=$("#invitelist [name='Type']").val();
+            PostData.DateFrom = $("#invitelist [name='DateFrom']").val();
             if (PostData.DateFrom == "") {
                 alert("请选择日期");
                 return;
             }
-            PostData.DateTo = $("#DateTo").val();
+            PostData.DateTo = $("#invitelist [name='DateTo']").val();
             if (PostData.DateTo == "") {
                 alert("请选择日期");
                 return;
             }
 
-            $.post("@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/InviteListQuery")", PostData, function (respDate) {
+            $.post("@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/InviteListQuery")", PostData, function (respDate) {
                 if (respDate.success == true) {
                     list = respDate.obj;
                     showEnters(list);
@@ -104,21 +90,13 @@
             });
         }
         function showEnters(obj) {
-            var element = $('#resulttable');
-            var tpl = $('#tpl').html();
-            var html = _.template(tpl, obj);
+            var element = $("#invitelist [name='resulttable']");
+            var tplForInvitelist = $('#tplForInvitelist').html();
+            var html = _.template(tplForInvitelist, obj);
             element.html(html);
         }
         function showClient(id) {
-            loadandchange('@("http://" + Request.Url.Authority+"/crm/Project/" + projectid.ToString() + "/Client/View/")' + id);
+            load('clientview','@(MvcApplication.RootPath+"/Project/" + projectid.ToString() + "/Client/View/")' + id);
         }
-        function Refresh(){
-            SearchClick();
-        }
-        $(function () {
-            window.onunload = function () {
-                window.opener.Refresh();
-            };
-        });
     </script>
 }

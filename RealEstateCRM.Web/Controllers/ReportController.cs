@@ -24,12 +24,12 @@ namespace RealEstateCRM.Web.Controllers
 
         }
 
-        public ActionResult ClientStateReport(int projectid,string datefrom,string dateto)
+        public ActionResult ClientStateReport(int projectid, string datefrom, string dateto)
         {
             if (datefrom == null && dateto == null)
             {
                 DateTime d2 = DateTime.Today;
-                int wd1 = (int) d2.DayOfWeek;
+                int wd1 = (int)d2.DayOfWeek;
                 DateTime d1 = wd1 == 0 ? d2.AddDays(-6) : d2.AddDays(1 - wd1);
                 ViewBag.Date1 = d1.ToString("yyyy-MM-dd");
                 ViewBag.Date2 = d2.ToString("yyyy-MM-dd");
@@ -39,7 +39,7 @@ namespace RealEstateCRM.Web.Controllers
                 ViewBag.Date1 = datefrom;
                 ViewBag.Date2 = dateto;
             }
-            
+
             List<RoomType> roomTypes = (from o in db.RoomTypes where o.DepartmentId == projectid select o).ToList();
             ViewBag.RoomTypes = roomTypes;
             return View();
@@ -90,16 +90,16 @@ namespace RealEstateCRM.Web.Controllers
             {
                 roomTypeSql = " and c.roomtype=@roomType ";
             }
-            
+
             string preSql = "declare @d1 datetime ,@d2 datetime ;set @d1='{0:yyyy-MM-dd}';set @d2='{1:yyyy-MM-dd}';declare @roomType nvarchar(50);set @roomType='{2}';";
-            preSql = string.Format(preSql, d1, d2,collection["roomType"]);
+            preSql = string.Format(preSql, d1, d2, collection["roomType"]);
             //来电，来访，，可按这方式取，小卡大卡大定和签约需要另外计算，因为大定和签约算套数，小卡要计算退卡
 
             string sql1 =
                 @"{0} select count(*) as num ,groupid as id  from clients c join clientactivities ca on c.id=ca.clientid
 where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime between @d1 and DATEADD(MINUTE,59, dateadd(HH,23,@d2)) {3}
  group by groupid";
-            var query1 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql, projectid, 1,roomTypeSql,(int)ClientStateEnum.无效客户)).ToList();
+            var query1 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql, projectid, 1, roomTypeSql, (int)ClientStateEnum.无效客户)).ToList();
             foreach (var i in query1)
             {
                 foreach (var j in list)
@@ -127,7 +127,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
                 @"{0} select count(*) as num ,c.groupid as id from clients c join cards on c.id=cards.clientid   where c.projectid={1} and cards.smalltime between @d1 and @d2 {2} group by c.groupid";
             string sql3 =
                @"{0} select count(*) as num ,c.groupid as id from clients c join cards on c.id=cards.clientid   where c.projectid={1} and cards.canceltime between @d1 and @d2 {2} group by c.groupid";
-            var query3 = db.Database.SqlQuery<IdInt>(string.Format(sql2, preSql, projectid,roomTypeSql)).ToList();
+            var query3 = db.Database.SqlQuery<IdInt>(string.Format(sql2, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query3)
             {
                 foreach (var j in list)
@@ -138,7 +138,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
                     }
                 }
             }
-            var query4 = db.Database.SqlQuery<IdInt>(string.Format(sql3, preSql, projectid,roomTypeSql)).ToList();
+            var query4 = db.Database.SqlQuery<IdInt>(string.Format(sql3, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query4)
             {
                 foreach (var j in list)
@@ -154,7 +154,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
                @"{0} select count(*) as num ,c.groupid as id from clients c join cards  on c.id=cards.clientid  where c.projectid={1} and cards.bigtime between @d1 and @d2 {2} group by c.groupid";
             string sql5 =
                @"{0} select count(*) as num ,c.groupid as id from clients c join cards  on c.id=cards.clientid  where c.projectid={1} and cards.bigtime!=null and cards.canceltime between @d1 and @d2 {2} group by c.groupid";
-            var query5 = db.Database.SqlQuery<IdInt>(string.Format(sql4, preSql, projectid,roomTypeSql)).ToList();
+            var query5 = db.Database.SqlQuery<IdInt>(string.Format(sql4, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query5)
             {
                 foreach (var j in list)
@@ -165,7 +165,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
                     }
                 }
             }
-            var query6 = db.Database.SqlQuery<IdInt>(string.Format(sql5, preSql, projectid,roomTypeSql)).ToList();
+            var query6 = db.Database.SqlQuery<IdInt>(string.Format(sql5, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query6)
             {
                 foreach (var j in list)
@@ -181,7 +181,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
               @"{0} select count(*) as num ,c.groupid as id from clients c  where c.projectid={1} and exists (select 1 from orders o where o.clientid=c.id and o.ordertime between @d1 and @d2) {2} group by c.groupid";
             string sql7 =
             @"{0} select count(*) as num ,c.groupid as id from clients c  where c.projectid={1} and exists (select 1 from orders o where o.clientid=c.id and o.canceltime between @d1 and @d2) {2} group by c.groupid";
-            var query7 = db.Database.SqlQuery<IdInt>(string.Format(sql6, preSql, projectid,roomTypeSql)).ToList();
+            var query7 = db.Database.SqlQuery<IdInt>(string.Format(sql6, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query7)
             {
                 foreach (var j in list)
@@ -192,7 +192,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
                     }
                 }
             }
-            var query8 = db.Database.SqlQuery<IdInt>(string.Format(sql7, preSql, projectid,roomTypeSql)).ToList();
+            var query8 = db.Database.SqlQuery<IdInt>(string.Format(sql7, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query8)
             {
                 foreach (var j in list)
@@ -208,7 +208,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
              @"{0} select count(*) as num ,c.groupid as id from clients c  join orders o on o.clientid=c.id where c.projectid={1}  and o.signtime between @d1 and @d2 {2} group by c.groupid";
             string sql9 =
             @"{0} select count(*) as num ,c.groupid as id from clients c join orders o on o.clientid=c.id  where c.projectid={1} and o.signtime!=null and o.canceltime between @d1 and @d2 {2} group by c.groupid";
-            var query9 = db.Database.SqlQuery<IdInt>(string.Format(sql8, preSql, projectid,roomTypeSql)).ToList();
+            var query9 = db.Database.SqlQuery<IdInt>(string.Format(sql8, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query9)
             {
                 foreach (var j in list)
@@ -219,7 +219,7 @@ where c.projectid={1} and c.state!={4} and ca.firsttype={2} and ca.actualtime be
                     }
                 }
             }
-            var query10 = db.Database.SqlQuery<IdInt>(string.Format(sql9, preSql, projectid,roomTypeSql)).ToList();
+            var query10 = db.Database.SqlQuery<IdInt>(string.Format(sql9, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query10)
             {
                 foreach (var j in list)
@@ -236,7 +236,7 @@ join clientactivities ca2 on c.id=ca2.clientid
 where c.projectid={1} and c.state!={3} and ca.firsttype=2 and ca.actualtime between @d1 and DATEADD(MINUTE,59, dateadd(HH,23,@d2))
 and ca2.firsttype=1 {2}
  group by groupid";
-            var query11 = db.Database.SqlQuery<IdInt>(string.Format(sql11, preSql, projectid,roomTypeSql,(int)ClientStateEnum.无效客户)).ToList();
+            var query11 = db.Database.SqlQuery<IdInt>(string.Format(sql11, preSql, projectid, roomTypeSql, (int)ClientStateEnum.无效客户)).ToList();
             foreach (var i in query11)
             {
                 foreach (var j in list)
@@ -247,11 +247,11 @@ and ca2.firsttype=1 {2}
                     }
                 }
             }
-            result.obj = new { list = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd"),RoomType=collection["roomtype"] };
+            result.obj = new { list = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd"), RoomType = collection["roomtype"] };
             result.success = true;
             return Json(result);
         }
-        public ActionResult ClientStateList(int projectid, int groupid, string dateFrom, string dateTo, string type,string roomtype)
+        public ActionResult ClientStateList(int projectid, int groupid, string dateFrom, string dateTo, string type, string roomtype)
         {
             //DateTime d2 = DateTime.Today;
             //int wd1 = (int)d2.DayOfWeek;
@@ -302,8 +302,8 @@ and ca2.firsttype=1 {2}
             }
 
             string preSql = "declare @d1 datetime ,@d2 datetime ;set @d1='{0:yyyy-MM-dd}';set @d2='{1:yyyy-MM-dd}';declare @roomType nvarchar(50);set @roomType='{2}';";
-            
-            preSql = string.Format(preSql, d1, d2,collection["roomtype"]);
+
+            preSql = string.Format(preSql, d1, d2, collection["roomtype"]);
             //来电，来访，，可按这方式取，小卡大卡大定和签约需要另外计算，因为大定和签约算套数，小卡要计算退卡
             string groupSql = "";
             if (groupid != 0)
@@ -339,7 +339,7 @@ and ca2.firsttype=1
             switch (type)
             {
                 case "0":
-                    sql = string.Format(sql1, preSql, projectid, 1, groupSql, "来电", 1,roomTypeSql,(int)ClientStateEnum.无效客户);
+                    sql = string.Format(sql1, preSql, projectid, 1, groupSql, "来电", 1, roomTypeSql, (int)ClientStateEnum.无效客户);
                     break;
                 case "1":
                     sql = string.Format(sql1, preSql, projectid, 2, groupSql, "来访", 2, roomTypeSql, (int)ClientStateEnum.无效客户);
@@ -357,7 +357,7 @@ and ca2.firsttype=1
                     sql = string.Format(sql5, preSql, projectid, groupSql, roomTypeSql);
                     break;
                 case "6":
-                    sql = string.Format(sql6, preSql, projectid, 1, groupSql, "电转访", roomTypeSql,(int)ClientStateEnum.无效客户);
+                    sql = string.Format(sql6, preSql, projectid, 1, groupSql, "电转访", roomTypeSql, (int)ClientStateEnum.无效客户);
                     break;
             }
             var list = db.Database.SqlQuery<ClientListVO>(sql).ToList();
@@ -370,7 +370,7 @@ and ca2.firsttype=1
             return Json(result);
         }
 
-        public ActionResult ClientWayReport1(int projectid,string datefrom ,string dateto)
+        public ActionResult ClientWayReport1(int projectid, string datefrom, string dateto)
         {
             if (datefrom == null && dateto == null)
             {
@@ -389,7 +389,7 @@ and ca2.firsttype=1
             ViewBag.RoomTypes = roomTypes;
             return View();
         }
-        public ActionResult ClientWayReport2(int projectid,string datefrom, string dateto)
+        public ActionResult ClientWayReport2(int projectid, string datefrom, string dateto)
         {
             if (datefrom == null && dateto == null)
             {
@@ -423,26 +423,26 @@ and ca2.firsttype=1
             List<WayReportVO> list = new List<WayReportVO>();
             string preSql = "declare @d1 datetime ,@d2 datetime ;set @d1='{0:yyyy-MM-dd}';set @d2='{1:yyyy-MM-dd}';declare @way nvarchar(50);set @way='{2}';declare @roomType nvarchar(50);set @roomType='{3}';";
             preSql = string.Format(preSql, d1, d2, collection["way"], collection["roomType"]);
-         
+
             string roomTypeSql = "";
             if (!string.IsNullOrEmpty(collection["roomType"]))
             {
                 roomTypeSql = " and c.roomtype=@roomType ";
             }
-            
+
             //来电，来访，，可按这方式取，小卡大卡大定和签约需要另外计算，因为大定和签约算套数，小卡要计算退卡
 
             string sql1 =
                 @"{0} select count(*) as id ,c.way as Name from clients c join clientactivities ca on c.id=ca.clientid
 where c.projectid={1} and c.state!={3} and ca.firsttype={2} and ca.actualtime >=@d1 and ca.actualtime<DATEADD(d,1, @d2) {4}
  group by c.way";
-            var query1 = db.Database.SqlQuery<IdName>(string.Format(sql1, preSql, projectid, 1,(int)ClientStateEnum.无效客户,roomTypeSql)).ToList();
+            var query1 = db.Database.SqlQuery<IdName>(string.Format(sql1, preSql, projectid, 1, (int)ClientStateEnum.无效客户, roomTypeSql)).ToList();
             foreach (var i in query1)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
                 vo.CallInNum = i.Id;
             }
-            var query2 = db.Database.SqlQuery<IdName>(string.Format(sql1, preSql, projectid, 2,(int)ClientStateEnum.无效客户,roomTypeSql)).ToList();
+            var query2 = db.Database.SqlQuery<IdName>(string.Format(sql1, preSql, projectid, 2, (int)ClientStateEnum.无效客户, roomTypeSql)).ToList();
             foreach (var i in query2)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
@@ -453,9 +453,9 @@ where c.projectid={1} and c.state!={3} and ca.firsttype={2} and ca.actualtime >=
                @"{0} select count(*) as id ,c.way as Name from clients c join cards on c.id=cards.clientid   where c.projectid={1} {2} and cards.smalltime between @d1 and @d2 group by c.way";
             string sql3 =
                @"{0} select count(*) as id ,c.way as Name from clients c join cards on c.id=cards.clientid   where c.projectid={1} {2} and cards.canceltime between @d1 and @d2 group by c.way";
-            var query3 = db.Database.SqlQuery<IdName>(string.Format(sql2, preSql, projectid,roomTypeSql)).ToList();
+            var query3 = db.Database.SqlQuery<IdName>(string.Format(sql2, preSql, projectid, roomTypeSql)).ToList();
 
-            var query4 = db.Database.SqlQuery<IdName>(string.Format(sql3, preSql, projectid,roomTypeSql)).ToList();
+            var query4 = db.Database.SqlQuery<IdName>(string.Format(sql3, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query3)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
@@ -471,8 +471,8 @@ where c.projectid={1} and c.state!={3} and ca.firsttype={2} and ca.actualtime >=
                @"{0} select count(*) as id ,c.way as Name from clients c join cards  on c.id=cards.clientid  where c.projectid={1} {2} and cards.bigtime between @d1 and @d2 group by c.way";
             string sql5 =
                @"{0} select count(*) as id ,c.way as Name from clients c join cards  on c.id=cards.clientid  where c.projectid={1} {2} and cards.bigtime!=null and cards.canceltime between @d1 and @d2 group by c.way";
-            var query5 = db.Database.SqlQuery<IdName>(string.Format(sql4, preSql, projectid,roomTypeSql)).ToList();
-            var query6 = db.Database.SqlQuery<IdName>(string.Format(sql5, preSql, projectid,roomTypeSql)).ToList();
+            var query5 = db.Database.SqlQuery<IdName>(string.Format(sql4, preSql, projectid, roomTypeSql)).ToList();
+            var query6 = db.Database.SqlQuery<IdName>(string.Format(sql5, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query5)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
@@ -489,8 +489,8 @@ where c.projectid={1} and c.state!={3} and ca.firsttype={2} and ca.actualtime >=
               @"{0} select count(*) as id ,c.way as Name  from clients c  where c.projectid={1} {2} and exists (select 1 from orders o where o.clientid=c.id and o.ordertime between @d1 and @d2) group by c.way";
             string sql7 =
             @"{0} select count(*) as id ,c.way as Name  from clients c  where c.projectid={1} {2} and exists (select 1 from orders o where o.clientid=c.id and o.canceltime between @d1 and @d2) group by c.way";
-            var query7 = db.Database.SqlQuery<IdName>(string.Format(sql6, preSql, projectid,roomTypeSql)).ToList();
-            var query8 = db.Database.SqlQuery<IdName>(string.Format(sql7, preSql, projectid,roomTypeSql)).ToList();
+            var query7 = db.Database.SqlQuery<IdName>(string.Format(sql6, preSql, projectid, roomTypeSql)).ToList();
+            var query8 = db.Database.SqlQuery<IdName>(string.Format(sql7, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query7)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
@@ -507,8 +507,8 @@ where c.projectid={1} and c.state!={3} and ca.firsttype={2} and ca.actualtime >=
              @"{0} select count(*)  as id ,c.way as Name from clients c  where c.projectid={1} {2} and exists (select 1 from orders o where o.clientid=c.id and o.signtime between @d1 and @d2) group by c.way";
             string sql9 =
             @"{0} select count(*)  as id ,c.way as Name from clients c  where c.projectid={1} {2} and exists (select 1 from orders o where o.clientid=c.id and o.signtime!=null and o.canceltime between @d1 and @d2) group by c.way";
-            var query9 = db.Database.SqlQuery<IdName>(string.Format(sql8, preSql, projectid,roomTypeSql)).ToList();
-            var query10 = db.Database.SqlQuery<IdName>(string.Format(sql9, preSql, projectid,roomTypeSql)).ToList();
+            var query9 = db.Database.SqlQuery<IdName>(string.Format(sql8, preSql, projectid, roomTypeSql)).ToList();
+            var query10 = db.Database.SqlQuery<IdName>(string.Format(sql9, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query9)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
@@ -526,7 +526,7 @@ join clientactivities ca2 on c.id=ca2.clientid
 where c.projectid={1} {2} and ca.firsttype=2 and ca.actualtime between @d1 and DATEADD(MINUTE,59, dateadd(HH,23,@d2))
 and ca2.firsttype=1 
  group by c.way";
-            var query11 = db.Database.SqlQuery<IdName>(string.Format(sql11, preSql, projectid,roomTypeSql)).ToList();
+            var query11 = db.Database.SqlQuery<IdName>(string.Format(sql11, preSql, projectid, roomTypeSql)).ToList();
             foreach (var i in query11)
             {
                 WayReportVO vo = WayReportVO.GetVo(list, i.Name);
@@ -538,7 +538,7 @@ and ca2.firsttype=1
             result.success = true;
             return Json(result);
         }
-        public ActionResult ClientWayList(int projectid, string way,string roomType, string dateFrom, string dateTo, string type)
+        public ActionResult ClientWayList(int projectid, string way, string roomType, string dateFrom, string dateTo, string type)
         {
             //DateTime d2 = DateTime.Today;
             //int wd1 = (int)d2.DayOfWeek;
@@ -574,7 +574,7 @@ and ca2.firsttype=1
 
 
         [HttpPost]
-        public ActionResult ClientWayListQuery(int projectid, string way,string roomtype, string dateFrom, string dateTo, string type, FormCollection collection)
+        public ActionResult ClientWayListQuery(int projectid, string way, string roomtype, string dateFrom, string dateTo, string type, FormCollection collection)
         {
             bool groupOnly = UserInfo.CurUser.GetClientRight(projectid) < ClientViewScopeEnum.查看项目;
             if (groupOnly)
@@ -585,14 +585,14 @@ and ca2.firsttype=1
             DateTime d1 = Utilities.ParseDate(dateFrom);
             DateTime d2 = Utilities.ParseDate(dateTo);
             string preSql = "declare @d1 datetime ,@d2 datetime ;set @d1='{0:yyyy-MM-dd}';set @d2='{1:yyyy-MM-dd}';declare @way nvarchar(50);set @way='{2}';declare @roomType nvarchar(50);set @roomType='{3}';";
-            preSql = string.Format(preSql, d1, d2,way, roomtype);
-           
+            preSql = string.Format(preSql, d1, d2, way, roomtype);
+
             string roomTypeSql = "";
             if (!string.IsNullOrEmpty(roomtype))
             {
                 roomTypeSql = " and c.roomtype=@roomType ";
             }
-            
+
             //来电，来访，，可按这方式取，小卡大卡大定和签约需要另外计算，因为大定和签约算套数，小卡要计算退卡
             string waySql = "";
             if (way == "来电/直访")
@@ -633,25 +633,25 @@ and ca2.firsttype=1
             switch (type)
             {
                 case "0":
-                    sql = string.Format(sql1, preSql, projectid, 1, waySql, "来电", 1, (int)ClientStateEnum.无效客户,roomTypeSql);
+                    sql = string.Format(sql1, preSql, projectid, 1, waySql, "来电", 1, (int)ClientStateEnum.无效客户, roomTypeSql);
                     break;
                 case "1":
-                    sql = string.Format(sql1, preSql, projectid, 2, waySql, "来访", 2, (int)ClientStateEnum.无效客户,roomTypeSql);
+                    sql = string.Format(sql1, preSql, projectid, 2, waySql, "来访", 2, (int)ClientStateEnum.无效客户, roomTypeSql);
                     break;
                 case "2":
-                    sql = string.Format(sql2, preSql, projectid, waySql,roomTypeSql);
+                    sql = string.Format(sql2, preSql, projectid, waySql, roomTypeSql);
                     break;
                 case "3":
-                    sql = string.Format(sql3, preSql, projectid, waySql,roomTypeSql);
+                    sql = string.Format(sql3, preSql, projectid, waySql, roomTypeSql);
                     break;
                 case "4":
-                    sql = string.Format(sql4, preSql, projectid, waySql,roomTypeSql);
+                    sql = string.Format(sql4, preSql, projectid, waySql, roomTypeSql);
                     break;
                 case "5":
-                    sql = string.Format(sql5, preSql, projectid, waySql,roomTypeSql);
+                    sql = string.Format(sql5, preSql, projectid, waySql, roomTypeSql);
                     break;
                 case "6":
-                    sql = string.Format(sql6, preSql, projectid, 1, waySql, "电转访",roomTypeSql);
+                    sql = string.Format(sql6, preSql, projectid, 1, waySql, "电转访", roomTypeSql);
                     break;
             }
             var list = db.Database.SqlQuery<ClientListVO>(sql).ToList();
@@ -756,7 +756,7 @@ where c.way='电话中心'";
 
             string preSql = "declare @d1 datetime ,@d2 datetime ;set @d1='{0:yyyy-MM-dd}';set @d2='{1:yyyy-MM-dd}';declare @roomType nvarchar(50);set @roomType='{2}';";
             preSql = string.Format(preSql, d1, d2, collection["roomType"]);
-           
+
             //来电，来访，，可按这方式取，小卡大卡大定和签约需要另外计算，因为大定和签约算套数，小卡要计算退卡
 
             string sql1 =
@@ -764,8 +764,8 @@ where c.way='电话中心'";
 where c.projectid={1} and ca.firsttype={2} and ca.actualtime between @d1 and DATEADD(MINUTE,59, dateadd(HH,23,@d2))
  group by ca.person";
             var query1 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql, projectid, 1)).ToList();
-            
-           
+
+
             string sql11 =
                 @"{0} select count(*) as num ,ca.person as id  from clients c join clientactivities ca on c.id=ca.clientid
 join clientactivities ca2 on c.id=ca2.clientid 
@@ -773,25 +773,25 @@ where c.projectid={1} and c.state!={2} and ca.firsttype=2 and ca.actualtime betw
 and ca2.firsttype=1 
  group by ca.person";
             var query11 = db.Database.SqlQuery<IdInt>(string.Format(sql11, preSql, projectid, (int)ClientStateEnum.无效客户)).ToList();
-            
+
             List<Department> projectgroups = DepartmentBLL.GetDepartmentByParent(projectid);
             List<IdName> users = new List<IdName>();
             var _groups = new List<GroupInfo>();
 
-          
+
             foreach (var _group in projectgroups)
             {
-                if (groupid==0||( groupid != 0 && _group.Id == groupid))
+                if (groupid == 0 || (groupid != 0 && _group.Id == groupid))
                 {
                     if (_group.Name != "公共客户" && _group.Name != "沉睡客户")
                     {
-                        
+
                         dynamic __group = new GroupInfo();
                         __group.Id = _group.Id;
                         __group.Name = _group.Name;
                         _groups.Add(__group);
                     }
-                   
+
                 }
             }
             foreach (var _group in _groups)
@@ -801,11 +801,11 @@ and ca2.firsttype=1
                     (from o in DepartmentBLL.DepartmentUsers where o.DepartmentId == _group.Id select o).ToList();
                 foreach (var u in groupusers)
                 {
-                    _group.Users.Add(new IdName {Id = u.UserId, Name = UserBLL.GetNameById(u.UserId)});
+                    _group.Users.Add(new IdName { Id = u.UserId, Name = UserBLL.GetNameById(u.UserId) });
                 }
             }
-            
-            result.obj = new { Groups=_groups,Users=users, list1 = query1,list2=query11, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
+
+            result.obj = new { Groups = _groups, Users = users, list1 = query1, list2 = query11, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
             result.success = true;
             return Json(result);
         }
@@ -882,11 +882,11 @@ and ca2.firsttype=1
             switch (type)
             {
                 case "0":
-                    sql = string.Format(sql1, preSql, projectid, 1, groupSql, "来电", 1,personSql);
+                    sql = string.Format(sql1, preSql, projectid, 1, groupSql, "来电", 1, personSql);
                     break;
-               
+
                 case "6":
-                    sql = string.Format(sql6, preSql, projectid, 1, groupSql, "电转访",personSql);
+                    sql = string.Format(sql6, preSql, projectid, 1, groupSql, "电转访", personSql);
                     break;
             }
             var list = db.Database.SqlQuery<ClientListVO>(sql).ToList();
@@ -914,13 +914,13 @@ and ca2.firsttype=1
                 ViewBag.Date1 = datefrom;
                 ViewBag.Date2 = dateto;
             }
-            
+
             return View();
         }
 
-        public ActionResult ClientCompanyReportQuery( string dateFrom, string dateTo, FormCollection collection)
+        public ActionResult ClientCompanyReportQuery(string dateFrom, string dateTo, FormCollection collection)
         {
-            
+
             Result result = new Result();
             DateTime d1 = Utilities.ParseDate(dateFrom);
             DateTime d2 = Utilities.ParseDate(dateTo);
@@ -928,7 +928,7 @@ and ca2.firsttype=1
             var projects = DepartmentBLL.GetDepartments("项目");
             foreach (var p in projects)
             {
-                list.Add(new ClientStateCompanyReportVO {ProjectId = p.Id, ProjectName = p.Name});
+                list.Add(new ClientStateCompanyReportVO { ProjectId = p.Id, ProjectName = p.Name });
             }
             string roomTypeSql = "";
             if (!string.IsNullOrEmpty(collection["roomType"]))
@@ -1132,12 +1132,12 @@ and ca2.firsttype=1 {2}
         }
         public ActionResult ClientCompanyWayReportQuery(string dateFrom, string dateTo, FormCollection collection)
         {
-           //ToDo:权限判断 ，上一张报表也需要添加
+            //ToDo:权限判断 ，上一张报表也需要添加
             Result result = new Result();
             DateTime d1 = Utilities.ParseDate(dateFrom);
             DateTime d2 = Utilities.ParseDate(dateTo);
-            var projects = (from o in  DepartmentBLL.GetDepartments("项目") select new IdName{Id=o.Id,Name=o.Name}).ToList();
-            
+            var projects = (from o in DepartmentBLL.GetDepartments("项目") select new IdName { Id = o.Id, Name = o.Name }).ToList();
+
             List<WayReportVO> list = new List<WayReportVO>();
 
 
@@ -1153,14 +1153,14 @@ where c.state!={1} and ca.firsttype={2} and ca.actualtime >=@d1 and ca.actualtim
             var query1 = db.Database.SqlQuery<IdNameNum>(string.Format(sql1, preSql, (int)ClientStateEnum.无效客户, 1)).ToList();
             foreach (var i in query1)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.CallInNum =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.CallInNum = i.Num;
             }
             var query2 = db.Database.SqlQuery<IdNameNum>(string.Format(sql1, preSql, (int)ClientStateEnum.无效客户, 2)).ToList();
             foreach (var i in query2)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.VisitNum =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.VisitNum = i.Num;
             }
             //小卡
             string sql2 =
@@ -1172,13 +1172,13 @@ where c.state!={1} and ca.firsttype={2} and ca.actualtime >=@d1 and ca.actualtim
             var query4 = db.Database.SqlQuery<IdNameNum>(string.Format(sql3, preSql, "1=1")).ToList();
             foreach (var i in query3)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.Card1Num =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.Card1Num = i.Num;
             }
             foreach (var i in query4)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.Card1Num -=i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.Card1Num -= i.Num;
             }
             //大卡
             string sql4 =
@@ -1189,13 +1189,13 @@ where c.state!={1} and ca.firsttype={2} and ca.actualtime >=@d1 and ca.actualtim
             var query6 = db.Database.SqlQuery<IdNameNum>(string.Format(sql5, preSql, "1=1")).ToList();
             foreach (var i in query5)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.Card2Num =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.Card2Num = i.Num;
             }
             foreach (var i in query6)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.Card2Num -=i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.Card2Num -= i.Num;
             }
 
             //大定
@@ -1207,13 +1207,13 @@ where c.state!={1} and ca.firsttype={2} and ca.actualtime >=@d1 and ca.actualtim
             var query8 = db.Database.SqlQuery<IdNameNum>(string.Format(sql7, preSql, "1=1")).ToList();
             foreach (var i in query7)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.OrderNum =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.OrderNum = i.Num;
             }
             foreach (var i in query8)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.OrderNum -=i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.OrderNum -= i.Num;
             }
 
             //签约
@@ -1225,13 +1225,13 @@ where c.state!={1} and ca.firsttype={2} and ca.actualtime >=@d1 and ca.actualtim
             var query10 = db.Database.SqlQuery<IdNameNum>(string.Format(sql9, preSql, "1=1")).ToList();
             foreach (var i in query9)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.ContractNum =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.ContractNum = i.Num;
             }
             foreach (var i in query10)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.ContractNum -=i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.ContractNum -= i.Num;
             }
 
             string sql11 =
@@ -1243,42 +1243,59 @@ and ca2.firsttype=1
             var query11 = db.Database.SqlQuery<IdNameNum>(string.Format(sql11, preSql, (int)ClientStateEnum.无效客户)).ToList();
             foreach (var i in query11)
             {
-                WayReportVO vo = WayReportVO.GetVo(list,i.Id, i.Name);
-                vo.CallVisitNum =i.Num;
+                WayReportVO vo = WayReportVO.GetVo(list, i.Id, i.Name);
+                vo.CallVisitNum = i.Num;
             }
 
 
-            result.obj = new {projects=projects, list = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
+            result.obj = new { projects = projects, list = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
             result.success = true;
             return Json(result);
         }
 
         public ActionResult PerformanceProjectReport()
         {
+            ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
             return View();
         }
         public ActionResult PerformanceTeamReport(string dateFrom, string dateTo, int projectid, string small)
         {
             ViewBag.Small = small;
-            ViewBag.Date1 = dateFrom;
-            ViewBag.Date2 = dateTo;
+            if (dateFrom == null)
+            {
+                ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                ViewBag.Date1 = dateFrom;
+            }
+            if (dateTo == null)
+            {
+                ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+
+                ViewBag.Date2 = dateTo;
+            }
             return View();
         }
         [HttpPost]
-        public ActionResult PerformanceProjectQuery(string dateFrom, string dateTo, int projectid,FormCollection collection)
+        public ActionResult PerformanceProjectQuery(string dateFrom, string dateTo, int projectid, FormCollection collection)
         {
             Result result = null;
 
             result = PerformanceQuery(dateFrom, dateTo, 1, projectid);
-            
+
             return Json(result);
         }
         [HttpPost]
         public ActionResult PerformanceCompanyQuery(string dateFrom, string dateTo, FormCollection collection)
         {
             Result result = null;
-            
-            result= PerformanceQuery(dateFrom, dateTo,2,0);
+
+            result = PerformanceQuery(dateFrom, dateTo, 2, 0);
             return Json(result);
         }
         /// <summary>
@@ -1289,16 +1306,16 @@ and ca2.firsttype=1
         /// <param name="grouptype">1=group ,2=project</param>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public Result PerformanceQuery(string dateFrom, string dateTo,int grouptype,int projectid)
+        public Result PerformanceQuery(string dateFrom, string dateTo, int grouptype, int projectid)
         {
-       
 
-        //ToDo:权限判断 ，上一张报表也需要添加
+
+            //ToDo:权限判断 ，上一张报表也需要添加
             Result result = new Result();
             DateTime d1 = Utilities.ParseDate(dateFrom);
             DateTime d2 = Utilities.ParseDate(dateTo);
-            
-            
+
+
             List<PorformanceReportVO> list = new List<PorformanceReportVO>();
             string groupField = "";
             if (grouptype == 2)
@@ -1306,7 +1323,7 @@ and ca2.firsttype=1
                 var projects = DepartmentBLL.GetDepartments("项目");
                 foreach (var p in projects)
                 {
-                    list.Add(new PorformanceReportVO {Id = p.Id, Name = p.Name});
+                    list.Add(new PorformanceReportVO { Id = p.Id, Name = p.Name });
                 }
                 groupField = "  c.projectid ";
             }
@@ -1320,18 +1337,18 @@ and ca2.firsttype=1
                         list.Add(new PorformanceReportVO { Id = o.Id, Name = o.Name });
                 });
             }
-            
-          
+
+
 
             string preSql = "declare @d1 datetime ,@d2 datetime ;set @d1='{0:yyyy-MM-dd}';set @d2='{1:yyyy-MM-dd}';declare @roomType nvarchar(50);set @roomType='{2}';";
-            preSql = string.Format(preSql, d1, d2,"");
+            preSql = string.Format(preSql, d1, d2, "");
             //来电，来访，，可按这方式取，小卡大卡大定和签约需要另外计算，因为大定和签约算套数，小卡要计算退卡
 
             string sql1 =
                 @"{0} select count(*) as num ,{1} as id  from clients c join clientactivities ca on c.id=ca.clientid
 where c.state!={2} and ca.firsttype={3} and ca.actualtime between @d1 and DATEADD(MINUTE,59, dateadd(HH,23,@d2)) 
  group by {1}";
-            var query1 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql,groupField, (int)ClientStateEnum.无效客户, 1)).ToList();
+            var query1 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql, groupField, (int)ClientStateEnum.无效客户, 1)).ToList();
             foreach (var i in query1)
             {
                 foreach (var j in list)
@@ -1342,7 +1359,7 @@ where c.state!={2} and ca.firsttype={3} and ca.actualtime between @d1 and DATEAD
                     }
                 }
             }
-            var query2 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql,groupField, (int)ClientStateEnum.无效客户, 2)).ToList();
+            var query2 = db.Database.SqlQuery<IdInt>(string.Format(sql1, preSql, groupField, (int)ClientStateEnum.无效客户, 2)).ToList();
             foreach (var i in query2)
             {
                 foreach (var j in list)
@@ -1359,7 +1376,7 @@ where c.state!={2} and ca.firsttype={3} and ca.actualtime between @d1 and DATEAD
                 @"{0} select count(*) as num ,{1} as id from clients c join cards on c.id=cards.clientid   where   cards.smalltime between @d1 and @d2 {2} group by {1}";
             string sql3 =
                @"{0} select count(*) as num ,{1} as id from clients c join cards on c.id=cards.clientid   where   cards.canceltime between @d1 and @d2 {2} group by {1}";
-            var query3 = db.Database.SqlQuery<IdInt>(string.Format(sql2, preSql,groupField, "")).ToList();
+            var query3 = db.Database.SqlQuery<IdInt>(string.Format(sql2, preSql, groupField, "")).ToList();
             foreach (var i in query3)
             {
                 foreach (var j in list)
@@ -1381,13 +1398,13 @@ where c.state!={2} and ca.firsttype={3} and ca.actualtime between @d1 and DATEAD
                     }
                 }
             }
-            
+
             //大定
             string sql6 =
               @"{0} select count(*) as num ,{1} as id from clients c join orders o on o.clientid=c.id where  o.ordertime between @d1 and @d2 {2} group by {1}";
             string sql7 =
             @"{0} select count(*) as num ,{1} as id from clients c join orders o on o.clientid=c.id where  o.canceltime between @d1 and @d2 {2} group by {1}";
-            var query7 = db.Database.SqlQuery<IdInt>(string.Format(sql6, preSql,groupField,"")).ToList();
+            var query7 = db.Database.SqlQuery<IdInt>(string.Format(sql6, preSql, groupField, "")).ToList();
             foreach (var i in query7)
             {
                 foreach (var j in list)
@@ -1416,7 +1433,7 @@ join clientactivities ca2 on c.id=ca2.clientid
 where  c.state!={2} and  ca.firsttype=2 and ca.actualtime between @d1 and DATEADD(MINUTE,59, dateadd(HH,23,@d2))
 and ca2.firsttype=1 
  group by {1}";
-            var query11 = db.Database.SqlQuery<IdInt>(string.Format(sql11, preSql,groupField, (int)ClientStateEnum.无效客户)).ToList();
+            var query11 = db.Database.SqlQuery<IdInt>(string.Format(sql11, preSql, groupField, (int)ClientStateEnum.无效客户)).ToList();
             foreach (var i in query11)
             {
                 foreach (var j in list)
@@ -1441,20 +1458,179 @@ and ca2.firsttype=1
                     if (performance != null) targetList.Add(performance);
                 }
             }
-            result.obj = new {targetList=targetList, actList = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
+            result.obj = new { targetList = targetList, actList = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
             result.success = true;
-             return result;
-         }
+            return result;
+        }
 
         Performance GetPerformance(int projectId, DateTime d1)
         {
             var query =
                 (from o in db.Performance
-                    where o.ProjectId == projectId && o.BeginDate <= d1
-                    orderby o.BeginDate descending
-                    select o).FirstOrDefault();
+                 where o.ProjectId == projectId && o.BeginDate <= d1
+                 orderby o.BeginDate descending
+                 select o).FirstOrDefault();
             return query;
         }
-    }
 
+        public ActionResult InviteCompanyReport()
+        {
+            ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
+            return View();
+        }
+
+        public JsonResult InviteCompanyQuery(string dateFrom, string dateTo)
+        {
+            return Json(InviteQuery(dateFrom, dateTo, 2, 0));
+
+        }
+
+        public ActionResult InviteProjectReport(string dateFrom, string dateTo)
+        {
+            if(string.IsNullOrEmpty(dateFrom))
+            {
+                ViewBag.Date1 = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                ViewBag.Date1 = dateFrom;
+            }
+            if (string.IsNullOrEmpty(dateTo))
+            {
+                ViewBag.Date2 = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                ViewBag.Date2 = dateTo;
+            }
+            return View();
+        }
+        public JsonResult InviteProjectQuery(string dateFrom, string dateTo, int projectid)
+        {
+            return Json(InviteQuery(dateFrom, dateTo, 1, projectid));
+
+        }
+
+        public Result InviteQuery(string dateFrom, string dateTo, int grouptype, int projectid)
+        {
+
+
+            //ToDo:权限判断 ，上一张报表也需要添加
+            Result result = new Result();
+            DateTime d1 = Utilities.ParseDate(dateFrom);
+            DateTime d2 = Utilities.ParseDate(dateTo);
+            if (d2.Year == 1900)
+            {
+                d2 = d1;
+            }
+            d2 = d2.AddHours(23).AddMinutes(59);
+            List<InviteReportVO> list = new List<InviteReportVO>();
+            string groupField = "";
+            if (grouptype == 2)
+            {
+                var projects = DepartmentBLL.GetDepartments("项目");
+                foreach (var p in projects)
+                {
+                    list.Add(new InviteReportVO { Id = p.Id, Name = p.Name });
+                }
+
+            }
+            else
+            {
+                var groups = DepartmentBLL.GetGroupsByPid(projectid);
+                groups.ForEach(o =>
+                {
+                    if (o.Name != "前台" && o.Name != "公共客户" && o.Name != "沉睡客户")
+                        list.Add(new InviteReportVO { Id = o.Id, Name = o.Name });
+                });
+            }
+            int groupid = 0;
+            if (UserInfo.CurUser.GetClientRight(projectid) <= ClientViewScopeEnum.查看本组)
+            {
+                groupid = UserInfo.CurUser.GetGroup(projectid);
+            }
+
+            List<ClientActivityReportView> caList = ClientActivityReportView.GetReport(projectid, groupid, d1, d2);
+            if (grouptype == 2)
+            {
+                foreach (var item in list)
+                {
+                    var projectList = (from o in caList where o.ProjectId == item.Id select o).ToList();
+                    foreach (var i in projectList)
+                    {
+                        switch (i.Type)
+                        {
+                            case "来访邀约":
+                                item.VisitNum = i.Num;
+                                item.VisitVisitNum = i.VisitNum;
+                                break;
+                            case "办卡邀约":
+                                item.Card1Num = i.Num;
+                                item.Card1VisitNum = i.VisitNum;
+                                item.Card1DoneNum = i.DoneNum;
+                                break;
+                            case "升卡邀约":
+                                item.Card2Num = i.Num;
+                                item.Card2VisitNum = i.VisitNum;
+                                item.Card2DoneNum = i.DoneNum;
+                                break;
+                            case "大定邀约":
+                                item.OrderNum = i.Num;
+                                item.OrderNum = i.VisitNum;
+                                item.OrderNum = i.DoneNum;
+                                break;
+                            case "签约邀约":
+                                item.ContractNum = i.Num;
+                                item.ContractNum = i.VisitNum;
+                                item.ContractNum = i.DoneNum;
+                                break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in list)
+                {
+                    var groupList = (from o in caList where o.GroupId == item.Id select o).ToList();
+                    foreach (var i in groupList)
+                    {
+                        switch (i.Type)
+                        {
+                            case "来访邀约":
+                                item.VisitNum = i.Num;
+                                item.VisitVisitNum = i.VisitNum;
+                                break;
+                            case "办卡邀约":
+                                item.Card1Num = i.Num;
+                                item.Card1VisitNum = i.VisitNum;
+                                item.Card1DoneNum = i.DoneNum;
+                                break;
+                            case "升卡邀约":
+                                item.Card2Num = i.Num;
+                                item.Card2VisitNum = i.VisitNum;
+                                item.Card2DoneNum = i.DoneNum;
+                                break;
+                            case "大定邀约":
+                                item.OrderNum = i.Num;
+                                item.OrderNum = i.VisitNum;
+                                item.OrderNum = i.DoneNum;
+                                break;
+                            case "签约邀约":
+                                item.ContractNum = i.Num;
+                                item.ContractNum = i.VisitNum;
+                                item.ContractNum = i.DoneNum;
+                                break;
+                        }
+                    }
+                }
+            }
+            result.obj = new { list = list, d1 = d1.ToString("yyyy-MM-dd"), d2 = d2.ToString("yyyy-MM-dd") };
+            result.success = true;
+            return result;
+        }
+    }
 }
+
+

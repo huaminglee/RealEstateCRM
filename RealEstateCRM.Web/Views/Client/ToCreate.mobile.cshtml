@@ -14,10 +14,10 @@
 
         function add() {
             var _type = '@ViewBag.Type';
-            load('clientedit','@(MvcApplication.RootPath + "/Project/" +Model.ProjectId)' +"/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#Name").val()) + "&phone=" + encodeURIComponent($("#AllPhone").val()));
+            load('clientview', '@(MvcApplication.RootPath + "/Project/" +Model.ProjectId)' + "/Client/Create?type=" + _type + "&name=" + encodeURIComponent($("#clientview #Name").val()) + "&phone=" + encodeURIComponent($("#clientview #AllPhone").val()));
             
-            $("#Name").val('');
-            $("#AllPhone").val('');
+            $("#clientview #Name").val('');
+            $("#clientview #AllPhone").val('');
         }
     </script>
     <div data-role="content">
@@ -31,7 +31,7 @@
             @Html.MyMobileTextFor(m => m.Name)
             @Html.MyMobileTextFor(m => m.AllPhone)
             <p style="text-align: center">
-                <input type="button" value="查找" onclick="post('clientedit','@Request.Url.AbsoluteUri',$('#clientedit form').serialize());" />
+                <input type="button" value="查找" onclick="post('clientview','@Request.Url.AbsoluteUri',$('#clientview form').serialize());" />
                 @if (ViewBag.Button)
                 {
                     @MyControls.Btn("新增客户", " add(); ")
@@ -63,7 +63,7 @@
                         @foreach (ClientView c in ViewBag.Clients1)
                         {
                             <tr>
-                                <td align="center"><a onclick="load('clientview','@(Request.Url.AbsoluteUri + "/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center"><a onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + Model.ProjectId + "/Client/View/" + c.Id)')">@c.Name</a></td>
                                 <td align="center">@c.Phone1<br />@c.Phone2</td>
                                 <td align="center">@c.GroupName</td>
                             </tr>
@@ -77,7 +77,7 @@
                         @foreach (ClientView c in ViewBag.Clients2)
                         {
                             <tr>
-                                <td align="center"><a onclick="load('clientview','@(Request.Url.AbsoluteUri + "/../View/" + c.Id)')">@c.Name</a></td>
+                                <td align="center"><a onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + Model.ProjectId + "/Client/View/" + c.Id)')">@c.Name</a></td>
                                 <td align="center">@c.MarkedPhone1<br /> @c.MarkedPhone2 </td>
                                 <td align="center">@c.GroupName</td>
                             </tr>

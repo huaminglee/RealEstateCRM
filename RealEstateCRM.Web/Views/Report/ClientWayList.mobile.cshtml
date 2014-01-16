@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "客户清单";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+}
+@section Main{
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            SearchClickForCWL();
+        });
+
+        function SearchClickForCWL() {
+            var PostData = {};
+            PostData.ProjectId = @projectid;
+            PostData.DateFrom = $("#projectReportDetail [name='DateFrom']").val();
+            PostData.DateTo = $("#projectReportDetail [name='DateTo']").val();
+            PostData.Type = $("#projectReportDetail [name='Type']").val();
+            PostData.Way = $("#projectReportDetail [name='Way']").val();
+            PostData.RoomType = $("#projectReportDetail [name='RoomType']").val();
+            $.post("@(MvcApplication.RootPath+"/Project/"+projectid+"/Report/ClientWayListQuery")", PostData, function(respDate) {
+                if (respDate.success == true) {
+                    var obj = respDate.obj;
+                    showEntersForCWL(obj);
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEntersForCWL(obj) {
+            var element = $("#projectReportDetail [name='resulttable']");
+            var tplForCWL = $('#tplForCWL').html();
+            var html = _.template(tplForCWL, obj);
+            element.html(html);
+        }
+
+    </script>
+    <div data-role="content">
+    <div class="well well-sm">
+        <input type="hidden" name="DateFrom" value="@ViewBag.D1" />
+        <input type="hidden" name="DateTo" value="@ViewBag.D2" />
+        <input type="hidden" name="Way" value="@ViewBag.Way" />
+        <input type="hidden" name="RoomType" value="@ViewBag.RoomType" />
+        <input type="hidden" name="Type" value="@ViewBag.Type" />
+        @*@Html.Hidden("DateFrom",ViewBag.D1 as string )
+            @Html.Hidden("DateTo", ViewBag.D2 as string)
+            @Html.Hidden("Way",ViewBag.Way as string )
+            @Html.Hidden("RoomType", ViewBag.RoomType as string)
+            @Html.Hidden("Type", ViewBag.Type as string)*@
+        <strong>客户清单</strong> <p>@ViewBag.D1 - @ViewBag.D2 </p>
+    </div>
+    <div name="resulttable">
+
+    </div>
+</div>
+    <script type="text/template" id="tplForCWL">
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr><th style="width:80px">物业类型</th>
+                    <th style="width:80px">组名</th>
+                    <th style="width:100px">客户</th>
+                    <th style="width:150px">渠道</th>
+                    <th style="width:150px">渠道说明</th>
+                    <th style="width:80px">动作</th>
+                    <th style="width:80px">时间</th>
+                    <th style="width:80px">备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i=0;i<obj.list.length;i++){var item=obj.list[i]; %>
+                    <tr><td><%=item.RoomType%></td>
+                        <td><%=item.GroupName%></td>
+                       
+                        <td ><%=item.Name%></td>
+                        <td ><%=item.Way%></td>
+                        <td ><%=item.WayExtend%></td>
+                        <td ><%=item.Action%></td>
+                        <td ><%=Date2String(item.StateDate)%></td>
+                        <td ><%=item.Remark%></td>
+                    </tr>   
+                    <%}%>
+                    
+
+</tbody>
+        </table>
+    </script>
+   
+    }

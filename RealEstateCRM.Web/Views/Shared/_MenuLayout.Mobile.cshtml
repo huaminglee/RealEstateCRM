@@ -1,0 +1,45 @@
+﻿@using RealEstateCRM.Web
+@using RealEstateCRM.Web.BLL
+@using OUDAL
+@{
+    var isProject = false;
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null)
+    {
+        projectid = Request.RequestContext.RouteData.Values["projectid"].ToString();
+        if(!projectid.Equals("0"))
+        {
+            isProject = true;
+        }
+     
+    }
+    else if (Request.Form["projectid"] != null)
+    {
+        projectid = Request.Form["projectid"];
+        if(!projectid.Equals("0"))
+        {
+            isProject = true;
+        }
+    }
+}
+<script>
+
+</script>
+
+<div data-role="header" data-add-back-btn="true" data-direction="reverse"  data-position="fixed" data-tap-toggle="false" align="center" data-theme="b" data-hide-during-focus="">
+    <a href="#" class=" ui-btn-left" data-icon="carat-l" data-iconpos="left" data-transition="slide" data-rel="back"
+       >Back</a>
+    @if (!isProject)
+    {
+        <h3>公司</h3>
+    }
+    else
+    {
+        <h3>
+            @DepartmentBLL.GetNameById(int.Parse(projectid))
+        </h3>
+    }
+</div>
+@RenderBody()
+@RenderSection("Main", false)
+@RenderSection("Footer", false)

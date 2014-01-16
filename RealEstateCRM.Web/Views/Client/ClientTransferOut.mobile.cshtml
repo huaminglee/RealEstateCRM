@@ -1,57 +1,57 @@
 ﻿@{
     ViewBag.Title = "客户转出表";
-    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
 }
 
 @section Main{
     @Scripts.Render("~/bundles/backbone")
     <script type="text/javascript">
         jQuery(document).ready(function () {
-            $(".datepicker").attr("data-role", "datebox");
-            var opt = {
-                preset: 'date', //日期
-                theme: 'ios', //皮肤样式
-                display: 'modal', //显示方式
-                mode: 'scroller', //日期选择模式
-                lang: 'zh',
-                dateFormat: 'yyyy-mm-dd', // 日期格式
-                dateOrder: 'yymmdd', //面板中日期排列格式
-                endYear: 2020 //结束年份
-            };
-            $('input:jqmData(role="datebox")').mobiscroll(opt);
-            $("#DateFromTransferTime").val('@ViewBag.Date1');
-            $("#DateToTransferTime").val('@ViewBag.Date2');
-            SearchClick();
+            //$(".datepicker").attr("data-role", "datebox");
+            //var opt = {
+            //    preset: 'date', //日期
+            //    theme: 'ios', //皮肤样式
+            //    display: 'modal', //显示方式
+            //    mode: 'scroller', //日期选择模式
+            //    lang: 'zh',
+            //    dateFormat: 'yyyy-mm-dd', // 日期格式
+            //    dateOrder: 'yymmdd', //面板中日期排列格式
+            //    endYear: 2020 //结束年份
+            //};
+            //$('input:jqmData(role="datebox")').mobiscroll(opt);
+            $("[name='DateFromTransferOutTime']").val('@ViewBag.Date1');
+            $("[name='DateToTransferOutTime']").val('@ViewBag.Date2');
+            SearchClickForTransferOut();
         });
 
-        function SearchClick() {
-            var postData={from:$("#DateFromTransferTime").val(),to:$("#DateToTransferTime").val()};
+        function SearchClickForTransferOut() {
+            var postData={from:$("[name='DateFromTransferOutTime']").val(),to:$("[name='DateToTransferOutTime']").val()};
             $.post("@(Request.Url.AbsoluteUri+"/../ClientTransferOutQuery")",postData, function(respDate) {
                 if (respDate.success == true) {
                     list = respDate.obj;
-                    showEnters(list);
+                    showEntersForTransferOut(list);
                 } else {
                     alert(respDate.obj);
                 }
             });
         }
 
-        function showEnters(obj) {
-            var element = $('#resulttable');
-            var tpl = $('#tpl').html();
-            var html = _.template(tpl, obj);
+        function showEntersForTransferOut(obj) {
+            var element = $('#resulttableForTransferOut');
+            var tplForTransferOut = $('#tplForTransferOut').html();
+            var html = _.template(tplForTransferOut, obj);
             element.html(html);
         }
     </script>
     <div class="well well-small" align="center">
-    @Html.MobileSearchDateRange("TransferTime", "转出日期：")
-    @MyControls.SearchBtn()
+    @Html.MobileSearchDateRange("TransferOutTime", "转出日期：")
+    @MyControls.MobileSearchBtn("TransferOut")
 
 </div>
-    <div id="resulttable">
+    <div id="resulttableForTransferOut">
 
     </div>
-    <script type="text/template" id="tpl">
+    <script type="text/template" id="tplForTransferOut">
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>

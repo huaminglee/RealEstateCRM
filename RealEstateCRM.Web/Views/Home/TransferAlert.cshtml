@@ -28,7 +28,7 @@
                     <td style="text-align:right">
                         @if (@item.Num != 0)
                         {
-                            <a href="#"  onclick="load('clientview','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/AlertList")?type=@item.TransferType')">@item.Num</a>
+                            <a href="#"  onclick="load('projectReportDetail','@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/AlertList")?type=@item.TransferType')">@item.Num</a>
                         }
                         else
                         {

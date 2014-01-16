@@ -1,0 +1,157 @@
+﻿@{
+    ViewBag.Title = "渠道统计表";
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+}
+@section Main{
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $("#companyReport [name='DateFrom']").val('@ViewBag.Date1');
+            $("#companyReport [name='DateTo']").val('@ViewBag.Date2');
+            SearchClickForCCW1();
+        });
+
+        function SearchClickForCCW1() {
+            var PostData = {};
+
+
+            PostData.DateFrom = $("#companyReport [name='DateFrom']").val();
+            if (PostData.DateFrom == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.DateTo = $("#companyReport [name='DateTo']").val();
+            if (PostData.DateTo == "") {
+                alert("请选择日期");
+                return;
+            }
+
+            $.post("@(MvcApplication.RootPath+"/Report/ClientCompanyWayReportQuery")", PostData, function(respDate) {
+                if (respDate.success == true) {
+
+
+                    var obj = respDate.obj;
+                    for (var i = 0; i < obj.projects.length; i++) {
+                        var p = obj.projects[i];
+                        p.wayList1 = [{ Way: '小计' }, { Way: '电话中心' }, { Way: '来电/直访' }, { Way: '销售员拓客' }, { Way: '中介' }];
+                        for (var j = 0; j < p.wayList1.length; j++) {
+                            var totalItem = p.wayList1[j];
+                            totalItem.CallInNum = 0;
+                            totalItem.CallVisitNum = 0;
+                            totalItem.VisitNum = 0;
+                            totalItem.Card1Num = 0;
+                            totalItem.Card2Num = 0;
+                            totalItem.OrderNum = 0;
+                            totalItem.ContractNum = 0;
+                        }
+                        var totalItem = p.wayList1[0];
+                       
+                        for (var j = 0; j < obj.list.length; j++) {
+                            if (obj.list[j].ProjectId == p.Id) {
+                                var item = obj.list[j];
+                                switch (item.Way) {
+                                case '电话中心':
+                                    p.wayList1[1] = item;
+                                    break;
+                                case '销售员拓客':
+                                    p.wayList1[3] = item;
+                                    break;
+                                case '中介':
+                                    p.wayList1[4] = item;
+                                    break;
+                                default:
+                                    p.wayList1[2].CallInNum += item.CallInNum;
+                                    p.wayList1[2].CallVisitNum += item.CallVisitNum;
+                                    p.wayList1[2].Card1Num += item.Card1Num;
+                                    p.wayList1[2].Card2Num += item.Card2Num;
+                                    p.wayList1[2].VisitNum += item.VisitNum;
+                                    p.wayList1[2].OrderNum += item.OrderNum;
+                                    p.wayList1[2].ContractNum += item.ContractNum;
+                                    
+                                    
+                                }
+                                totalItem.CallInNum += item.CallInNum;
+                                totalItem.CallVisitNum += item.CallVisitNum;
+                                totalItem.VisitNum += item.VisitNum;
+                                totalItem.Card1Num += item.Card1Num;
+                                totalItem.Card2Num += item.Card2Num;
+                                totalItem.OrderNum += item.OrderNum;
+                                totalItem.ContractNum += item.ContractNum;
+                            }
+                            
+                        }
+
+                    }
+
+
+                    showEntersForCCW1({ list: obj.projects, d1: obj.d1, d2: obj.d2 });
+
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        function showEntersForCCW1(obj) {
+            var element = $("#companyReport [name='resulttable']");
+            var tplForCCW1 = $('#tplForCCW1').html();
+            var html = _.template(tplForCCW1, obj);
+            element.html(html);
+        }
+    </script>
+    <div data-role="content">
+    <div class="well well-sm">
+        @Html.MobileSearchDateRange("", "日期：")
+
+        @MyControls.MobileSearchBtn("CCW1")
+    </div>
+    <h4>渠道统计</h4>
+    <div name="resulttable">
+
+    </div>
+</div>
+    <script type="text/template" id="tplForCCW1">
+        <table class="table table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px">渠道</th>
+                    <th style="width:80px">来电</th>
+                    <th style="width:80px">电转访</th>
+                    <th style="width:80px">来访</th>
+                    <th style="width:80px">小卡</th>
+                    <th style="width:80px">大卡</th>
+                    <th style="width:80px">大定</th>
+                    <th style="width:80px">签约</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(var i=0;i<list.length;i++){
+                    var p=list[i];
+                    for(var j=0;j<p.wayList1.length;j++){
+                        var item=p.wayList1[j]; 
+                    if(j==0){%>
+                                     <tr class="warning">
+                                         <td><a onclick="load('projectReport','@(MvcApplication.RootPath)'+'/Project/<%=p.Id%>/Report/ClientWayReport1?datefrom=<%=d1%>&dateto=<%=d2%>')"><%=p.Name%></a></td>
+                                         <%}else{%>
+                                     <tr>
+                                         <td><%=item.Way%></td>
+                                         <%}%>
+
+                        <td style="text-align:right"><%=item.CallInNum%>   </td>
+                        <td style="text-align:right"><%=item.CallVisitNum%></td>
+                        <td style="text-align:right"><%=item.VisitNum%>    </td>
+                        <td style="text-align:right"><%=item.Card1Num%>    </td>
+                        <td style="text-align:right"><%=item.Card2Num%>    </td>
+                        <td style="text-align:right"><%=item.OrderNum%>    </td>
+                        <td style="text-align:right"><%=item.ContractNum%> </td>
+
+                    </tr>
+
+
+                        <%}}%>
+
+
+</tbody>
+        </table>
+    </script>
+
+}

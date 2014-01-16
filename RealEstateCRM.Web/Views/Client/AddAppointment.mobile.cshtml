@@ -2,11 +2,17 @@
 
 @{
     ViewBag.Title = "邀约记录编辑";
-    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_EditLayout.mobile.cshtml";
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null)
+    {
+        projectid = Request.RequestContext.RouteData.Values["projectid"].ToString();
+    }
+    ViewBag.BackUrl = MvcApplication.RootPath + "/Project/" + projectid + "/Client/View/" + Model.ClientId.ToString();
 }
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        $(".datetimepicker").attr("data-role", "datebox");
+        //$(".datetimepicker").attr("data-role", "datebox");
         var opt = {
             preset: 'datetime', //日期
             theme: 'ios', //皮肤样式
@@ -17,37 +23,39 @@
             dateOrder: 'yymmdd', //面板中日期排列格式
             endYear: 2020 //结束年份
         };
-        $('input:jqmData(role="datebox")').mobiscroll(opt);
+        $('.datetimepicker').mobiscroll(opt);
     });
     function Submit() {
-        post('@Request.Url.AbsoluteUri', $('#contact form').serialize());
+        post('clientview', '@Request.Url.AbsoluteUri', $('#clientview form').serialize());
     }
     function Back() {
-        load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("AddAppointment"))+"View/"+Model.ClientId)');
+        loadCurPage('@ViewBag.BackUrl');
     }
 </script>
-@using (Html.BeginForm())
-{
-    @Html.ValidationSummary(true)
-    @Html.HiddenFor(model => model.Id)
-    @Html.HiddenFor(model => model.ClientId)
+@section Main{
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.ClientId)
 
-    <h3>邀约信息</h3>
-    <div class="ui-field-contain">
-        <fieldset data-role="controlgroup">
-            <legend>联系类型<font color="red">*</font></legend>
-            @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
-            {
-                <label class="radio"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
+        <h3>邀约信息</h3>
+        <div class="ui-field-contain">
+            <fieldset data-role="controlgroup">
+                <legend>联系类型<font color="red">*</font></legend>
+                @foreach (SelectListItem s in DictionaryBLL.GetList("邀约类型", false))
+                {
+                    <label class="radio"><input type="radio" name="Type" value="@s.Value" checked="@s.Value.Equals(Model.Type)" />@s.Text</label>
 
-            }
+                }
 
-        </fieldset>
-    </div>
-    @Html.ValidationMessageFor(m => m.Type)
-    @Html.MyMobileDateTimeFor(model => model.PlanTime)
-    @* @Html.MyDateTimeFor(model => model.ActualTime)*@
-    @Html.MyMobileTextAreaFor(model => model.Detail, 3)
-    <input name="ismobile" value="true" type="hidden" />
-    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+            </fieldset>
+        </div>
+        @Html.ValidationMessageFor(m => m.Type)
+        @Html.MyMobileDateTimeFor(model => model.PlanTime)
+        @* @Html.MyDateTimeFor(model => model.ActualTime)*@
+        @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+        <input name="ismobile" value="true" type="hidden" />
+        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+    }
 }

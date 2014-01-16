@@ -88,8 +88,10 @@ where c.projectid={0} {1} and ca.plantime between '{2:yyyy-MM-dd}' and '{3:yyyy-
 
     public class ClientActivityReportView
     {
+        public int ProjectId { get; set; }
         public string Type { get; set; }
-        public string GroupName { get; set; }
+        //public string GroupName { get; set; }
+        public int GroupId { get; set; }
         public int Num { get; set; }
         public int VisitNum { get; set; }
         public int DoneNum { get; set; }
@@ -104,14 +106,16 @@ where c.projectid={0} {1} and ca.plantime between '{2:yyyy-MM-dd}' and '{3:yyyy-
         /// <returns></returns>
         public static List<ClientActivityReportView> GetReport(int projectid, int groupid, DateTime dateFrom, DateTime dateTo)
         {
-            string sql = @"select ca.type,d.name as groupname,count(*) as num
-,sum(case  when actualtime is null then 0 else 1 end ) as VistNum,sum(case isdone when 1 then 1 else 0 end) as donenum
+            string sql = @"select c.projectid {4}, ca.type ,count(*) as num
+,sum(case  when actualtime is null then 0 else 1 end ) as VisitNum,sum(case isdone when 1 then 1 else 0 end) as donenum
 from clients c join clientactivities ca on c.id=ca.clientid
 join departments d on c.groupid=d.id
-where c.projectid={0} {1} and ca.plantime between '{2:yyyy-MM-dd}' and '{3:yyyy-MM-dd} 23:59'
-group by ca.type,d.name";
+where 1=1  {0} {1} and ca.plantime between '{2:yyyy-MM-dd}' and '{3:yyyy-MM-dd} 23:59'
+group by c.projectid {4}, ca.type";
+            string project = projectid == 0 ? "" : string.Format(" and c.projectid={0}", projectid);
             string group = groupid == 0 ? "" : string.Format(" and c.groupid={0}" , groupid);
-            sql = string.Format(sql, projectid, group, dateFrom, dateTo);
+            string groupgroup = projectid == 0 ? "" : ",c.groupid";
+            sql = string.Format(sql, project, group, dateFrom, dateTo,groupgroup);
             using (Context db = new Context())
             {
                return  db.Database.SqlQuery<ClientActivityReportView>(sql).ToList();

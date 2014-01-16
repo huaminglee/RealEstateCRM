@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "客户分配";
-    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 
@@ -8,7 +8,7 @@
 @section Main{
 
     <script type="text/javascript">
-        var PostData = { projectid: '@Html.ViewContext.RouteData.Values["projectid"]', GroupId: $("#GroupId").val() };
+        var PostDataForBatch = { projectid: '@Html.ViewContext.RouteData.Values["projectid"]', GroupId: $("#GroupId").val() };
         jQuery(document).ready(function () {
             $('input[type="checkbox"]').bind('click', function () {
                 $(this).prop('checked').checkboxradio("refresh");   // 绑定事件及时更新checkbox的checked值
@@ -17,7 +17,7 @@
             $("#GroupId option:contains('公共客户')").attr("selected", "selected");
             $("#GroupId").selectmenu();
             $("#GroupId").selectmenu("refresh");
-            clientQuery();
+            clientQueryForBatch();
         });
         function Transfer() {
             if ($("#newGroupId").val() == "") {
@@ -37,14 +37,14 @@
             $.post('@(Request.Url.AbsoluteUri)', data, function (data) {
                 alert(data.obj);
                 if (data.success == true) {
-                    clientQuery()
+                    clientQueryForBatch()
                 }
             });
         }
-        function clientQuery() {
-            var PostData = $('form#query').serialize();
+        function clientQueryForBatch() {
+            var PostDataForBatch = $('#clienttransfer form').serialize();
             var string = "";
-            $.post('@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/ListQuery")', PostData, function (res) {
+            $.post('@(MvcApplication.RootPath + "/Project/" + projectid.ToString()+"/Client/ListQuery")', PostDataForBatch, function (res) {
                 res.rows.forEach(function (e) {
                     string += "<input type='checkbox' name='selectedId' id='" + e.Id + "' value='" + e.Id + "'/><label for='" + e.Id + "'>" + e.Name + "    " + e.AllPhone + "<br/><font color='grey'>"+e.GroupName+"</font></label>";
                 });
@@ -52,42 +52,42 @@
                     string += "没有符合条件的客户";
 
                 }
-                $('#clientList').html(string);
-                $('#page').page("destroy").page();
-                totalPage = res.total;
-                currentPage = res.page;
+                $('#clientListForBatch').html(string);
+                $('#clienttransfer').page("destroy").page();
+                totalPageForBatch = res.total;
+                currentPageForBatch = res.page;
                 hideLoader();
             });
         }
-        function prePage() {
-            if (currentPage == 1) {
+        function prePageForBatch() {
+            if (currentPageForBatch == 1) {
                 alert("已经是第一页。");
-                $("#prePage").removeClass("ui-btn-active");
+                $("#prePageForBatch").removeClass("ui-btn-active");
                 return;
             }
-            $("input[name='page']").val(currentPage - 1);
-            clientQuery();
-            $("#prePage").removeClass("ui-btn-active");
+            $("input[name='page']").val(currentPageForBatch - 1);
+            clientQueryForBatch();
+            $("#prePageForBatch").removeClass("ui-btn-active");
         }
-        function nextPage() {
-            if (currentPage == totalPage) {
+        function nextPageForBatch() {
+            if (currentPageForBatch == totalPageForBatch) {
                 alert("已经是最后一页。");
-                $("#nextPage").removeClass("ui-btn-active");
+                $("#nextPageForBatch").removeClass("ui-btn-active");
                 return;
             }
-            $("input[name='page']").val(currentPage + 1);
-            clientQuery();
-            $("#nextPage").removeClass("ui-btn-active");
+            $("input[name='page']").val(currentPageForBatch + 1);
+            clientQueryForBatch();
+            $("#nextPageForBatch").removeClass("ui-btn-active");
         }
-        var currentPage = 1;
-        var totalPage = 1;
+        var currentPageForBatch = 1;
+        var totalPageForBatch = 1;
     </script>
     <div data-role="content">
         <a data-role="button" href="#submitdiv" data-rel="popup" data-position-to="window" data-transition="pop" data-disabled="true">转移</a>
         <fieldset data-role="controlgroup">
-            <div class="ui-controlgroup-controls" id="clientList"></div>
+            <div class="ui-controlgroup-controls" id="clientListForBatch"></div>
         </fieldset>
-        <div data-role="popup" id="search" data-overlay-theme="b" data-theme="a">
+        <div data-role="popup" id="searchForBatch" data-overlay-theme="b" data-theme="a">
             <div data-role="header"><h3>查询条件</h3></div>
             <div role="main" class="ui-corner-bottom ui-content">
                 <form id="query">
@@ -109,7 +109,7 @@
                 </form>
                 <p align="center">
                     <a data-role="button" data-inline="true" data-rel="back" data-theme="a">取消</a>
-                    <a onclick="clientQuery();" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">查询</a>
+                    <a onclick="clientQueryForBatch();" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">查询</a>
                 </p>
             </div>
         </div>
@@ -133,9 +133,10 @@
     <div data-role="footer" data-position="fixed" data-theme="b" data-hide-during-focus="" data-tap-toggle="false">
         <div data-role="navbar">
             <ul>
-                <li><a id="prePage" onclick="prePage();">上一页</a></li>
-                <li><a href="#search" data-rel="popup" data-position-to="window" data-transition="pop" data-disabled="true">查询</a></li>
-                <li><a id="nextPage" onclick="nextPage();">下一页</a></li>
+                <li><a id="prePageForBatch" onclick="prePageForBatch();">上一页</a></li>
+                <li><a href="#searchForBatch" data-rel="popup" data-position-to="window" data-transition="pop" data-disabled="true">查询</a></li>
+                <li><a onclick="load('projectReport', '@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceTeamReport")')">排名</a></li>
+                <li><a id="nextPageForBatch" onclick="nextPageForBatch();">下一页</a></li>
             </ul>
         </div>
     </div>

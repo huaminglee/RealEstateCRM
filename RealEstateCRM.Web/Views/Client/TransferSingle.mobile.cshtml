@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "客户转移";
-    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_EditLayout.mobile.cshtml";
+    ViewBag.BackUrl = Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId;
 }
 <script type="text/javascript">
     function Transfer() {
@@ -12,22 +13,22 @@
         $.post('@(Request.Url.AbsoluteUri+"/../../TransferSingleProcess")', data, function (data) {
             alert(data.obj);
             if (data.success == true) {
-                load('@(Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId)');
+                loadCurPage('@(Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId)');
             }
         });
     }
     function Back() {
-        load('@(Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId)');
+        loadCurPage('@(Request.Url.AbsoluteUri + "/../../View/" + ViewBag.ClientId)');
     }
 </script>
-
-<div data-role="fieldcontain">
-    <h3>新项目选择</h3>
-    <fieldset data-role="controlgroup" data-type="horizontal">
-        <legend>所属小组:<font color="red">*</font></legend>
-        @Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
-    </fieldset>
-    <input name="ismobile" value="true" type="hidden" />
-    <p style="text-align:center">@MyControls.Btn("保存", "Transfer();") @MyControls.Btn("取消", "Back();")</p>
-</div>
-
+@section Main{
+    <div data-role="fieldcontain">
+        <h3>新项目选择</h3>
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <legend>所属小组:<font color="red">*</font></legend>
+            @Html.DropDownList("newGroupId", (ViewBag.Groups as List<SelectListItem>))
+        </fieldset>
+        <input name="ismobile" value="true" type="hidden" />
+        <p style="text-align:center">@MyControls.Btn("保存", "Transfer();") @MyControls.Btn("取消", "Back();")</p>
+    </div>
+}

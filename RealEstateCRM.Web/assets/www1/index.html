@@ -3,17 +3,22 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>客户关系管理</title>
-    <link href="http://192.168.10.102/crm/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
-    <script src="http://192.168.10.102/crm/Scripts/jquery-1.9.1.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/jquery.mobile-1.4.0.js"></script>
-    <script src="http://192.168.10.102/crm/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
-    <link href="http://192.168.10.102/crm/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
-    <script src="http://192.168.10.102/crm/bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/MyJs.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/underscore-min.js"></script>
-    <script src="http://192.168.10.102/crm/Scripts/backbone-min.js"></script>
-    <link href="http://192.168.10.102/crm/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
-    <link href="http://192.168.10.102/crm/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" />
+    <link href="http://192.168.0.148:19717/Content/jquery.mobile-1.4.0.css" rel="stylesheet" type="text/css" />
+    <script src="http://192.168.0.148:19717/Scripts/jquery-1.9.1.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/jquery.mobile-1.4.0.js"></script>
+    <script src="http://192.168.0.148:19717/Content/mobiscroll-2.6.2/js/mobiscroll.custom-2.6.2.min.js"></script>
+    <link href="http://192.168.0.148:19717/Content/mobiscroll-2.6.2/css/mobiscroll.custom-2.6.2.min.css" rel="stylesheet" />
+    <script src="http://192.168.0.148:19717/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/MyJs.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/underscore-min.js"></script>
+    <script src="http://192.168.0.148:19717/Scripts/backbone-min.js"></script>
+    <link href="http://192.168.0.148:19717/Content/bootstrap-table-misc-2.3.2.css" rel="stylesheet" />
+    <link href="http://192.168.0.148:19717/Content/bootstrap-table-misc-2.3.2.min.css" rel="stylesheet" />
+    <link href="datebox/jqm-datebox-1.1.0.css" rel="stylesheet" />
+    <script src="datebox/jqm-datebox-1.1.0.core.js"></script>
+    <script src="datebox/jqm-datebox-1.1.0.mode.calbox.js"></script>
+    <script src="datebox/jquery.mobile.datebox.i18n.zh-CN.utf8.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
     <style>
         .dropup,
         .dropdown {
@@ -61,7 +66,7 @@
             
         </div>
     <script type="text/javascript">
-        var baseUrl = "http://192.168.10.102/crm";
+        var baseUrl = "http://192.168.0.148:19717";
         jQuery(document).ready(function ($) {
            
             load('homePage',baseUrl+'/Account/AppLogOn'); 
@@ -139,9 +144,9 @@
             var page = curPage;// $.mobile.activePage;
             showLoader();
             page.load(url, function () {
-                //page.page("destroy").page();
-                //page.trigger("updatelayout");
-                page.enhanceWithin();
+                page.page("destroy").page();
+                page.trigger("updatelayout");
+                //page.enhanceWithin();
                 hideLoader();  
             });
         }
@@ -157,7 +162,7 @@
         	//url=baseUrl+url;
         	page.load(url, function () {
                 try{
-                    page.page();
+                    page.page("destroy").page();
                     page.enhanceWithin();
                 }catch(err){
                     page.page();

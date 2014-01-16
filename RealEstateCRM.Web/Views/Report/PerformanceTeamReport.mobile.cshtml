@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "T间排名";
-        Layout = "~/Views/Shared/_Layout.mobile.cshtml";
- 
+    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 
@@ -9,32 +9,35 @@
 @section Main{
 
     <script type="text/javascript">
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             var PostData = {};
-            $("#DateFrom").val('@ViewBag.Date1');
-            $("#DateTo").val('@ViewBag.Date2');
-            
+            $("#projectReport [name='DateFrom']").val('@ViewBag.Date1');
+            $("#projectReport [name='DateTo']").val('@ViewBag.Date2');
+            SearchClickForPerformanceTeam();
         });
-        var list;
+        var teams = {};
+        teams.list = new Array();
+        teams.reportObj = {};
+        teams.rateType = "0";
 
-        function SearchClick() {
+        function SearchClickForPerformanceTeam() {
             var PostData = {};
 
 
-            PostData.DateFrom = $("#DateFrom").val();
+            PostData.DateFrom = $("#projectReport [name='DateFrom']").val();
             if (PostData.DateFrom == "") {
                 alert("请选择日期");
                 return;
             }
-            PostData.DateTo = $("#DateTo").val();
+            PostData.DateTo = $("#projectReport [name='DateTo']").val();
             if (PostData.DateTo == "") {
                 alert("请选择日期");
                 return;
             }
-            $.post("@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Report/PerformanceProjectQuery")", PostData, function(respDate) {
+            $.post("@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceProjectQuery")", PostData, function (respDate) {
                 if (respDate.success == true) {
-                    reportObj = respDate.obj;
-                    showEnters();
+                    teams.reportObj = respDate.obj;
+                    showEntersForPerformanceTeam();
 
                 } else {
                     alert(respDate.obj);
@@ -42,38 +45,39 @@
             });
         }
 
-        var reportObj;
-        var rateType = 0;
 
         function SetRate() {
-            rateType = $("input:radio[name='radiotype']:checked").val();
-            showEnters();
+            teams.rateType = $("#projectReport input:radio[name='radiotype']:checked").val() + "";
+            showEntersForPerformanceTeam();
 
         }
 
-        function showEnters() {
+        function showEntersForPerformanceTeam() {
             var list = new Array();
+            var graph = new Object();
+            graph.categories = new Array();
+            graph.data = new Array();
             var aNum1 = 0;
             var aNum2 = 0;
             var tNum1 = 0;
             var tNum2 = 0;
             var targetItem = null;
-            var totalItem = {aNum1:0,aNum2:0,tNum1:0,tNum2:0,targetRate:0};
-            if (reportObj.targetList.length > 0) {
-                targetItem = reportObj.targetList[0];
-                switch (rateType) {
-                case 0:
-                    tNum1 = targetItem.CallInNum;
-                    tNum2 = targetItem.CallVisitNum;
-                    break;
-                case 1:
-                    tNum1 = targetItem.VisitNum;
-                    tNum2 = targetItem.CardNum;
-                    break;
-                case 2:
-                    tNum1 = targetItem.VisitNum;
-                    tNum2 = targetItem.OrderNum;
-                    break;
+            var totalItem = { aNum1: 0, aNum2: 0, tNum1: 0, tNum2: 0, targetRate: 0 };
+            if (teams.reportObj.targetList.length > 0) {
+                targetItem = teams.reportObj.targetList[0];
+                switch (teams.rateType) {
+                    case 0:
+                        tNum1 = targetItem.CallInNum;
+                        tNum2 = targetItem.CallVisitNum;
+                        break;
+                    case 1:
+                        tNum1 = targetItem.VisitNum;
+                        tNum2 = targetItem.CardNum;
+                        break;
+                    case 2:
+                        tNum1 = targetItem.VisitNum;
+                        tNum2 = targetItem.OrderNum;
+                        break;
                 }
                 totalItem.tNum1 = tNum1;
                 totalItem.tNum2 = tNum2;
@@ -81,25 +85,27 @@
                     totalItem.targetRate = (tNum2 * 100 / tNum1);
                 }
             }
-            for (var i = 0; i < reportObj.actList.length; i++) {
-                var actItem = reportObj.actList[i];
+
+            for (var i = 0; i < teams.reportObj.actList.length; i++) {
+
+                var actItem = teams.reportObj.actList[i];
 
                 var item = { Id: actItem.Id, Name: actItem.Name };
                 list.push(item);
-
-                switch (rateType) {
-                case 0:
-                    aNum1 = actItem.CallInNum;
-                    aNum2 = actItem.CallVisitNum;
-                    break;
-                case 1:
-                    aNum1 = actItem.VisitNum;
-                    aNum2 = actItem.Card1Num;
-                    break;
-                case 2:
-                    aNum1 = actItem.VisitNum;
-                    aNum2 = actItem.OrderNum;
-                    break;
+                
+                switch (teams.rateType) {
+                    case "0":
+                        aNum1 = actItem.CallInNum;
+                        aNum2 = actItem.CallVisitNum;
+                        break;
+                    case "1":
+                        aNum1 = actItem.VisitNum;
+                        aNum2 = actItem.Card1Num;
+                        break;
+                    case "2":
+                        aNum1 = actItem.VisitNum;
+                        aNum2 = actItem.OrderNum;
+                        break;
                 }
                 if (aNum1 == 0) {
                     if (aNum2 > 0) {
@@ -110,6 +116,10 @@
                 } else {
                     item.actRate = (aNum2 * 100 / aNum1);
                 }
+                //图标元素操作
+                graph.categories.push(actItem.Name);
+                graph.data.push(item.actRate)
+                //debugger;
                 totalItem.aNum1 += aNum1;
                 totalItem.aNum2 += aNum2;
                 if (tNum1 == 0) {
@@ -120,8 +130,8 @@
                     } else {
                         item.Rate = 0;
                     }
-                }       
-
+                }
+                
 
             }
             if (totalItem.aNum1 != 0) {
@@ -132,17 +142,17 @@
 
                 } else {
                     totalItem.actRate = 0;
-                    
+
                 }
-                    
+
             }
             if (totalItem.targetRate != 0) {
                 totalItem.Rate = (totalItem.actRate * 100 / totalItem.targetRate);
-                              
+
             } else {
                 totalItem.Rate = 0;
             }
-            list.sort(function(item1, item2) {
+            list.sort(function (item1, item2) {
                 if (item1.Rate == item2.Rate) {
                     return item1.actRate < item2.actRate;
                 }
@@ -150,78 +160,126 @@
 
             });
 
-            var element = $('#resulttable');
+            var element = $("#projectReport [name='resulttable']");
 
-            var tpl = $('#tpl').html();
+            var tpl = $('#teamstpl').html();
 
-            var html = _.template(tpl, { list: list,total:totalItem });
+            var html = _.template(tpl, { list: list, total: totalItem });
 
             element.html(html);
-        }
-
-
-        function showClient(id) {
-            OpenFullWindow("./View/" + id);
-
+            $("#projectReport [name='container1']").highcharts({
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'T间排名统计'
+                },
+                xAxis: {
+                    categories: graph.categories,
+                    title: {
+                        text: '部门'
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    max:100,
+                    title: {
+                        text: '完成情况(%)',
+                        align: 'high'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' %'
+                },
+                plotOptions: {
+                    bar: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: -40,
+                    y: 100,
+                    floating: true,
+                    borderWidth: 1,
+                    backgroundColor: '#FFFFFF',
+                    shadow: true
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: '实际完成',
+                    data: graph.data
+                }]
+            });
 
         }
 
     </script>
     <div data-role="content">
-         <div class="well well-small">
-    @Html.MobileSearchDateRange("", "统计期间：")
-    @MyControls.SearchBtn()
-
-</div>
-        <div>
-            <h3>T间排名统计</h3>
-             <div class="ui-field-contain">
-        <fieldset data-role="controlgroup" data-type="horizontal">
-            <label class="radio"><input name="radiotype" type="radio" value="0" checked="checked" onchange="SetRate();" />电转访率</label>
-            <label class="radio"><input name="radiotype" type="radio" value="1" onchange="SetRate();" />办卡率</label>
-            <label class="radio"><input name="radiotype" type="radio" value="2" onchange="SetRate();" />大定率</label>
-        </fieldset>
-    </div>
-           
-            <div id="resulttable" >
-
-            </div>
+        <div class="well well-small">
+            @Html.MobileSearchDateRange("", "统计期间：")
+            @MyControls.MobileSearchBtn("PerformanceTeam")
 
         </div>
+        <div>
+            <h3>T间排名统计</h3>
+            <div class="ui-field-contain">
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <label class="radio"><input name="radiotype" type="radio" value="0" checked="checked" onchange=" SetRate(); " />电转访率</label>
+                    <label class="radio"><input name="radiotype" type="radio" value="1" onchange=" SetRate(); " />办卡率</label>
+                    <label class="radio"><input name="radiotype" type="radio" value="2" onchange=" SetRate(); " />大定率</label>
+                </fieldset>
+            </div>
+            
+            <div name="resulttable">
 
-        <script type="text/template" id="tpl">
-        
-        <table class="table table-bordered table-striped ">
-            <thead>
-                <tr>
-                    <th style="width:80px">部门</th>
-                    <th style="width:40px">指标</th>
-                    <th style="width:40px">实际完成</th>
-                    <th style="width:40px">完成率</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>项目</td>
-                    <td style="text-align:right"><%=total.targetRate.toFixed(0)%> %</td>
-                    <td style="text-align:right"><%=total.actRate.toFixed(0)%> %</td>
-                    <td style="text-align:right"><%=total.Rate.toFixed(0)%> %</td>
-                </tr>
-                <%for(var i=0;i<list.length;i++){var item=list[i]; %>
-                <tr>
-                    <td><%=item.Name%></td>
-                    <td style="text-align:right"> </td>
-                    <td style="text-align:right"><%=item.actRate.toFixed(0)%> %</td>
-                    <td style="text-align:right"><%=item.Rate.toFixed(0)%> %</td>
-                </tr>
-                <%}%>
-            </tbody>
-        </table>
-    
-    
-    </script>
-       
+            </div>
+            <div name="container1" style="width:100%"></div>
+            <div name="container2"></div>
+        </div>
+
+        <script type="text/template" id="teamstpl">
+
+            <table class="table table-bordered table-striped ">
+                <thead>
+                    <tr>
+                        <th style="width:80px">部门</th>
+                        <th style="width:40px">指标</th>
+                        <th style="width:40px">实际完成</th>
+                        <th style="width:40px">完成率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>项目</td>
+                        <td style="text-align:right"><%=total.targetRate.toFixed(0)%> %</td>
+                        <td style="text-align:right"><%=total.actRate.toFixed(0)%> %</td>
+                        <td style="text-align:right"><%=total.Rate.toFixed(0)%> %</td>
+                    </tr>
+                    <%for(var i=0;i<list.length;i++){var item=list[i]; %>
+                        <tr>
+                            <td><%=item.Name%></td>
+                            <td style="text-align:right"> </td>
+                            <td style="text-align:right"><%=item.actRate.toFixed(0)%> %</td>
+                            <td style="text-align:right"><%=item.Rate.toFixed(0)%> %</td>
+                        </tr>
+                        <%}%>
+                </tbody>
+            </table>
+
+
+        </script>
+
     </div>
-   
+
 
 }

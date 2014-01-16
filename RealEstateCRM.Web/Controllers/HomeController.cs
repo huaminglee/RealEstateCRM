@@ -22,7 +22,14 @@ namespace RealEstateCRM.Web.Controllers
             var projects = UserInfo.CurUser.GetProjects();
             if (projects.Count == 1)
             {
-                return Redirect("~/Project/" + projects[0].Id.ToString() + "/Home/ProjectIndex");
+                if (Request.Cookies["isMobile"] == null)
+                {
+                    return Redirect("~/Project/" + projects[0].Id.ToString() + "/Home/ProjectIndex");
+                }
+                else
+                {
+                    return Redirect("~/Project/" + projects[0].Id.ToString() + "/Home/MobileProjectIndex");
+                }
             }
             return View(Request.Browser);
             
@@ -137,6 +144,11 @@ namespace RealEstateCRM.Web.Controllers
         }
 
         public ActionResult CreateClient()
+        {
+            return View();
+        }
+
+        public ActionResult ProjectMobileReport()
         {
             return View();
         }

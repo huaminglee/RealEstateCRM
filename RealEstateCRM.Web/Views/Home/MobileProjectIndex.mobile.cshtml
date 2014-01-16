@@ -4,7 +4,7 @@
 
 @{
     ViewBag.Title = "首页";
-    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+    Layout = "~/Views/Shared/_IndexLayout.mobile.cshtml";
     var projectid = "";
     if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
 }
@@ -14,16 +14,16 @@
 <div data-role="content">
     
     <div class="ui-grid-a">
-        <div class="ui-block-a"><a data-role="button" onclick="load('invitealert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/InviteList")')">
+        <div class="ui-block-a"><a data-role="button" onclick="load('projectReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/InviteProjectReport")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/play-all.png")"  /><br />计划提醒&完成
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('transferalert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/TransferAlert")')">
+        <div class="ui-block-b"><a data-role="button" onclick="load('projectReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/TransferAlert")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/appointment-urgent.png")"  /><br />预警
                                 </a></div>
-        <div class="ui-block-a"><a data-role="button" onclick="load('invitelist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/InviteList")')">
-                                    <img src="@(MvcApplication.RootPath + "/Content/Images/order_159.png")"  /><br />客户邀约表
-                                </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('teams','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceTeamReport")')">
+        <div class="ui-block-a"><a data-role="button" onclick="load('projectReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/ClientStateReport")')">
+    <img src="@(MvcApplication.RootPath + "/Content/Images/order_159.png")" /><br />客户统计表
+</a></div>
+        <div class="ui-block-b"><a data-role="button" onclick="load('projectReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceTeamReport")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/transfer-document.png")"  /><br />T间排名
                                 </a></div>
         <div class="ui-block-a"><a data-role="button" onclick="load('clientlist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/List")')">
@@ -32,10 +32,10 @@
         <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/CreateClient")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/plus.png")" /><br />客户录入
                                 </a></div>
-        <div class="ui-block-a"><a data-role="button" onclick="load('invitealert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/TransferBatch")')">
+        <div class="ui-block-a"><a data-role="button" onclick="load('clienttransfer','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Client/TransferBatch")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/play-all.png")"  /><br />客户分配
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/ProjectReport")')">
+        <div class="ui-block-b"><a data-role="button" onclick="load('clientedit','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/ProjectMobileReport")')">
                                     <img src="@(MvcApplication.RootPath + "/Content/Images/plus.png")" /><br />统计报表
                                 </a></div>
     </div>

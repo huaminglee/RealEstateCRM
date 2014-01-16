@@ -8,7 +8,7 @@ GO
 
 CREATE TABLE [dbo].[Performances](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[ProjecttId] [int] NOT NULL,
+	[ProjectId] [int] NOT NULL,
 	[RoomType] [nvarchar](max) NULL,
 	[BeginDate] [datetime] NOT NULL,
 	[CallInNum] [int] NOT NULL,

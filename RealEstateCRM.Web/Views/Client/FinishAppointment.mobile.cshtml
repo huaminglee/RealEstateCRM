@@ -2,11 +2,12 @@
 
 @{
     ViewBag.Title = "邀约记录编辑";
-    Layout = "~/Views/Shared/_InfoLayout.mobile.cshtml";
+    Layout = "~/Views/Shared/_EditLayout.mobile.cshtml";
+    ViewBag.BackUrl = Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("FinishAppointment")) + "View/" + Model.ClientId;
 }
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        $(".datetimepicker").attr("data-role", "datebox");
+        //$(".datetimepicker").attr("data-role", "datebox");
         var opt = {
             preset: 'datetime', //日期
             theme: 'ios', //皮肤样式
@@ -17,48 +18,50 @@
             dateOrder: 'yymmdd', //面板中日期排列格式
             endYear: 2020 //结束年份
         };
-        $('input:jqmData(role="datebox")').mobiscroll(opt);
+        $('.datetimepicker').mobiscroll(opt);
         $("#PlanTime").attr("readonly", "readonly");
         $("#Type").attr("readonly", "readonly");
     });
     function Submit() {
-        post('@Request.Url.AbsoluteUri', $('form').serialize());
+        post('clientview', '@Request.Url.AbsoluteUri', $('form').serialize());
     }
     function Back() {
-        load('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("FinishAppointment"))+"View/"+Model.ClientId)');
+        loadCurPage('@(Request.Url.AbsoluteUri.Remove(Request.Url.AbsoluteUri.IndexOf("FinishAppointment"))+"View/"+Model.ClientId)');
     }
 </script>
-@using (Html.BeginForm())
-{
-    @Html.ValidationSummary(true)
-    @Html.HiddenFor(model => model.Id)
-    @Html.HiddenFor(model => model.ClientId)
-    <h3>邀约信息</h3>
-
-    @Html.MyMobileTextFor(m => m.Type)
-    @Html.MyMobileTextFor(m => m.PlanTime)
-    @Html.MyMobileDateTimeFor(model => model.ActualTime)
-    if (ViewBag.ChangeGroup == true)
+@section Main{
+    @using (Html.BeginForm())
     {
-        var list = Project.GetSalesGroup(ViewBag.ProjectId);
-        <div class="ui-field-contain">
-            <fieldset data-role="controlgroup" data-type="horizontal">
-                <label for="GroupId">接待小组<font style="color:red">*</font></label>
-                <select id="GroupId" name="GroupId">
-                    <option></option>
-                    @foreach (var item in list)
-                    {
-                        <option value='@item.Id'>@item.Name</option>
-                    }
-                </select>
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.ClientId)
+        <h3>邀约信息</h3>
+
+        @Html.MyMobileTextFor(m => m.Type)
+        @Html.MyMobileTextFor(m => m.PlanTime)
+        @Html.MyMobileDateTimeFor(model => model.ActualTime)
+        if (ViewBag.ChangeGroup == true)
+        {
+            var list = Project.GetSalesGroup(ViewBag.ProjectId);
+            <div class="ui-field-contain">
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <label for="GroupId">接待小组<font style="color:red">*</font></label>
+                    <select id="GroupId" name="GroupId">
+                        <option></option>
+                        @foreach (var item in list)
+                        {
+                            <option value='@item.Id'>@item.Name</option>
+                        }
+                    </select>
 
 
-                <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
-            </fieldset>
-        </div>
+                    <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="GroupId">@ViewBag.GroupPrompt</span>
+                </fieldset>
+            </div>
+        }
+        @Html.MyMobileTextAreaFor(model => model.Detail, 3)
+        <input name="ismobile" value="true" type="hidden" />
+        <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
+
     }
-    @Html.MyMobileTextAreaFor(model => model.Detail, 3)
-    <input name="ismobile" value="true" type="hidden" />
-    <p style="text-align:center">@MyControls.Btn("保存", "Submit();") @MyControls.Btn("取消", "Back();")</p>
-
 }

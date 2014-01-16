@@ -1,0 +1,183 @@
+﻿@{
+    ViewBag.Title = "邀约";
+        Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+ 
+    var projectid = "";
+    if (Request.RequestContext.RouteData.Values["projectid"] != null) { projectid = Request.RequestContext.RouteData.Values["projectid"].ToString(); }
+
+}
+@section Main{
+
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $("#companyReport [name='DateFrom']").val('@ViewBag.Date1');
+            $("#companyReport [name='DateTo']").val('@ViewBag.Date2');
+            SearchClickForInviteCompany();
+        });
+
+        
+
+        function SearchClickForInviteCompany() {
+            var PostData = {};
+
+
+            PostData.DateFrom = $("#companyReport [name='DateFrom']").val();
+            if (PostData.DateFrom == "") {
+                alert("请选择日期");
+                return;
+            }
+            PostData.DateTo = $("#companyReport [name='DateTo']").val();
+
+            $.post("@(MvcApplication.RootPath + "/report/InviteCompanyQuery")", PostData, function(respDate) {
+                if (respDate.success == true) {
+                    reportObj = respDate.obj;
+                    showEntersForInviteCompany();
+
+                } else {
+                    alert(respDate.obj);
+                }
+            });
+        }
+
+        var reportObj;
+
+
+        function showEntersForInviteCompany() {
+            var total = {
+                Id: 0,
+                Name: '合计',
+                VisitNum: 0,
+                Card1Num: 0,
+                Card2Num: 0,
+                OrderNum: 0,
+                ContractNum: 0,
+                VisitVisitNum: 0,
+                Card1VisitNum: 0,
+                Card2VisitNum: 0,
+                OrderVisitNum: 0,
+                ContractVisitNum: 0,
+                Card1DoneNum: 0,
+                Card2DoneNum: 0,
+                OrderDoneNum: 0,
+                ContractDoneNum: 0
+            };
+            for (var i = 0; i < reportObj.list.length; i++) {
+                var item = reportObj.list[i];
+                total.VisitNum += item.VisitNum;
+                total.Card1Num += item.Card1Num;
+                total.Card2Num += item.Card2Num;
+                total.OrderNum += item.OrderNum;
+                total.ContractNum += item.ContractNum;
+                total.VisitVisitNum += item.VisitVisitNum;
+                total.Card1VisitNum += item.Card1VisitNum;
+                total.Card2VisitNum += item.Card2VisitNum;
+                total.OrderVisitNum += item.OrderVisitNum;
+                total.ContractVisitNum += item.ContractVisitNum;
+                total.Card1DoneNum += item.Card1DoneNum;
+                total.Card2DoneNum += item.Card2DoneNum;
+                total.OrderDoneNum += item.OrderDoneNum;
+                total.ContractDoneNum += item.ContractDoneNum;
+            }
+            reportObj.list.unshift(total);
+
+
+            var element = $("#companyReport [name='resulttable']");
+
+            var tplForICR = $('#tplForICR').html();
+
+            var html = _.template(tplForICR, reportObj);
+
+            element.html(html);
+        }
+
+
+        function OpenProject(projectid) {
+            
+            var path = '@(MvcApplication.RootPath+"/Project/")';
+            load("projectReport", path + projectid + "/Report/InviteProjectReport?dateFrom=" + $("#companyReport [name='DateFrom']").val() + "&dateTo=" + $("#companyReport [name='DateTo']").val());
+        }
+
+    </script>
+    <div data-role="content">
+        <div class="well well-small">
+            @Html.MobileSearchDateRange("", "统计期间：")
+            
+            @MyControls.MobileSearchBtn("InviteCompany")
+        
+        </div>
+        <div>
+            <h3>计划任务&完成</h3>
+             
+           
+            <div name="resulttable" >
+
+            </div>
+
+        </div>
+
+        <script type="text/template" id="tplForICR">
+        
+        <table class="table table-bordered table-striped ">
+            <thead>
+                <tr>
+                    <th style="width:80px">项目</th>
+                    <th style="width:40px">类型</th>
+                    <th style="width:40px">计划数</th>
+                    <th style="width:40px">来人数</th>
+                    <th style="width:40px">完成数</th>
+                    <th style="width:40px">未完成</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                <%for(var i=0;i<list.length;i++){var item=list[i]; %>
+                <tr>
+                    <td rowspan="5"><%if(item.Id==0){%>
+                        合计
+                    <%}else{%>
+                    <a onclick="OpenProject(<%=item.Id%>)"><%=item.Name%></a>
+                    <%}%> 
+                    </td>
+                    <td>签约</td>
+                     <td style="text-align:right"><%=item.ContractNum%></td>
+                    <td style="text-align:right"><%=item.ContractVisitNum%></td>
+                    <td style="text-align:right"><%=item.ContractDoneNum%></td>
+                    <td style="text-align:right"><%=item.ContractNum-item.ContractDoneNum%></td>
+                    </tr>
+                <tr><td>大定</td>
+                    <td style="text-align:right"><%=item.OrderNum%></td>
+                    <td style="text-align:right"><%=item.OrderVisitNum%></td>
+                    <td style="text-align:right"><%=item.OrderDoneNum%></td>
+                    <td style="text-align:right"><%=item.OrderNum-item.OrderDoneNum%></td>
+                </tr>
+                <tr><td>升卡</td>
+                    <td style="text-align:right"><%=item.Card2Num%></td>
+                    <td style="text-align:right"><%=item.Card2VisitNum%></td>
+                    <td style="text-align:right"><%=item.Card2DoneNum%></td>
+                    <td style="text-align:right"><%=item.Card2Num-item.Card2DoneNum%></td>
+                </tr>
+                <tr><td>办卡</td>
+                    <td style="text-align:right"><%=item.Card1Num%></td>
+                    <td style="text-align:right"><%=item.Card1VisitNum%></td>
+                    <td style="text-align:right"><%=item.Card1DoneNum%></td>
+                    <td style="text-align:right"><%=item.Card1Num-item.Card1DoneNum%></td>
+                </tr>
+                <tr><td>来访</td>                   
+                    <td style="text-align:right"><%=item.VisitNum%></td>
+                    <td style="text-align:right"><%=item.VisitVisitNum%></td>
+                    <td style="text-align:right"> </td>
+                    <td style="text-align:right"><%=item.VisitNum-item.VisitVisitNum%></td>
+                </tr>
+               
+               
+                <%}%>
+            </tbody>
+        </table>
+    
+    
+    </script>
+       
+    </div>
+   
+
+}

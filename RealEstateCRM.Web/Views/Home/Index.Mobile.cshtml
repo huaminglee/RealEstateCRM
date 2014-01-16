@@ -3,34 +3,34 @@
 @using OUDAL
 @{
     ViewBag.Title = "";
-    Layout = "~/Views/Shared/_Layout.mobile.cshtml";
-    var projectid = "";
+    Layout = "~/Views/Shared/_IndexLayout.mobile.cshtml";
+    var projectid = "0";
 }
 
 <div data-role="content">
     <div class="ui-grid-a">
-        <div class="ui-block-a"><a data-role="button" onclick="load('invitelist','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Home/InviteList")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/play-all.png")"  /><br />计划&完成
+        <div class="ui-block-a"><a data-role="button" onclick="load('companyReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/InviteCompanyReport")')">
+                                    <img src="@(MvcApplication.RootPath +"/Content/Images/play-all.png")"  /><br />计划&完成
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('transferalert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Home/TransferAlert")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/appointment-urgent.png")"  /><br />预警
+        @*<div class="ui-block-b"><a data-role="button" onclick="load('transferalert','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Home/TransferAlert")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/appointment-urgent.png")"  /><br />预警
+                                </a></div>*@
+        <div class="ui-block-a"><a data-role="button" onclick="load('companyReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/ClientCompanyReport")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/order_159.png")"  /><br />客户统计
                                 </a></div>
-        <div class="ui-block-a"><a data-role="button" onclick="load('report','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/InviteList")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/order_159.png")"  /><br />客户统计
+        <div class="ui-block-b"><a data-role="button" onclick="load('companyReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/PerformanceProjectReport")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/transfer-document.png")"  /><br />项目排名
                                 </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('report','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Report/PerformanceTeamReport")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/transfer-document.png")"  /><br />项目排名
+        <div class="ui-block-a"><a data-role="button" onclick="load('companyReport','@(MvcApplication.RootPath + "/Report/ClientCompanyWayReport1")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/shipping.png")" /><br />渠道来人分析
                                 </a></div>
-        <div class="ui-block-a"><a data-role="button" onclick="load('report','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/List")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/shipping.png")" /><br />渠道来人分析
-                                </a></div>
-        <div class="ui-block-b"><a data-role="button" onclick="load('report','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Project/" + projectid.ToString() + "/Client/ToCreate?type=5")')">
-                                    <img src="@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Content/Images/special_offer.png")" /><br />企划效果分析
+        <div class="ui-block-b"><a data-role="button" onclick="load('companyReport','@(MvcApplication.RootPath + "/Project/" + projectid.ToString() + "/Report/ClientCompanyWayReport2")')">
+                                    <img src="@(MvcApplication.RootPath + "/Content/Images/special_offer.png")" /><br />企划效果分析
                                 </a></div>
     </div>
 </div>
 <script>
-    getMenu('menupage',{ isproject: '@((!projectid.IsEmpty()).ToString().ToLower())',projectid:'@(projectid.IsEmpty()?0:int.Parse(projectid))' });
+    getMenu('menupage', { isproject: '@((!projectid.IsEmpty()).ToString().ToLower())', projectid: '@(projectid.IsEmpty()?0:int.Parse(projectid))' });
 </script>
 @section Footer{
     <div data-role="footer" align="center" data-position="fixed" data-tap-toggle="false" data-theme="b">
